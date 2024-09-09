@@ -11,11 +11,10 @@ This project is a Senior Capstone focused on developing an innovative software s
 
 ## Team Members
 
-- Dominic Minnich
+- Dominic Minnich (Team Leader)
 - Kyle Benich
 - Logan Smith
 - Sulaiman Hussain
-- Blaze Jackson (Team Leader)
 
 ## Project Type
 
