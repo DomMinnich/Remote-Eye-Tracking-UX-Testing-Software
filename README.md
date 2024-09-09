@@ -73,7 +73,7 @@ This software aims to revolutionize UX testing by eliminating physical barriers 
 ### Backend Development
 
 - **Python**: Ideal for computer vision and data analysis.
-- **Django or Flask**: Frameworks for building scalable web applications.
+- **Flask**: Framework for building scalable web applications.
 - **OpenCV**: For image processing and eye-tracking algorithms.
 - **TensorFlow or PyTorch**: For advanced computer vision tasks.
 
@@ -83,8 +83,7 @@ This software aims to revolutionize UX testing by eliminating physical barriers 
 
 ### Data Storage
 
-- **PostgreSQL**: Relational database for structured data.
-- **MongoDB**: NoSQL database for varied or unstructured data.
+- **SQlite**
 
 ### Data Analysis and Reporting
 
@@ -95,7 +94,6 @@ This software aims to revolutionize UX testing by eliminating physical barriers 
 ### Deployment
 
 - **Docker**: For containerizing the application.
-- **Kubernetes**: For orchestrating containerized applications.
 
 ### Security and Compliance
 
