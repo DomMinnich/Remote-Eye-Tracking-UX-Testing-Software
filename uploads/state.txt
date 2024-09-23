@@ -1,0 +1,1 @@
+Video of the recordings should be stored here in indivisual subfolders with project ID.
