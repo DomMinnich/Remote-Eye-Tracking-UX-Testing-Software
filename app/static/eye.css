@@ -180,7 +180,6 @@ body {
     z-index: 4;
     opacity: 0.7;
 }
-
 /* Eyelids */
 .upper-eyelid,
 .lower-eyelid {
@@ -211,56 +210,6 @@ body {
     background: linear-gradient(to top, #0a0a0a, transparent);
     left: 50%;
     transform: translateX(-50%);
-}
-
-/* Blink Animation */
-@keyframes blink-upper {
-    0%,
-    100% {
-      transform: translateY(0); /* Start and end at the original position */
-      left: 50%;
-      transform: translateX(-50%);
-      width: 80%;
-      height: 30%;
-      opacity: 0.35;
-    }
-    50% {
-      transform: translateY(100px); /* Move down to cover the eye */
-      left: 50%;
-      transform: translateX(-50%);
-      width: 100%; /* Make it slightly wider */
-      height: 70%; /* Make it slightly taller */
-      opacity: 1; /* Increase opacity */
-    }
-}
-
-@keyframes blink-lower {
-    0%,
-    100% {
-      transform: translateY(0); /* Start and end at the original position */
-      left: 50%;
-      transform: translateX(-50%);
-      width: 80%;
-      height: 30%;
-      opacity: 0.35;
-    }
-    50% {
-      transform: translateY(-100px); /* Move up to cover the eye */
-      left: 50%;
-      transform: translateX(-50%);
-      width: 100%; /* Make it slightly wider */
-      height: 70%; /* Make it slightly taller */
-      opacity: 1; /* Increase opacity */
-    }
-}
-
-/* Animation classes applied on click */
-.upper-eyelid.blinking {
-    animation: blink-upper 1.5s forwards;
-}
-
-.lower-eyelid.blinking {
-    animation: blink-lower 1.5s forwards;
 }
 
 /* Animations */
@@ -311,3 +260,70 @@ body {
         0px 0px 40px rgba(102, 153, 255, 0.7);
     }
 }
+
+
+  /* Blink Animation NOT USING THIS ONE*/
+  @keyframes blink-upper {
+    0%,
+    100% {
+      transform: translateY(0); /* Start and end at the original position */
+      left: 50%;
+      transform: translateX(-50%);
+      width: 80%;
+      height: 30%;
+      opacity: 0.35;
+    }
+    50% {
+      transform: translateY(100px); /* Move down to cover the eye */
+      left: 50%;
+      transform: translateX(-50%);
+      width: 100%; /* Make it slightly wider */
+      height: 70%; /* Make it slightly taller */
+      opacity: 1; /* Increase opacity */
+    }
+  }
+  
+  @keyframes blink-lower {
+    0%,
+    100% {
+      transform: translateY(0); /* Start and end at the original position */
+      left: 50%;
+      transform: translateX(-50%);
+      width: 80%;
+      height: 30%;
+      opacity: 0.35;
+    }
+    50% {
+      transform: translateY(-100px); /* Move up to cover the eye */
+      left: 50%;
+      transform: translateX(-50%);
+      width: 100%; /* Make it slightly wider */
+      height: 70%; /* Make it slightly taller */
+      opacity: 1; /* Increase opacity */
+    }
+  }
+
+  @keyframes grow {
+    0%,
+    100% {
+      width: 30px;
+      height: 30px;
+    }
+    50% {
+      width: 35px;
+      height: 35px;
+    }
+  }
+  
+  /* Animation classes applied on click */
+  .upper-eyelid.blinking {
+    animation: blink-upper 1.5s forwards;
+  }
+  
+  .lower-eyelid.blinking {
+    animation: blink-lower 1.5s forwards;
+  }
+
+  .pupil.grow {
+    animation: grow 1.5s forwards;
+  }

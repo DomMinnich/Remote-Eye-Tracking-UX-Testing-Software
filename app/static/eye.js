@@ -4,6 +4,7 @@
 const iris = document.querySelector('.cyber-iris');
 const upperEyelid = document.querySelector('.upper-eyelid');
 const lowerEyelid = document.querySelector('.lower-eyelid');
+const pupil = document.querySelector('.pupil');
 
 // Function to move the iris towards the cursor
 function moveEye(event) {
@@ -24,13 +25,15 @@ function moveEye(event) {
 // Function to trigger the blink animation
 function blinkEye() {
     // Add the "blinking" class to trigger animation
-    upperEyelid.classList.add('blinking');
-    lowerEyelid.classList.add('blinking');
+    //upperEyelid.classList.add('blink');
+    //lowerEyelid.classList.add('blink');
+    pupil.classList.add('grow');
 
     // Remove the class after the animation ends
     setTimeout(() => {
-        upperEyelid.classList.remove('blinking');
-        lowerEyelid.classList.remove('blinking');
+        //upperEyelid.classList.remove('blink');
+        //lowerEyelid.classList.remove('blink');
+        pupil.classList.remove('grow');
     }, 1500); // Match the animation duration
 }
 
