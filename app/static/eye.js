@@ -42,3 +42,21 @@ document.addEventListener('mousemove', moveEye);
 
 // Add click event listener to trigger the blink
 document.addEventListener('click', blinkEye);
+
+
+// Apply warning class if there is an error alert
+document.addEventListener('DOMContentLoaded', () => {
+    const flashMessage = document.querySelector('.alert-danger');
+    const eyeContainer = document.querySelector('.eye-container');
+    const pupil = document.querySelector('.pupil');
+
+    if (flashMessage) {
+        // Add the warning class to trigger color change and pupil growth
+        eyeContainer.classList.add('warning');
+        
+        // Remove the warning class after 5 seconds
+        setTimeout(() => {
+            eyeContainer.classList.remove('warning');
+        }, 5000);
+    }
+});

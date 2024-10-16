@@ -327,3 +327,71 @@ body {
   .pupil.grow {
     animation: grow 1.5s forwards;
   }
+
+
+  /* Warning Animation */
+
+.eye-container.warning .pupil {
+    background-color: #000;
+    box-shadow: 0px 0px 5px rgba(255, 0, 0, 0.8);
+    animation: growPupil 2s forwards;
+
+}
+
+.eye-container.warning .outer-ring {
+    border-color: #ff0000;
+    box-shadow: 0px 0px 30px rgba(255, 0, 0, 0.8);
+}
+
+.eye-container.warning .inner-ring-1 {
+    background: radial-gradient(circle, #ff00008f, transparent 60%);
+}
+
+.eye-container.warning .inner-ring-2 {
+    background: repeating-conic-gradient(
+      from 0deg,
+      rgba(255, 0, 0, 0.2) 0% 10%,
+      transparent 10% 20%
+    );
+}
+
+.eye-container.warning .inner-ring-3 {
+    background: radial-gradient(circle, #ff0000, transparent 70%);
+    box-shadow: 0 0 15px rgba(255, 0, 0, 0.8);
+}
+
+.eye-container.warning .cyber-iris {
+    background: radial-gradient(circle at 50% 50%, #ff0000, #cc3300);
+}
+
+.eye-container.warning .tech-overlay {
+    background: repeating-radial-gradient(
+      circle at 50% 50%,
+      rgba(255, 0, 0, 0.1),
+      transparent 5%
+    );
+    box-shadow: inset 0 0 5px rgba(255, 0, 0, 0.7), 0 0 20px rgba(255, 0, 0, 0.4);
+}
+
+.eye-container.warning .reflection-layer {
+    background: radial-gradient(
+      circle at 30% 30%,
+      rgba(255, 255, 255, 0.5),
+      transparent 70%
+    );
+}
+
+@keyframes growPupil {
+    0% {
+        width: 30px;
+        height: 30px;
+    }
+    50% {
+        width: 40px;
+        height: 40px;
+    }
+    100% {
+        width: 30px;
+        height: 30px;
+    }
+}

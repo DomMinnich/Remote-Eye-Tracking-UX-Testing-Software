@@ -28,6 +28,21 @@
 
   <!-- Form Section -->
   <form method="POST" class="login-form">
+
+      <!-- Flash Messages Section -->
+   {% with messages = get_flashed_messages(with_categories=true) %}
+   {% if messages %}
+     <div class="flash-messages">
+       {% for category, message in messages %}
+         <div class="alert alert-{{ category }}">
+           {{ message }}
+         </div>
+       {% endfor %}
+     </div>
+   {% endif %}
+ {% endwith %}
+
+
     {{ form.hidden_tag() }}
     <div class="form-group">
       <label for="username">{{ form.username.label }}</label>
