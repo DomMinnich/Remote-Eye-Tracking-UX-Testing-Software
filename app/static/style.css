@@ -1,5 +1,23 @@
 /* Style for the app */
 /* Layout */
+
+/* Reset */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    background-color: #121212;
+    overflow: hidden;
+}
+
+
 .login-page {
   display: flex;
   flex-direction: column;
@@ -12,10 +30,10 @@
 }
 
 .login-title {
-  font-size: 2rem;
-  margin-bottom: 1rem;
+  font-size: 5rem;
+  margin-bottom: 5rem;
   text-align: center;
-  color: #00d1b2;
+  color: #0073d1;
 }
 
 /* Eye Animation Styling */
@@ -107,7 +125,7 @@
 
 /* Form Styling */
 .login-form {
-  width: 300px;
+  width: 400px;
   padding: 1.5rem;
   background-color: #1e1e1e;
   border-radius: 8px;
@@ -131,7 +149,7 @@ input[type="password"] {
   color: #fff;
   background-color: #333;
   border: none;
-  border-bottom: 2px solid #00d1b2;
+  border-bottom: 2px solid #0062d1;
 }
 
 input[type="text"]:focus,
@@ -144,7 +162,7 @@ input[type="password"]:focus {
   width: 100%;
   padding: 0.7rem;
   font-size: 1rem;
-  background-color: #00d1b2;
+  background-color: #006cd1;
   color: #ffffff;
   border: none;
   border-radius: 4px;
@@ -153,7 +171,7 @@ input[type="password"]:focus {
 }
 
 .btn-submit:hover {
-  background-color: #00a78f;
+  background-color: #0064a7;
 }
 
 .register-link {
@@ -163,7 +181,7 @@ input[type="password"]:focus {
 }
 
 .register-link a {
-  color: #00d1b2;
+  color: #ced100;
   text-decoration: none;
 }
 
@@ -192,14 +210,11 @@ input[type="password"]:focus {
 }
 
 .alert {
-  padding: 20px;
-  color: rgb(143, 46, 83);
-  margin-bottom: 15px;
-  border: 1px solid transparent;
+  color: rgb(187, 51, 130);
   border-radius: 4px;
   text-align: center;
   font-size: 1.2rem;
   font-weight: 500;
-  border-color: rgb(255, 204, 204);
+  margin: 0 auto;
+  width: 100%;
 }
-
