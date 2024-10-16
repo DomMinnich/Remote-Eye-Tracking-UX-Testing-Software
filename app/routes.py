@@ -2,7 +2,7 @@
 #2024
 
 
-#         CONTENTS OF THIS STYLE FILE 
+#         CONTENTS OF THIS FILE 
 #    *Imports                     | ~Line 12-17
 #    Blueprint                      | ~Line 22-30   -Dominic Minnich
 #    LoginManager Instance          | ~Line 35-38   -Dominic Minnich

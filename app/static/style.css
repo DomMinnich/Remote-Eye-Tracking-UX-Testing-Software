@@ -8,10 +8,10 @@ For ex for login title I did login-title
 */
 
 /*
-      CONTENTS OF THIS STYLE FILE
- Fonts A->Z               | ~Line 20-32   -Dominic Minnich
- Base Styling A->Z        | ~Line 34-35   -All
- Login/Register A->Z      | ~Line 36-205  -Dominic Minnich
+      CONTENTS OF THIS FILE
+ Fonts A->Z               | ~Line 20-32    -Dominic Minnich
+ Base Styling A->Z        | ~Line 34-197   -Dominic Minnich
+ Login/Register A->Z      | ~Line 200-269  -Dominic Minnich
  .?.?.                    | ~Line ?-? 
  .?.?.                    | ~Line ?-?   
  */
@@ -32,6 +32,170 @@ For ex for login title I did login-title
 }
 
 /* Base Styling A->Z */
+
+/* Expand Icon */
+.expand-icon {
+  font-size: 38px;
+  transition: transform 0.3s ease;
+}
+
+/* Keyframes for Menu Item Fade-in Animation */
+@keyframes fadeInMenu {
+  from {
+    opacity: 0;
+    transform: translateX(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+/* Corner Menu Toggle Icon */
+.menu-toggle {
+  cursor: pointer;
+  left: 20px;
+  position: fixed;
+  top: 20px;
+  z-index: 1000;
+}
+
+.menu-toggle .bar {
+  background-color: #fff;
+  height: 3px;
+  margin: 5px 0;
+  transition: all 0.4s ease; /* Smooth transition for bars */
+  width: 30px;
+}
+
+.menu-toggle.active .bar:nth-child(1) {
+  transform: rotate(45deg) translate(5px, 5px);
+}
+
+.menu-toggle.active .bar:nth-child(2) {
+  opacity: 0;
+}
+
+.menu-toggle.active .bar:nth-child(3) {
+  transform: rotate(-45deg) translate(5px, -5px);
+}
+
+/* Menu List */
+.menu-list {
+  list-style: none;
+  margin-top: 20px;
+  padding: 0;
+}
+
+.menu-list > li {
+  animation: fadeInMenu 0.6s ease forwards;
+  font-size: 18px;
+  opacity: 0;
+  padding: 15px 20px;
+  position: relative;
+  transform: translateX(-20px);
+}
+
+.menu-list > li:nth-child(1) {
+  animation-delay: 0.1s;
+}
+
+.menu-list > li:nth-child(2) {
+  animation-delay: 0.2s;
+}
+
+.menu-list > li:nth-child(3) {
+  animation-delay: 0.3s;
+}
+
+.menu-list > li:nth-child(4) {
+  animation-delay: 0.4s;
+}
+
+.menu-list > li:nth-child(5) {
+  animation-delay: 0.5s;
+}
+
+.menu-list > li > a {
+  align-items: center;
+  color: #fff;
+  display: flex;
+  justify-content: space-between;
+  text-decoration: none;
+  transition: color 0.3s;
+}
+
+.menu-list > li > a:hover {
+  color: #ff5733;
+}
+
+/* Rotate icon when active */
+.menu-list > li.active .expand-icon {
+  transform: rotate(45deg);
+}
+
+.menu-list > li.active .submenu {
+  display: block;
+  max-height: 500px; /* Set a large enough max-height to accommodate content */
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* Sidebar Menu */
+.sidebar-menu {
+  background: linear-gradient(135deg, #0e76ffce, #210014);
+  box-shadow: 3px 0 15px rgba(0, 0, 0, 0.5);
+  color: #fff;
+  height: 100%;
+  left: -100%;
+  padding-top: 50px;
+  position: fixed;
+  top: 0;
+  transition: left 0.6s cubic-bezier(0.25, 1, 0.5, 1); /* Smooth slide-in */
+  user-select: none;
+  width: 300px;
+  z-index: 999;
+}
+
+.sidebar-menu.active {
+  left: 0;
+}
+
+/* Close Button */
+.sidebar-menu .close-btn {
+  cursor: pointer;
+  font-size: 0px;
+  position: absolute;
+  right: 20px;
+  top: 20px;
+  transition: color 0.3s;
+}
+
+.sidebar-menu .close-btn:hover {
+  color: #ff5733;
+}
+
+/* Submenu */
+.submenu {
+  display: none;
+  list-style: none;
+  max-height: 0; /* Initially set max-height to 0 */
+  opacity: 0;
+  padding-left: 20px;
+  transform: translateY(-10px);
+  transition: max-height 0.7s ease, opacity 0.7s ease; /* Add transition */
+}
+
+.submenu li {
+  color: #bbb;
+  font-size: 16px;
+  padding: 10px 0;
+}
+
+.submenu li a:hover {
+  color: #ff5733;
+}
+
 
 /* Login/Register A->Z */
 

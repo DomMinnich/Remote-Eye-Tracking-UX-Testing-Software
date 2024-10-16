@@ -2,7 +2,7 @@
 # 2024
 
 
-#         CONTENTS OF THIS STYLE FILE A-Z
+#         CONTENTS OF THIS FILE A-Z
 #    *Imports                     | ~Line 12-16
 #    User                         | ~Line 21-31   -Dominic Minnich
 #    .?.?.                        | ~Line ??
