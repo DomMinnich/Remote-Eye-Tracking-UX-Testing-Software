@@ -199,6 +199,51 @@
   height: 200px;
 }
 
+.eye-container.success .cyber-iris {
+  background: radial-gradient(circle at 50% 50%, #00ff00, #00cc00);
+  animation: pulse 3s infinite;
+}
+
+.eye-container.eye-container.success .inner-ring-1 {
+  background: radial-gradient(circle, #00ff008f, transparent 60%);
+}
+
+.eye-container.eye-container.success .inner-ring-2 {
+  background: repeating-conic-gradient(
+    from 0deg,
+    rgba(0, 255, 0, 0.2) 0% 10%,
+    transparent 10% 20%
+  );
+}
+
+.eye-container.eye-container.success .inner-ring-3 {
+  background: radial-gradient(circle, #00ff00, transparent 70%);
+  box-shadow: 0 0 15px rgba(0, 255, 0, 0.8);
+}
+
+.eye-container.success .outer-ring {
+  border-color: #00ff00;
+  box-shadow: 0px 0px 30px rgba(0, 255, 0, 0.8);
+}
+
+.eye-container.success .pupil {
+  background-color: #000;
+  box-shadow: 0px 0px 5px rgba(0, 255, 0, 0.8);
+  animation: growPupil 2s forwards;
+}
+
+.eye-container.success .reflection-layer {
+  background: radial-gradient(
+    circle at 30% 30%,
+    rgba(255, 255, 255, 0.5),
+    transparent 70%
+  );
+}
+
+.eye-container.success .sclera {
+  background: radial-gradient(circle at 50% 50%, #4a4a4a, #1a1a1a 95%);
+}
+
 .eye-container.warning .cyber-iris {
   background: radial-gradient(circle at 50% 50%, #ff0000, #cc3300);
   animation: pulse-warning 3s infinite;
@@ -424,6 +469,6 @@
 }
 
 .zoom-effect {
-  animation: zoomInAndFade 0.5s forwards;
+  animation: zoomInAndFade 0.8s forwards;
   transform-origin: center 42%;
 }

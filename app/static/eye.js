@@ -59,11 +59,11 @@ document.addEventListener('DOMContentLoaded', () => {
 
     if (flashMessage) {
         // Add the warning class to trigger color change and pupil growth
-        eyeContainer.classList.add('warning');
+        eyeContainer.classList.add('warning'); 
         
         // Remove the warning class after 5 seconds
         setTimeout(() => {
-            eyeContainer.classList.remove('warning');
+            eyeContainer.classList.remove('warning'); // Remove warning class
         }, 5000);
     }
 });
@@ -71,14 +71,15 @@ document.addEventListener('DOMContentLoaded', () => {
 document.addEventListener('DOMContentLoaded', () => {
     const loginPage = document.querySelector('.login-page');
     const successMessage = document.querySelector('.alert-success');  // Detect success message
+    const eyeContainer = document.querySelector('.eye-container');
     
     if (successMessage) {
+        eyeContainer.classList.add('success');  // Trigger success animation (green)
         loginPage.classList.add('zoom-effect');  // Trigger zoom effect
-        
         // Delay redirection to allow animation to complete
         setTimeout(() => {
             window.location.href = "/";  // Redirect to home
-        }, 500);  // Match CSS animation duration
+        }, 800);  // Match CSS animation duration
     }
 });
 
