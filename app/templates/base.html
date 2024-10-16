@@ -1,21 +1,25 @@
-
 <!-- base.html -->
 
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Flask App</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
-    <link rel="stylesheet" href="{{ url_for('static', filename='eye.css') }}">
-</head>
-<body>
-    <main>
-        {% block content %}{% endblock %}
-    </main>
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='style.css') }}"
+    />
+    <link rel="stylesheet" href="{{ url_for('static', filename='eye.css') }}" />
+    <style>
+      body {
+        font-family: "Gruppo", sans-serif;
+      }
+    </style>
+  </head>
+  <body>
+    <main>{% block content %}{% endblock %}</main>
     <script src="{{ url_for('static', filename='script.js') }}"></script>
     <script src="{{ url_for('static', filename='eye.js') }}"></script>
-</body>
+  </body>
 </html>
-
