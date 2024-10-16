@@ -154,12 +154,13 @@ For ex for login title I did login-title
   border: 2px solid transparent;
   border-radius: 8px;
   box-sizing: border-box;
-  background: linear-gradient(60deg, #084494, #210014, #8d0147);
+  background: linear-gradient(60deg, #6a8fc0, #101d49, #697add);
   background-size: 200% 200%;
   animation: borderFlow 6s ease infinite;
   z-index: -1; /* Ensures border is behind content */
   opacity: 0;
   transition: opacity 0.5s;
+  border: 2px solid #6788c5;
 }
 
 .menu-list > li:hover::before {
@@ -192,7 +193,7 @@ For ex for login title I did login-title
 
 /* Sidebar Menu */
 .sidebar-menu {
-  background: linear-gradient(135deg,#a10051, #08264e , #530534, #a10051);
+  background: linear-gradient(135deg,#a10050d8, #002657c7 , #530534c9, #a34373c2);
   background-size: 200% 200%;
   animation: gradientShift 10s ease infinite; /* Ambient animated background */
   box-shadow: 3px 0 15px rgba(0, 0, 0, 0.5);
@@ -245,10 +246,8 @@ For ex for login title I did login-title
 }
 
 .submenu li a:hover {
-  color: #ff5733;
+  color: #a4d3ff;
 }
-
-
 
 /* Login/Register A->Z */
 

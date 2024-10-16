@@ -34,7 +34,7 @@
         <div class="close-btn">&times;</div>
         <ul class="menu-list">
           {% if current_user.is_authenticated %}
-          <li><a href="#">HOME</a></li>
+          <li><a href="{{ url_for('main.home') }}">HOME</a></li>
           <li>
             <a href="#">PROJECTS <span class="expand-icon">+</span></a>
             <ul class="submenu">
@@ -56,7 +56,7 @@
           <!--  endif  -->
 
           <li><a href="#">ABOUT US</a></li>
-          <li><a href="#">LOGOUT</a></li>
+          <li><a href="{{ url_for('main.logout') }}">LOGOUT</a></li>
           {% else %}
           <li><a href="#">ABOUT US</a></li>
           <li><a href="{{ url_for('main.login') }}">LOGIN</a></li>
