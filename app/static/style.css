@@ -33,24 +33,6 @@ For ex for login title I did login-title
 
 /* Base Styling A->Z */
 
-/* Expand Icon */
-.expand-icon {
-  font-size: 38px;
-  transition: transform 0.3s ease;
-}
-
-/* Keyframes for Menu Item Fade-in Animation */
-@keyframes fadeInMenu {
-  from {
-    opacity: 0;
-    transform: translateX(-20px);
-  }
-  to {
-    opacity: 1;
-    transform: translateX(0);
-  }
-}
-
 /* Corner Menu Toggle Icon */
 .menu-toggle {
   cursor: pointer;
@@ -80,6 +62,50 @@ For ex for login title I did login-title
   transform: rotate(-45deg) translate(5px, -5px);
 }
 
+/* Expand Icon */
+.expand-icon {
+  font-size: 38px;
+  transition: transform 0.3s ease;
+}
+
+/* Keyframes for animated gradient */
+@keyframes borderFlow {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}
+
+/* Keyframes for Menu Item Fade-in Animation */
+@keyframes fadeInMenu {
+  from {
+    opacity: 0;
+    transform: translateX(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+/* Keyframes for animated gradient */
+@keyframes gradientShift {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}
+
 /* Menu List */
 .menu-list {
   list-style: none;
@@ -94,6 +120,8 @@ For ex for login title I did login-title
   padding: 15px 20px;
   position: relative;
   transform: translateX(-20px);
+  transition: color 0.3s;
+  overflow: hidden; /* To ensure animated border stays within bounds */
 }
 
 .menu-list > li:nth-child(1) {
@@ -116,6 +144,28 @@ For ex for login title I did login-title
   animation-delay: 0.5s;
 }
 
+.menu-list > li::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  border: 2px solid transparent;
+  border-radius: 8px;
+  box-sizing: border-box;
+  background: linear-gradient(60deg, #084494, #210014, #8d0147);
+  background-size: 200% 200%;
+  animation: borderFlow 6s ease infinite;
+  z-index: -1; /* Ensures border is behind content */
+  opacity: 0;
+  transition: opacity 0.5s;
+}
+
+.menu-list > li:hover::before {
+  opacity: 1; /* Border appears on hover */
+}
+
 .menu-list > li > a {
   align-items: center;
   color: #fff;
@@ -126,10 +176,9 @@ For ex for login title I did login-title
 }
 
 .menu-list > li > a:hover {
-  color: #ff5733;
+  color: #ffffff; /* Matches border animation color */
 }
 
-/* Rotate icon when active */
 .menu-list > li.active .expand-icon {
   transform: rotate(45deg);
 }
@@ -143,7 +192,9 @@ For ex for login title I did login-title
 
 /* Sidebar Menu */
 .sidebar-menu {
-  background: linear-gradient(135deg, #0e76ffce, #210014);
+  background: linear-gradient(135deg,#a10051, #08264e , #530534, #a10051);
+  background-size: 200% 200%;
+  animation: gradientShift 10s ease infinite; /* Ambient animated background */
   box-shadow: 3px 0 15px rgba(0, 0, 0, 0.5);
   color: #fff;
   height: 100%;
@@ -159,6 +210,7 @@ For ex for login title I did login-title
 
 .sidebar-menu.active {
   left: 0;
+  border-right: 2px solid #fff;
 }
 
 /* Close Button */
@@ -195,6 +247,7 @@ For ex for login title I did login-title
 .submenu li a:hover {
   color: #ff5733;
 }
+
 
 
 /* Login/Register A->Z */
@@ -369,3 +422,11 @@ For ex for login title I did login-title
 }
 
 /* ...   A->Z */
+
+
+
+
+
+
+
+
