@@ -1,4 +1,11 @@
-// script.js
+// Dominic Minnich 2024
+// script.js  
+
+
+// This script is used to move the iris and eyelid elements in response to mouse movement.
+// It also triggers a blink animation when the user clicks on the eye.
+// It also applies a warning class to the eye container if there is an error alert.
+
 
 // Select the iris and eyelid elements
 const iris = document.querySelector('.cyber-iris');

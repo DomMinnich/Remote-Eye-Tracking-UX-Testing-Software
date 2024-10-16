@@ -1,42 +1,67 @@
-/* Style for the app 
+/* Main Style 2024*/
+
+/*
 Do not use generic tags like div, span, etc.
 Be specific with the elements you want to style.
 This ensures that your css will only apply to your desired elements and not everyones.
+For ex for login title I did login-title
 */
 
-/* Font Styling */
+/*
+      CONTENTS OF THIS STYLE FILE
+ Fonts A->Z               | ~Line 20-32   -Dominic Minnich
+ Base Styling A->Z        | ~Line 34-35   -All
+ Login/Register A->Z      | ~Line 36-205  -Dominic Minnich
+ .?.?.                    | ~Line ?-? 
+ .?.?.                    | ~Line ?-?   
+ */
+
+/* Font Styling A->Z*/
 @font-face {
-  font-family: 'Gruppo';
-  src: url('/static/fonts/Gruppo-Regular.ttf') format('truetype');
+  font-family: "Gruppo";
+  src: url("/static/fonts/Gruppo-Regular.ttf") format("truetype");
   font-weight: normal;
   font-style: normal;
 }
 
 @font-face {
-  font-family: 'Tapestry';
-  src: url('/static/fonts/Tapestry-Regular.ttf') format('truetype');
+  font-family: "Tapestry";
+  src: url("/static/fonts/Tapestry-Regular.ttf") format("truetype");
   font-weight: normal;
   font-style: normal;
 }
 
-.login-page {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  min-height: 100vh;
-  background-color: #121212;
-  color: #ffffff;
-}
+/* Base Styling A->Z */
 
-.login-title {
-  font-size: 5rem;
-  margin-bottom: 5rem;
+/* Login/Register A->Z */
+
+.login-alert {
+  color: #ff0000;
+  border-radius: 4px;
   text-align: center;
-  color: #0073d1;
+  font-size: 1.2rem;
+  font-weight: 500;
+  margin: 0 auto;
+  width: 100%;
+  padding: 1rem;
 }
 
-/* Form Styling */
+.login-btn-submit {
+  width: 100%;
+  padding: 0.7rem;
+  font-size: 1rem;
+  background-color: #006cd1;
+  color: #ffffff;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.login-btn-submit:hover {
+  background-color: #0064a7;
+}
+
 .login-form {
   width: 400px;
   padding: 1.5rem;
@@ -47,6 +72,27 @@ This ensures that your css will only apply to your desired elements and not ever
 
 .login-form-group {
   margin-bottom: 1.2rem;
+}
+
+.login-link {
+  text-align: center;
+  font-size: 0.85rem;
+  color: #c1c1c1;
+}
+
+.login-link a {
+  color: #ced100;
+  text-decoration: none;
+}
+
+.login-page {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  background-color: #121212;
+  color: #ffffff;
 }
 
 .login-page input[type="text"],
@@ -67,7 +113,24 @@ This ensures that your css will only apply to your desired elements and not ever
   border-bottom: 2px solid #00d1b2;
 }
 
-.login-btn-submit {
+.login-title {
+  font-size: 5rem;
+  margin-bottom: 5rem;
+  text-align: center;
+  color: #0073d1;
+}
+
+.register-alert {
+  color: #ff0000;
+  border-radius: 4px;
+  text-align: center;
+  font-size: 1.2rem;
+  font-weight: 500;
+  margin: 0 auto;
+  width: 100%;
+}
+
+.register-btn-submit {
   width: 100%;
   padding: 0.7rem;
   font-size: 1rem;
@@ -79,8 +142,20 @@ This ensures that your css will only apply to your desired elements and not ever
   transition: background-color 0.3s;
 }
 
-.login-btn-submit:hover {
+.register-btn-submit:hover {
   background-color: #0064a7;
+}
+
+.register-form {
+  width: 400px;
+  padding: 1.5rem;
+  background-color: #1e1e1e;
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.5);
+}
+
+.register-form-group {
+  margin-bottom: 1.2rem;
 }
 
 .register-link {
@@ -94,19 +169,6 @@ This ensures that your css will only apply to your desired elements and not ever
   text-decoration: none;
 }
 
-.login-alert {
-  color: #ff0000;
-  border-radius: 4px;
-  text-align: center;
-  font-size: 1.2rem;
-  font-weight: 500;
-  margin: 0 auto;
-  width: 100%;
-  padding: 1rem;
-}
-
-
-
 .register-page {
   display: flex;
   flex-direction: column;
@@ -115,26 +177,6 @@ This ensures that your css will only apply to your desired elements and not ever
   min-height: 100vh;
   background-color: #121212;
   color: #ffffff;
-}
-
-.register-title {
-  font-size: 5rem;
-  margin-bottom: 5rem;
-  text-align: center;
-  color: #0073d1;
-}
-
-/* Form Styling */
-.register-form {
-  width: 400px;
-  padding: 1.5rem;
-  background-color: #1e1e1e;
-  border-radius: 8px;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.5);
-}
-
-.register-form-group {
-  margin-bottom: 1.2rem;
 }
 
 .register-page input[type="text"],
@@ -155,57 +197,11 @@ This ensures that your css will only apply to your desired elements and not ever
   border-bottom: 2px solid #00d1b2;
 }
 
-.register-btn-submit {
-  width: 100%;
-  padding: 0.7rem;
-  font-size: 1rem;
-  background-color: #006cd1;
-  color: #ffffff;
-  border: none;
-  border-radius: 4px;
-  cursor: pointer;
-  transition: background-color 0.3s;
-}
-
-.register-btn-submit:hover {
-  background-color: #0064a7;
-}
-
-.login-link {
+.register-title {
+  font-size: 5rem;
+  margin-bottom: 5rem;
   text-align: center;
-  font-size: 0.85rem;
-  color: #c1c1c1;
+  color: #0073d1;
 }
 
-.login-link a {
-  color: #ced100;
-  text-decoration: none;
-}
-
-.register-alert {
-  color: #ff0000;
-  border-radius: 4px;
-  text-align: center;
-  font-size: 1.2rem;
-  font-weight: 500;
-  margin: 0 auto;
-  width: 100%;
-}
-
-
-/* Zoom-in animation directly into the pupil and fade to black */
-@keyframes zoomInAndFade {
-  from {
-    transform: scale(1);
-    opacity: 1;
-  }
-  to {
-    transform: scale(50); /* Adjust scale as needed to fill the screen */
-    opacity: 0; /* Fade to black */
-  }
-}
-
-.zoom-effect {
-  animation: zoomInAndFade 0.5s forwards;  /* Match duration to JavaScript delay */
-  transform-origin: center 42%; /* Adjust y-axis to zoom higher */
-}
+/* ...   A->Z */

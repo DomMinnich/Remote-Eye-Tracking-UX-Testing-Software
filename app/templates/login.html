@@ -1,24 +1,24 @@
+<!-- Dominic Minnich 2024 -->
 <!-- login.html -->
+
 {% extends 'base.html' %} {% block content %}
 
 <style>
-
   /* Reset */
-* {
+  * {
     margin: 0;
     padding: 0;
     box-sizing: border-box;
-}
+  }
 
-body {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  height: 100vh;
-  background-color: #121212;
-  overflow: hidden;
-}
-
+  body {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    background-color: #121212;
+    overflow: hidden;
+  }
 </style>
 
 <!-- Centered Container -->
@@ -48,32 +48,31 @@ body {
 
   <!-- Form Section -->
   <!-- Flash Messages Section -->
-  {% with messages = get_flashed_messages(with_categories=true) %}
-  {% if messages %}
-      <div class="login-flash-messages">
-          {% for category, message in messages %}
-          <div class="login-alert alert-{{ category }}">{{ message }}</div>
-          {% endfor %}
-      </div>
-  {% endif %}
-  {% endwith %}
-    
-    
+  {% with messages = get_flashed_messages(with_categories=true) %} {% if
+  messages %}
+  <div class="login-flash-messages">
+    {% for category, message in messages %}
+    <div class="login-alert alert-{{ category }}">{{ message }}</div>
+    {% endfor %}
+  </div>
+  {% endif %} {% endwith %}
+
   <form method="POST" action="{{ url_for('main.login') }}" class="login-form">
     {{ form.hidden_tag() }}
     <div class="login-form-group">
-        {{ form.username(id="username", placeholder="Enter your username") }}
+      {{ form.username(id="username", placeholder="Enter your username") }}
     </div>
     <div class="login-form-group">
-        {{ form.password(id="password", placeholder="Enter your password") }}
+      {{ form.password(id="password", placeholder="Enter your password") }}
     </div>
-    <div class="login-form-group">{{ form.submit(class="login-btn-submit") }}</div>
+    <div class="login-form-group">
+      {{ form.submit(class="login-btn-submit") }}
+    </div>
     <p class="register-link">
-        Don't have an account?
-        <a href="{{ url_for('main.register') }}">Register</a>
+      Don't have an account?
+      <a href="{{ url_for('main.register') }}">Register</a>
     </p>
-</form>
-
+  </form>
 </div>
 
 {% endblock %}

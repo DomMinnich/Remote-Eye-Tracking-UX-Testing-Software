@@ -1,212 +1,136 @@
-/* Eye Container */
-.eye-container {
-  position: relative;
-  margin-bottom: 2rem;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 200px;
-  height: 200px;
+/* Dominic Minnich 2024 */
+
+/* Eye Styling */
+/* This styles and animates the eye used in the login page and register page. */
+
+/*
+      CONTENTS OF THIS STYLE FILE
+ Keyframes A->Z           | ~Line 12-173 -Dominic Minnich
+ Styling A->Z             | ~Line 175-427 -Dominic Minnich
+ */
+
+/* Animations A->Z */
+@keyframes blink {
+  0%,
+  97%,
+  100% {
+    height: 100%;
+  }
+  98%,
+  99% {
+    height: 5%;
+  }
 }
 
-.eye-socket {
-  position: relative;
-  width: 100%;
-  height: 100%;
-  border-radius: 50%;
-  overflow: hidden;
-  animation: blink 4s infinite;
+@keyframes blink-lower {
+  0%,
+  100% {
+    transform: translateY(0);
+    left: 50%;
+    transform: translateX(-50%);
+    width: 80%;
+    height: 30%;
+    opacity: 0.35;
+  }
+  50% {
+    transform: translateY(-100px);
+    left: 50%;
+    transform: translateX(-50%);
+    width: 100%;
+    height: 70%;
+    opacity: 1;
+  }
 }
 
-/* Outer Ring */
-.outer-ring {
-  position: absolute;
-  border: 2px solid #6699ff;
-  border-radius: 50%;
-  box-shadow: 0px 0px 30px rgba(102, 153, 255, 0.8);
-  animation: rotateRing 12s linear infinite;
+@keyframes blink-upper {
+  0%,
+  100% {
+    transform: translateY(0);
+    left: 50%;
+    transform: translateX(-50%);
+    width: 80%;
+    height: 30%;
+    opacity: 0.35;
+  }
+  50% {
+    transform: translateY(100px);
+    left: 50%;
+    transform: translateX(-50%);
+    width: 100%;
+    height: 70%;
+    opacity: 1;
+  }
 }
 
-/* Sclera */
-.sclera {
-  width: 200px;
-  height: 200px;
-  background: radial-gradient(circle at 50% 50%, #4a4a4a, #1a1a1a 95%);
-  border-radius: 50%;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  overflow: hidden;
-  position: relative;
+@keyframes grow {
+  0%,
+  100% {
+    width: 30px;
+    height: 30px;
+  }
+  50% {
+    width: 35px;
+    height: 35px;
+  }
 }
 
-/* Vein Texture */
-.vein-texture {
-  position: absolute;
-  width: 100%;
-  height: 100%;
-  background: radial-gradient(
-    circle,
-    transparent,
-    rgba(102, 153, 255, 0.3) 30%,
-    transparent 60%
-  );
-  background-blend-mode: multiply;
-  border-radius: 50%;
-  z-index: 1;
-  opacity: 0.6;
+@keyframes growPupil {
+  0% {
+    width: 30px;
+    height: 30px;
+  }
+  50% {
+    width: 40px;
+    height: 40px;
+  }
+  100% {
+    width: 30px;
+    height: 30px;
+  }
 }
 
-/* Cyber Iris */
-.cyber-iris {
-  width: 120px;
-  height: 120px;
-  background: radial-gradient(circle at 50% 50%, #6699ff, #3366cc);
-  border-radius: 50%;
-  box-shadow: inset 0px 0px 30px rgba(102, 153, 255, 0.7),
-    0px 0px 20px rgba(102, 153, 255, 0.5);
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  position: relative;
-  overflow: hidden;
-  animation: pulse 3s infinite;
+@keyframes irisFocus {
+  0%,
+  50%,
+  100% {
+    transform: scale(1);
+  }
+  25%,
+  75% {
+    transform: scale(0.9);
+  }
 }
 
-/* Detailed Inner Rings */
-
-/* Inner Ring 1 */
-.inner-ring-1 {
-  width: 90%;
-  height: 90%;
-  border-radius: 50%;
-  position: absolute;
-  background: radial-gradient(circle, #0044ff8f, transparent 60%);
-  opacity: 0.9;
-  animation: rotateInnerRing 8s linear infinite;
+@keyframes pulse {
+  0%,
+  100% {
+    box-shadow: inset 0px 0px 30px rgba(102, 153, 255, 0.7),
+      0px 0px 20px rgba(102, 153, 255, 0.5);
+  }
+  50% {
+    box-shadow: inset 0px 0px 50px rgba(102, 153, 255, 0.9),
+      0px 0px 40px rgba(102, 153, 255, 0.7);
+  }
 }
 
-/* Inner Ring 2 */
-.inner-ring-2 {
-  width: 70%;
-  height: 70%;
-  border-radius: 50%;
-  position: absolute;
-  background: repeating-conic-gradient(
-    from 0deg,
-    rgba(102, 153, 255, 0.2) 0% 10%,
-    transparent 10% 20%
-  );
-  opacity: 0.7;
-  animation: rotateInnerRingReverse 10s linear infinite;
+@keyframes pulse-warning {
+  0%,
+  100% {
+    box-shadow: inset 0px 0px 30px rgba(255, 0, 0, 0.7),
+      0px 0px 20px rgba(255, 0, 0, 0.5);
+  }
+  50% {
+    box-shadow: inset 0px 0px 50px rgba(255, 0, 0, 0.9),
+      0px 0px 40px rgba(255, 0, 0, 0.7);
+  }
 }
 
-/* Inner Ring 3 */
-.inner-ring-3 {
-  width: 50%;
-  height: 50%;
-  border-radius: 50%;
-  position: absolute;
-  background: radial-gradient(circle, #7066ff, transparent 70%);
-  box-shadow: 0 0 15px rgba(102, 153, 255, 0.8);
-  opacity: 0.8;
-  animation: rotateInnerRing 12s linear infinite;
-}
-
-/* Inner Circuitry */
-.inner-circuitry {
-  width: 140%;
-  height: 140%;
-  position: absolute;
-  border-radius: 50%;
-  background: repeating-conic-gradient(
-    rgba(102, 153, 255, 0.2) 0% 10%,
-    rgba(0, 0, 0, 0.2) 10% 20%
-  );
-  opacity: 0.9;
-  animation: rotateCircuitry 15s linear infinite;
-}
-
-/* Pupil */
-.pupil {
-  width: 30px;
-  height: 30px;
-  background-color: #000;
-  border-radius: 50%;
-  box-shadow: 0px 0px 20px rgba(0, 162, 255, 0.8);
-  z-index: 2;
-}
-
-/* Tech Overlay */
-.tech-overlay {
-  position: absolute;
-  border-radius: 50%;
-  background: repeating-radial-gradient(
-    circle at 50% 50%,
-    rgba(102, 153, 255, 0.1),
-    transparent 5%
-  );
-  box-shadow: inset 0 0 5px rgba(102, 153, 255, 0.7),
-    0 0 20px rgba(102, 153, 255, 0.4);
-  opacity: 0.5;
-  z-index: 3;
-}
-
-/* Reflection Layer */
-.reflection-layer {
-  width: 70px;
-  height: 70px;
-  position: absolute;
-  background: radial-gradient(
-    circle at 30% 30%,
-    rgba(255, 255, 255, 0.5),
-    transparent 70%
-  );
-  border-radius: 50%;
-  top: 8px;
-  left: 8px;
-  z-index: 4;
-  opacity: 0.7;
-}
-/* Eyelids */
-.upper-eyelid,
-.lower-eyelid {
-  position: absolute;
-  width: 95%;
-  height: 25%;
-  background: linear-gradient(to bottom, #000000, rgb(0, 0, 0));
-  border-radius: 30%;
-  left: 25px;
-  opacity: 0.35;
-  pointer-events: none; /* Make the eyelids non-interactive */
-  transform: translateY(0); /* Start position */
-  transition: width 1.5s, height 1.5s, opacity 1.5s; /* Transition properties */
-}
-
-/* Upper Eyelid */
-.upper-eyelid {
-  top: 0;
-  transform-origin: bottom;
-  left: 50%;
-  transform: translateX(-50%);
-}
-
-/* Lower Eyelid */
-.lower-eyelid {
-  bottom: 0;
-  transform-origin: top;
-  height: 20%;
-  left: 50%;
-  transform: translateX(-50%);
-}
-
-/* Animations */
-@keyframes rotateRing {
+@keyframes rotateCircuitry {
   from {
     transform: rotate(0deg);
   }
   to {
-    transform: rotate(360deg);
+    transform: rotate(-360deg);
   }
 }
 
@@ -228,131 +152,56 @@
   }
 }
 
-@keyframes rotateCircuitry {
+@keyframes rotateRing {
   from {
     transform: rotate(0deg);
   }
   to {
-    transform: rotate(-360deg);
+    transform: rotate(360deg);
   }
 }
 
-@keyframes pulse {
-  0%,
-  100% {
-    box-shadow: inset 0px 0px 30px rgba(102, 153, 255, 0.7),
-      0px 0px 20px rgba(102, 153, 255, 0.5);
-  }
-  50% {
-    box-shadow: inset 0px 0px 50px rgba(102, 153, 255, 0.9),
-      0px 0px 40px rgba(102, 153, 255, 0.7);
-  }
-}
-
-/* Keyframe Animations */
-@keyframes blink {
-  0%,
-  97%,
-  100% {
-    height: 100%;
-  }
-  98%,
-  99% {
-    height: 5%;
-  }
-}
-
-/* Iris Focus Animation */
-@keyframes irisFocus {
-  0%,
-  50%,
-  100% {
+@keyframes zoomInAndFade {
+  from {
     transform: scale(1);
+    opacity: 1;
   }
-  25%,
-  75% {
-    transform: scale(0.9);
-  }
-}
-
-
-/* This Blink Animation NOT USING THIS ONE*/
-@keyframes blink-upper {
-  0%,
-  100% {
-    transform: translateY(0); /* Start and end at the original position */
-    left: 50%;
-    transform: translateX(-50%);
-    width: 80%;
-    height: 30%;
-    opacity: 0.35;
-  }
-  50% {
-    transform: translateY(100px); /* Move down to cover the eye */
-    left: 50%;
-    transform: translateX(-50%);
-    width: 100%; /* Make it slightly wider */
-    height: 70%; /* Make it slightly taller */
-    opacity: 1; /* Increase opacity */
+  to {
+    transform: scale(50);
+    opacity: 0;
   }
 }
 
-@keyframes blink-lower {
-  0%,
-  100% {
-    transform: translateY(0); /* Start and end at the original position */
-    left: 50%;
-    transform: translateX(-50%);
-    width: 80%;
-    height: 30%;
-    opacity: 0.35;
-  }
-  50% {
-    transform: translateY(-100px); /* Move up to cover the eye */
-    left: 50%;
-    transform: translateX(-50%);
-    width: 100%; /* Make it slightly wider */
-    height: 70%; /* Make it slightly taller */
-    opacity: 1; /* Increase opacity */
-  }
+/* Styling A->Z */
+
+.cyber-iris {
+  width: 120px;
+  height: 120px;
+  background: radial-gradient(circle at 50% 50%, #6699ff, #3366cc);
+  border-radius: 50%;
+  box-shadow: inset 0px 0px 30px rgba(102, 153, 255, 0.7),
+    0px 0px 20px rgba(102, 153, 255, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: relative;
+  overflow: hidden;
+  animation: pulse 3s infinite;
 }
 
-@keyframes grow {
-  0%,
-  100% {
-    width: 30px;
-    height: 30px;
-  }
-  50% {
-    width: 35px;
-    height: 35px;
-  }
+.eye-container {
+  position: relative;
+  margin-bottom: 2rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 200px;
+  height: 200px;
 }
 
-/* Animation classes applied on click */
-.upper-eyelid.blinking {
-  animation: blink-upper 1.5s forwards;
-}
-
-.lower-eyelid.blinking {
-  animation: blink-lower 1.5s forwards;
-}
-
-.pupil.grow {
-  animation: grow 1.5s forwards;
-}
-
-/* Warning Animation */
-
-.eye-container.warning .pupil {
-  background-color: #000;
-  box-shadow: 0px 0px 5px rgba(255, 0, 0, 0.8);
-  animation: growPupil 2s forwards;
-}
-
-.eye-container.warning .outer-ring {
-  border-color: #ff0000;
-  box-shadow: 0px 0px 30px rgba(255, 0, 0, 0.8);
+.eye-container.warning .cyber-iris {
+  background: radial-gradient(circle at 50% 50%, #ff0000, #cc3300);
+  animation: pulse-warning 3s infinite;
 }
 
 .eye-container.warning .inner-ring-1 {
@@ -372,8 +221,23 @@
   box-shadow: 0 0 15px rgba(255, 0, 0, 0.8);
 }
 
-.eye-container.warning .cyber-iris {
-  background: radial-gradient(circle at 50% 50%, #ff0000, #cc3300);
+.eye-container.warning .outer-ring {
+  border-color: #ff0000;
+  box-shadow: 0px 0px 30px rgba(255, 0, 0, 0.8);
+}
+
+.eye-container.warning .pupil {
+  background-color: #000;
+  box-shadow: 0px 0px 5px rgba(255, 0, 0, 0.8);
+  animation: growPupil 2s forwards;
+}
+
+.eye-container.warning .reflection-layer {
+  background: radial-gradient(
+    circle at 30% 30%,
+    rgba(255, 255, 255, 0.5),
+    transparent 70%
+  );
 }
 
 .eye-container.warning .tech-overlay {
@@ -385,46 +249,181 @@
   box-shadow: inset 0 0 5px rgba(255, 0, 0, 0.7), 0 0 20px rgba(255, 0, 0, 0.4);
 }
 
-.eye-container.warning .reflection-layer {
+.eye-socket {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  overflow: hidden;
+  animation: blink 4s infinite;
+}
+
+.inner-circuitry {
+  width: 140%;
+  height: 140%;
+  position: absolute;
+  border-radius: 50%;
+  background: repeating-conic-gradient(
+    rgba(102, 153, 255, 0.2) 0% 10%,
+    rgba(0, 0, 0, 0.2) 10% 20%
+  );
+  opacity: 0.9;
+  animation: rotateCircuitry 15s linear infinite;
+}
+
+.inner-ring-1 {
+  width: 90%;
+  height: 90%;
+  border-radius: 50%;
+  position: absolute;
+  background: radial-gradient(circle, #0044ff8f, transparent 60%);
+  opacity: 0.9;
+  animation: rotateInnerRing 8s linear infinite;
+}
+
+.inner-ring-2 {
+  width: 70%;
+  height: 70%;
+  border-radius: 50%;
+  position: absolute;
+  background: repeating-conic-gradient(
+    from 0deg,
+    rgba(102, 153, 255, 0.2) 0% 10%,
+    transparent 10% 20%
+  );
+  opacity: 0.7;
+  animation: rotateInnerRingReverse 10s linear infinite;
+}
+
+.inner-ring-3 {
+  width: 50%;
+  height: 50%;
+  border-radius: 50%;
+  position: absolute;
+  background: radial-gradient(circle, #7066ff, transparent 70%);
+  box-shadow: 0 0 15px rgba(102, 153, 255, 0.8);
+  opacity: 0.8;
+  animation: rotateInnerRing 12s linear infinite;
+}
+
+.lower-eyelid {
+  position: absolute;
+  width: 95%;
+  height: 20%;
+  background: linear-gradient(to bottom, #000000, rgb(0, 0, 0));
+  border-radius: 30%;
+  left: 50%;
+  transform: translateX(-50%);
+  transform-origin: top;
+  opacity: 0.35;
+  pointer-events: none;
+  transition: width 1.5s, height 1.5s, opacity 1.5s;
+  bottom: 0;
+}
+
+.lower-eyelid.blinking {
+  animation: blink-lower 1.5s forwards;
+}
+
+.outer-ring {
+  position: absolute;
+  border: 2px solid #6699ff;
+  border-radius: 50%;
+  box-shadow: 0px 0px 30px rgba(102, 153, 255, 0.8);
+  animation: rotateRing 12s linear infinite;
+}
+
+.pupil {
+  width: 30px;
+  height: 30px;
+  background-color: #000;
+  border-radius: 50%;
+  box-shadow: 0px 0px 20px rgba(0, 162, 255, 0.8);
+  z-index: 2;
+}
+
+.pupil.grow {
+  animation: grow 1.5s forwards;
+}
+
+.reflection-layer {
+  width: 70px;
+  height: 70px;
+  position: absolute;
   background: radial-gradient(
     circle at 30% 30%,
     rgba(255, 255, 255, 0.5),
     transparent 70%
   );
+  border-radius: 50%;
+  top: 8px;
+  left: 8px;
+  z-index: 4;
+  opacity: 0.7;
 }
 
-
-@keyframes growPupil {
-  0% {
-    width: 30px;
-    height: 30px;
-  }
-  50% {
-    width: 40px;
-    height: 40px;
-  }
-  100% {
-    width: 30px;
-    height: 30px;
-  }
+.sclera {
+  width: 200px;
+  height: 200px;
+  background: radial-gradient(circle at 50% 50%, #4a4a4a, #1a1a1a 95%);
+  border-radius: 50%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  overflow: hidden;
+  position: relative;
 }
 
-/* Define new pulse animation for warning state */
-@keyframes pulse-warning {
-  0%,
-  100% {
-    box-shadow: inset 0px 0px 30px rgba(255, 0, 0, 0.7),
-      0px 0px 20px rgba(255, 0, 0, 0.5);
-  }
-  50% {
-    box-shadow: inset 0px 0px 50px rgba(255, 0, 0, 0.9),
-      0px 0px 40px rgba(255, 0, 0, 0.7);
-  }
+.tech-overlay {
+  position: absolute;
+  border-radius: 50%;
+  background: repeating-radial-gradient(
+    circle at 50% 50%,
+    rgba(102, 153, 255, 0.1),
+    transparent 5%
+  );
+  box-shadow: inset 0 0 5px rgba(102, 153, 255, 0.7),
+    0 0 20px rgba(102, 153, 255, 0.4);
+  opacity: 0.5;
+  z-index: 3;
 }
 
-/* Apply the new pulse animation to the cyber-iris in warning state */
-.eye-container.warning .cyber-iris {
-  background: radial-gradient(circle at 50% 50%, #ff0000, #cc3300);
-  animation: pulse-warning 3s infinite;
+.upper-eyelid {
+  position: absolute;
+  width: 95%;
+  height: 25%;
+  background: linear-gradient(to bottom, #000000, rgb(0, 0, 0));
+  border-radius: 30%;
+  left: 50%;
+  transform: translateX(-50%);
+  transform-origin: bottom;
+  opacity: 0.35;
+  pointer-events: none;
+  transition: width 1.5s, height 1.5s, opacity 1.5s;
+  top: 0;
 }
 
+.upper-eyelid.blinking {
+  animation: blink-upper 1.5s forwards;
+}
+
+.vein-texture {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  background: radial-gradient(
+    circle,
+    transparent,
+    rgba(102, 153, 255, 0.3) 30%,
+    transparent 60%
+  );
+  background-blend-mode: multiply;
+  border-radius: 50%;
+  z-index: 1;
+  opacity: 0.6;
+}
+
+.zoom-effect {
+  animation: zoomInAndFade 0.5s forwards;
+  transform-origin: center 42%;
+}
