@@ -173,7 +173,7 @@
 .lower-eyelid {
   position: absolute;
   width: 95%;
-  height: 30%;
+  height: 25%;
   background: linear-gradient(to bottom, #000000, rgb(0, 0, 0));
   border-radius: 30%;
   left: 25px;
@@ -195,7 +195,7 @@
 .lower-eyelid {
   bottom: 0;
   transform-origin: top;
-
+  height: 20%;
   left: 50%;
   transform: translateX(-50%);
 }
