@@ -60,3 +60,22 @@ document.addEventListener('DOMContentLoaded', () => {
         }, 5000);
     }
 });
+
+document.addEventListener('DOMContentLoaded', () => {
+    const loginPage = document.querySelector('.login-page');
+    const successMessage = document.querySelector('.alert-success');  // Detect success message
+    
+    if (successMessage) {
+        loginPage.classList.add('zoom-effect');  // Trigger zoom effect
+        
+        // Delay redirection to allow animation to complete
+        setTimeout(() => {
+            window.location.href = "/";  // Redirect to home
+        }, 500);  // Match CSS animation duration
+    }
+});
+
+
+
+
+

@@ -191,3 +191,21 @@ This ensures that your css will only apply to your desired elements and not ever
   margin: 0 auto;
   width: 100%;
 }
+
+
+/* Zoom-in animation directly into the pupil and fade to black */
+@keyframes zoomInAndFade {
+  from {
+    transform: scale(1);
+    opacity: 1;
+  }
+  to {
+    transform: scale(50); /* Adjust scale as needed to fill the screen */
+    opacity: 0; /* Fade to black */
+  }
+}
+
+.zoom-effect {
+  animation: zoomInAndFade 0.5s forwards;  /* Match duration to JavaScript delay */
+  transform-origin: center 42%; /* Adjust y-axis to zoom higher */
+}

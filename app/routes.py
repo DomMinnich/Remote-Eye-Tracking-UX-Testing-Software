@@ -1,6 +1,6 @@
 # routes.py, routes for the Flask application
 
-from flask import Blueprint, render_template, redirect, url_for, flash, request
+from flask import Blueprint, render_template, redirect, session, url_for, flash, request, jsonify
 from flask_login import login_user, logout_user, login_required, current_user, LoginManager
 from .models import db, User
 from .forms import RegistrationForm, LoginForm
@@ -33,6 +33,7 @@ def register():
 @main.route('/login', methods=['GET', 'POST'])
 def login():
     form = LoginForm()
+    
     if form.validate_on_submit():
         user = User.query.filter_by(username=form.username.data).first()
         if user is None:
@@ -41,15 +42,24 @@ def login():
             flash('- Incorrect Password -', 'danger')
         else:
             login_user(user)
-            flash('Logged In Successfully!', 'success')
-            return redirect(url_for('main.home'))
+            flash('Logged In Successfully!', 'success')  # Only success message
+            return render_template('login.html', form=form)
+
     return render_template('login.html', form=form)
+
+
+    return render_template('login.html', form=form)
+
+@main.route('/clear-login-success', methods=['POST'])
+def clear_login_success():
+    session.pop("login_success", None)
+    return '', 204  # Return 'No Content' response
 
 
 @main.route('/logout')
 def logout():
     logout_user()
-    flash('You have been logged out.', 'info')
+    flash('Logged Out Successfully!', 'success')
     return redirect(url_for('main.login'))
 
 @main.route('/')
