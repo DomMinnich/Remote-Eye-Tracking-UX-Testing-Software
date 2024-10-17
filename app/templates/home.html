@@ -17,7 +17,7 @@
     height: 100vh;
     background-color: #121212;
     overflow: hidden;
-  }
+    cursor: url('{{ url_for('static', filename='burger.svg') }}'), auto;
 
   p {
     color: white;
@@ -36,8 +36,22 @@
     margin-top: 1rem;
   }
 
+  img {
+    transition: transform 0.1s;
+  }
+
 </style>
 <h2>Welcome to the Home Page</h2>
 <p>waddle waddle, waddle... waddle... waddle...</p>
-<img src="{{ url_for('static', filename='duck.gif') }}" alt="duck" />
+<img id="duck" src="{{ url_for('static', filename='duck.gif') }}" alt="duck" />
+<script>
+  document.addEventListener('mousemove', function(event) {
+    const duck = document.getElementById('duck');
+    const rect = duck.getBoundingClientRect();
+    const duckX = rect.left + rect.width / 2;
+    const duckY = rect.top + rect.height / 2;
+    const angle = Math.atan2(event.clientY - duckY, event.clientX - duckX) * (180 / Math.PI);
+    duck.style.transform = `rotate(${angle}deg)`;
+  });
+</script>
 {% endblock %}
