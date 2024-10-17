@@ -199,6 +199,10 @@
   height: 200px;
 }
 
+.eye-container:hover {
+  cursor: none;
+}
+
 .eye-container.success .cyber-iris {
   background: radial-gradient(circle at 50% 50%, #00ff00, #00cc00);
   animation: pulse 3s infinite;

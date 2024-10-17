@@ -351,11 +351,13 @@ For ex for login title I did login-title instead of title
   text-align: center;
   font-size: 0.85rem;
   color: #c1c1c1;
+  user-select: none;
 }
 
 .login-link a {
   color: #ced100;
   text-decoration: none;
+  user-select: none;
 }
 
 .login-page {
@@ -391,6 +393,7 @@ For ex for login title I did login-title instead of title
   margin-bottom: 5rem;
   text-align: center;
   color: #0073d1;
+  user-select: none;
 }
 
 .register-alert {
@@ -436,11 +439,13 @@ For ex for login title I did login-title instead of title
   text-align: center;
   font-size: 0.85rem;
   color: #c1c1c1;
+  user-select: none;
 }
 
 .register-link a {
   color: #ced100;
   text-decoration: none;
+  user-select: none;
 }
 
 .register-page {
@@ -476,6 +481,7 @@ For ex for login title I did login-title instead of title
   margin-bottom: 5rem;
   text-align: center;
   color: #0073d1;
+  user-select: none;
 }
 
 /* ...   A->Z */
