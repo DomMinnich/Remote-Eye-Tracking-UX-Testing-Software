@@ -4,7 +4,7 @@
 Do not use generic tags like div, span, etc.
 Be specific with the elements you want to style.
 This ensures that your css will only apply to your desired elements and not everyones.
-For ex for login title I did login-title
+For ex for login title I did login-title instead of title
 */
 
 /*
