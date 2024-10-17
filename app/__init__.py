@@ -1,5 +1,6 @@
+
+# Dominic Minnich 2024
 # __init__.py, initialization file for the Flask application
-# 2024
 
 from flask import Flask
 from flask_sqlalchemy import SQLAlchemy

@@ -6,9 +6,7 @@
 #    *Imports                     | ~Line 12-17
 #    Blueprint                      | ~Line 22-30   -Dominic Minnich
 #    LoginManager Instance          | ~Line 35-38   -Dominic Minnich
-
 #               ROUTES A->Z
-
 #    /                      | ~Line 35-38   -Dominic Minnich
 #    /clear-login-sucess    | ~Line 35-38   -Dominic Minnich
 #    /logout                | ~Line 35-38   -Dominic Minnich
