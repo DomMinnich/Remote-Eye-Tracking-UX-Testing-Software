@@ -23,28 +23,28 @@
       {% block content %}{% endblock %}
 
       <!-- Corner Icon for Menu Toggle -->
-      <div class="menu-toggle">
-        <div class="bar"></div>
-        <div class="bar"></div>
-        <div class="bar"></div>
+      <div class="base-menu-toggle">
+        <div class="base-bar"></div>
+        <div class="base-bar"></div>
+        <div class="base-bar"></div>
       </div>
 
       <!-- Sidebar Menu -->
-      <div class="sidebar-menu">
-        <div class="close-btn">&times;</div>
-        <ul class="menu-list">
+      <div class="base-sidebar-menu">
+        <div class="base-close-btn">&times;</div>
+        <ul class="base-menu-list">
           {% if current_user.is_authenticated %}
           <li><a href="{{ url_for('main.home') }}">HOME</a></li>
           <li>
-            <a href="#">PROJECTS <span class="expand-icon">+</span></a>
-            <ul class="submenu">
+            <a href="#">PROJECTS <span class="base-expand-icon">+</span></a>
+            <ul class="base-submenu">
               <li><a href="#">MY PROJECTS</a></li>
               <li><a href="#">NEW PROJECT</a></li>
             </ul>
           </li>
           <li>
-            <a href="#">COMMUNICATION <span class="expand-icon">+</span></a>
-            <ul class="submenu">
+            <a href="#">COMMUNICATION <span class="base-expand-icon">+</span></a>
+            <ul class="base-submenu">
               <li><a href="#">CHAT</a></li>
               <li><a href="#">INVITES</a></li>
             </ul>
@@ -66,7 +66,7 @@
       </div>
 
       <!-- Footer Section -->
-<footer class="footer">
+<footer class="base-footer">
   <p>&copy; 2024  EyeC.Design | All rights reserved.</p>
 </footer>
 

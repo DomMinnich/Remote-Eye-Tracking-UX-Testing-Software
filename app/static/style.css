@@ -34,10 +34,16 @@ For ex for login title I did login-title
 /* Base Styling A->Z */
 
 /* Footer Styling */
-.footer {
-  background: linear-gradient(135deg, #a10050d8, #002657c7, #530534c9, #a34373c2);
+.base-footer {
+  background: linear-gradient(
+    135deg,
+    #a10050d8,
+    #002657c7,
+    #530534c9,
+    #a34373c2
+  );
   background-size: 200% 200%;
-  animation: gradientShift 10s ease infinite; /* Ambient animated background */
+  animation: base-gradientShift 10s ease infinite; /* Ambient animated background */
   color: #fff;
   text-align: center;
   position: fixed;
@@ -52,23 +58,22 @@ For ex for login title I did login-title
   user-select: none;
 }
 
-.footer a {
+.base-footer a {
   color: #fff;
   text-decoration: none;
   transition: color 0.3s ease;
   user-select: none;
 }
 
-.footer p {
+.base-footer p {
   margin: 0;
   margin-top: 10px;
   font-size: 0.8rem;
   user-select: none;
 }
 
-
 /* Corner Menu Toggle Icon */
-.menu-toggle {
+.base-menu-toggle {
   cursor: pointer;
   left: 20px;
   position: fixed;
@@ -76,7 +81,7 @@ For ex for login title I did login-title
   z-index: 2001;
 }
 
-.menu-toggle .bar {
+.base-menu-toggle .base-bar {
   background-color: #fff;
   height: 3px;
   margin: 5px 0;
@@ -84,26 +89,26 @@ For ex for login title I did login-title
   width: 30px;
 }
 
-.menu-toggle.active .bar:nth-child(1) {
+.base-menu-toggle.active .base-bar:nth-child(1) {
   transform: rotate(45deg) translate(5px, 5px);
 }
 
-.menu-toggle.active .bar:nth-child(2) {
+.base-menu-toggle.active .base-bar:nth-child(2) {
   opacity: 0;
 }
 
-.menu-toggle.active .bar:nth-child(3) {
+.base-menu-toggle.active .base-bar:nth-child(3) {
   transform: rotate(-45deg) translate(5px, -5px);
 }
 
 /* Expand Icon */
-.expand-icon {
+.base-expand-icon {
   font-size: 38px;
   transition: transform 0.3s ease;
 }
 
 /* Keyframes for animated gradient */
-@keyframes borderFlow {
+@keyframes base-borderFlow {
   0% {
     background-position: 0% 50%;
   }
@@ -116,7 +121,7 @@ For ex for login title I did login-title
 }
 
 /* Keyframes for Menu Item Fade-in Animation */
-@keyframes fadeInMenu {
+@keyframes base-fadeInMenu {
   from {
     opacity: 0;
     transform: translateX(-20px);
@@ -128,7 +133,7 @@ For ex for login title I did login-title
 }
 
 /* Keyframes for animated gradient */
-@keyframes gradientShift {
+@keyframes base-gradientShift {
   0% {
     background-position: 0% 50%;
   }
@@ -141,14 +146,14 @@ For ex for login title I did login-title
 }
 
 /* Menu List */
-.menu-list {
+.base-menu-list {
   list-style: none;
   margin-top: 20px;
   padding: 0;
 }
 
-.menu-list > li {
-  animation: fadeInMenu 0.6s ease forwards;
+.base-menu-list > li {
+  animation: base-fadeInMenu 0.6s ease forwards;
   font-size: 18px;
   opacity: 0;
   padding: 15px 20px;
@@ -158,27 +163,27 @@ For ex for login title I did login-title
   overflow: hidden; /* To ensure animated border stays within bounds */
 }
 
-.menu-list > li:nth-child(1) {
+.base-menu-list > li:nth-child(1) {
   animation-delay: 0.1s;
 }
 
-.menu-list > li:nth-child(2) {
+.base-menu-list > li:nth-child(2) {
   animation-delay: 0.2s;
 }
 
-.menu-list > li:nth-child(3) {
+.base-menu-list > li:nth-child(3) {
   animation-delay: 0.3s;
 }
 
-.menu-list > li:nth-child(4) {
+.base-menu-list > li:nth-child(4) {
   animation-delay: 0.4s;
 }
 
-.menu-list > li:nth-child(5) {
+.base-menu-list > li:nth-child(5) {
   animation-delay: 0.5s;
 }
 
-.menu-list > li::before {
+.base-menu-list > li::before {
   content: "";
   position: absolute;
   top: 0;
@@ -190,18 +195,18 @@ For ex for login title I did login-title
   box-sizing: border-box;
   background: linear-gradient(60deg, #6a8fc0, #101d49, #697add);
   background-size: 200% 200%;
-  animation: borderFlow 6s ease infinite;
+  animation: base-borderFlow 6s ease infinite;
   z-index: -1; /* Ensures border is behind content */
   opacity: 0;
   transition: opacity 0.5s;
   border: 2px solid #6788c5;
 }
 
-.menu-list > li:hover::before {
+.base-menu-list > li:hover::before {
   opacity: 1; /* Border appears on hover */
 }
 
-.menu-list > li > a {
+.base-menu-list > li > a {
   align-items: center;
   color: #fff;
   display: flex;
@@ -210,15 +215,15 @@ For ex for login title I did login-title
   transition: color 0.3s;
 }
 
-.menu-list > li > a:hover {
+.base-menu-list > li > a:hover {
   color: #ffffff; /* Matches border animation color */
 }
 
-.menu-list > li.active .expand-icon {
+.base-menu-list > li.active .base-expand-icon {
   transform: rotate(45deg);
 }
 
-.menu-list > li.active .submenu {
+.base-menu-list > li.active .base-submenu {
   display: block;
   max-height: 500px; /* Set a large enough max-height to accommodate content */
   opacity: 1;
@@ -226,10 +231,16 @@ For ex for login title I did login-title
 }
 
 /* Sidebar Menu */
-.sidebar-menu {
-  background: linear-gradient(135deg,#a10050d8, #002657c7 , #530534c9, #a34373c2);
+.base-sidebar-menu {
+  background: linear-gradient(
+    135deg,
+    #a10050d8,
+    #002657c7,
+    #530534c9,
+    #a34373c2
+  );
   background-size: 200% 200%;
-  animation: gradientShift 10s ease infinite; /* Ambient animated background */
+  animation: base-gradientShift 10s ease infinite; /* Ambient animated background */
   box-shadow: 3px 0 15px rgba(0, 0, 0, 0.5);
   color: #fff;
   height: 100%;
@@ -243,13 +254,13 @@ For ex for login title I did login-title
   z-index: 2000;
 }
 
-.sidebar-menu.active {
+.base-sidebar-menu.active {
   left: 0;
   border-right: 2px solid #fff;
 }
 
 /* Close Button */
-.sidebar-menu .close-btn {
+.base-sidebar-menu .base-close-btn {
   cursor: pointer;
   font-size: 0px;
   position: absolute;
@@ -258,12 +269,12 @@ For ex for login title I did login-title
   transition: color 0.3s;
 }
 
-.sidebar-menu .close-btn:hover {
+.base-sidebar-menu .close-btn:hover {
   color: #ff5733;
 }
 
 /* Submenu */
-.submenu {
+.base-submenu {
   display: none;
   list-style: none;
   max-height: 0; /* Initially set max-height to 0 */
@@ -273,14 +284,25 @@ For ex for login title I did login-title
   transition: max-height 0.7s ease, opacity 0.7s ease; /* Add transition */
 }
 
-.submenu li {
-  color: #bbb;
+.base-submenu li {
+  color: #bbbbbb;
   font-size: 16px;
   padding: 10px 0;
+  text-decoration: none;
 }
 
-.submenu li a:hover {
-  color: #a4d3ff;
+.base-submenu li a {
+  color: #fff;
+  text-decoration: none;
+  transition: color 0.3s;
+}
+
+.base-submenu li a:hover {
+  color: #ffffff;
+  text-decoration: underline;
+  text-underline-offset: 4px;
+  text-decoration-color: #ffffff;
+  text-decoration-thickness: 1px;
 }
 
 /* Login/Register A->Z */
@@ -300,7 +322,7 @@ For ex for login title I did login-title
   width: 100%;
   padding: 0.7rem;
   font-size: 1rem;
-  background-color: #006cd1;
+  background-color: #39516642;
   color: #ffffff;
   border: none;
   border-radius: 4px;
@@ -309,7 +331,8 @@ For ex for login title I did login-title
 }
 
 .login-btn-submit:hover {
-  background-color: #0064a7;
+  background: #0073d1;
+  color: #ffffff;
 }
 
 .login-form {
@@ -360,7 +383,7 @@ For ex for login title I did login-title
 .login-page input[type="text"]:focus,
 .login-page input[type="password"]:focus {
   outline: none;
-  border-bottom: 2px solid #00d1b2;
+  border-bottom: 2px solid #b43333;
 }
 
 .login-title {
@@ -384,7 +407,7 @@ For ex for login title I did login-title
   width: 100%;
   padding: 0.7rem;
   font-size: 1rem;
-  background-color: #006cd1;
+  background-color: #39516642;
   color: #ffffff;
   border: none;
   border-radius: 4px;
@@ -393,7 +416,8 @@ For ex for login title I did login-title
 }
 
 .register-btn-submit:hover {
-  background-color: #0064a7;
+  background:  #0073d1;
+  color: #ffffff;
 }
 
 .register-form {
@@ -455,11 +479,3 @@ For ex for login title I did login-title
 }
 
 /* ...   A->Z */
-
-
-
-
-
-
-
-

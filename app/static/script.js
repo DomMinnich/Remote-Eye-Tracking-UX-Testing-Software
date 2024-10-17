@@ -10,14 +10,14 @@
 // NavMenu A->Z
 
 // Select elements
-const menuToggle = document.querySelector(".menu-toggle");
-const sidebarMenu = document.querySelector(".sidebar-menu");
-const closeBtn = document.querySelector(".close-btn");
-const expandableItems = document.querySelectorAll(".menu-list > li");
+const menuToggle = document.querySelector(".base-menu-toggle");
+const sidebarMenu = document.querySelector(".base-sidebar-menu");
+const closeBtn = document.querySelector(".base-close-btn");
+const expandableItems = document.querySelectorAll(".base-menu-list > li");
 
 // Set initial max-height for submenus
 expandableItems.forEach((item) => {
-  const submenu = item.querySelector(".submenu");
+  const submenu = item.querySelector(".base-submenu");
   if (submenu) {
     submenu.style.maxHeight = "0px"; // Collapse initially
   }
@@ -39,7 +39,7 @@ closeBtn.addEventListener("click", () => {
 expandableItems.forEach((item) => {
   item.addEventListener("click", (e) => {
     // Only toggle if the item has a submenu
-    const submenu = item.querySelector(".submenu");
+    const submenu = item.querySelector(".base-submenu");
     if (submenu) {
       e.preventDefault();
       // Toggle the active class for smooth open/close
