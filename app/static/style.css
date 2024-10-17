@@ -49,18 +49,21 @@ For ex for login title I did login-title
   box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.5);
   z-index: 1000;
   padding-bottom: 1px;
+  user-select: none;
 }
 
 .footer a {
   color: #fff;
   text-decoration: none;
   transition: color 0.3s ease;
+  user-select: none;
 }
 
 .footer p {
   margin: 0;
   margin-top: 10px;
   font-size: 0.8rem;
+  user-select: none;
 }
 
 
