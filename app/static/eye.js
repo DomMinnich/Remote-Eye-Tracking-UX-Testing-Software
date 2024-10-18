@@ -25,21 +25,15 @@ function moveEye(event) {
     const irisMoveDistance = 15;
     const irisX = irisMoveDistance * Math.cos(angle);
     const irisY = irisMoveDistance * Math.sin(angle);
-
     iris.style.transform = `translate(${irisX}px, ${irisY}px)`;
 }
 
-// Function to trigger the blink animation
+// Function to trigger grow animation on the pupil
 function blinkEye() {
-    // Add the "blinking" class to trigger animation
-    //upperEyelid.classList.add('blink');
-    //lowerEyelid.classList.add('blink');
     pupil.classList.add('grow');
 
     // Remove the class after the animation ends
     setTimeout(() => {
-        //upperEyelid.classList.remove('blink');
-        //lowerEyelid.classList.remove('blink');
         pupil.classList.remove('grow');
     }, 1500); // Match the animation duration
 }
