@@ -381,7 +381,7 @@
   height: 45%;
   border-radius: 50%;
   position: absolute;
-  background: radial-gradient(circle, #000, #000);
+  background: radial-gradient(circle, #000, #000000);
   opacity: 0.9;
   animation: rotateInnerRingReverse 25s linear infinite;
 }
@@ -438,6 +438,18 @@
   border-radius: 50%;
   top: 8px;
   left: 8px;
+  z-index: 4;
+  opacity: 0.7;
+}
+
+.reflection-layer-2 {
+  width: 10px;
+  height: 10px;
+  position: absolute;
+  background: rgba(255, 255, 255, 0.151);
+  border-radius: 50%;
+  top: 68px;
+  left: 68px;
   z-index: 4;
   opacity: 0.7;
 }
