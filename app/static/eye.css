@@ -318,6 +318,7 @@
   );
   opacity: 0.9;
   animation: rotateCircuitry 15s linear infinite;
+  filter: blur(2px);
 }
 
 .inner-ring-1 {
@@ -353,6 +354,36 @@
   box-shadow: 0 0 15px rgba(102, 153, 255, 0.8);
   opacity: 0.8;
   animation: rotateInnerRing 12s linear infinite;
+}
+
+.inner-ring-4 {
+  width: 30%;
+  height: 30%;
+  border-radius: 50%;
+  position: absolute;
+  background: radial-gradient(circle, #000, #000);
+  opacity: 0.9;
+  animation: rotateInnerRingReverse 15s linear infinite;
+}
+
+.inner-ring-5 {
+  width: 10%;
+  height: 10%;
+  border-radius: 50%;
+  position: absolute;
+  background: radial-gradient(circle, #000, #000);
+  opacity: 0.9;
+  animation: rotateInnerRing 20s linear infinite;
+}
+
+.inner-ring-6 {
+  width: 45%;
+  height: 45%;
+  border-radius: 50%;
+  position: absolute;
+  background: radial-gradient(circle, #000, #000);
+  opacity: 0.9;
+  animation: rotateInnerRingReverse 25s linear infinite;
 }
 
 .lower-eyelid {
@@ -414,13 +445,14 @@
 .sclera {
   width: 200px;
   height: 200px;
-  background: radial-gradient(circle at 50% 50%, #4a4a4a, #1a1a1a 95%);
+  background: radial-gradient(circle at 50% 50%, #4a4a4a, #1a1a1a 70%);
   border-radius: 50%;
   display: flex;
   justify-content: center;
   align-items: center;
   overflow: hidden;
   position: relative;
+  border: 2px solid #0000003a;
 }
 
 .tech-overlay {
