@@ -43,7 +43,7 @@ For ex for login title I did login-title instead of title
     #a34373c2
   );
   background-size: 200% 200%;
-  animation: base-gradientShift 10s ease infinite; /* Ambient animated background */
+  animation: base-gradientShift 10s ease infinite;
   color: #fff;
   text-align: center;
   position: fixed;
@@ -58,6 +58,7 @@ For ex for login title I did login-title instead of title
   user-select: none;
 }
 
+/* Footer Links */
 .base-footer a {
   color: #fff;
   text-decoration: none;
@@ -81,6 +82,7 @@ For ex for login title I did login-title instead of title
   z-index: 2001;
 }
 
+/* Menu Toggle Bars */
 .base-menu-toggle .base-bar {
   background-color: #fff;
   height: 3px;
@@ -145,6 +147,30 @@ For ex for login title I did login-title instead of title
   }
 }
 
+/* Animation for sliding content in from the top */
+@keyframes log-reg-slideDown {
+  0% {
+    opacity: 0;
+    transform: translateY(-100%);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Animation for sliding content down to hide */
+@keyframes log-reg-slideOut {
+  0% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  100% {
+    opacity: 0;
+    transform: translateY(100%);
+  }
+}
+
 /* Menu List */
 .base-menu-list {
   list-style: none;
@@ -160,9 +186,10 @@ For ex for login title I did login-title instead of title
   position: relative;
   transform: translateX(-20px);
   transition: color 0.3s;
-  overflow: hidden; /* To ensure animated border stays within bounds */
+  overflow: hidden;
 }
 
+/* Delay each menu item animation */
 .base-menu-list > li:nth-child(1) {
   animation-delay: 0.1s;
 }
@@ -183,6 +210,7 @@ For ex for login title I did login-title instead of title
   animation-delay: 0.5s;
 }
 
+/* Menu Item Border */
 .base-menu-list > li::before {
   content: "";
   position: absolute;
@@ -196,14 +224,14 @@ For ex for login title I did login-title instead of title
   background: linear-gradient(60deg, #6a8fc0, #101d49, #697add);
   background-size: 200% 200%;
   animation: base-borderFlow 6s ease infinite;
-  z-index: -1; /* Ensures border is behind content */
+  z-index: -1;
   opacity: 0;
   transition: opacity 0.5s;
   border: 2px solid #6788c5;
 }
 
 .base-menu-list > li:hover::before {
-  opacity: 1; /* Border appears on hover */
+  opacity: 1;
 }
 
 .base-menu-list > li > a {
@@ -215,8 +243,9 @@ For ex for login title I did login-title instead of title
   transition: color 0.3s;
 }
 
+/* Hover effect for menu items */
 .base-menu-list > li > a:hover {
-  color: #ffffff; /* Matches border animation color */
+  color: #ffffff;
 }
 
 .base-menu-list > li.active .base-expand-icon {
@@ -225,7 +254,7 @@ For ex for login title I did login-title instead of title
 
 .base-menu-list > li.active .base-submenu {
   display: block;
-  max-height: 500px; /* Set a large enough max-height to accommodate content */
+  max-height: 500px;
   opacity: 1;
   transform: translateY(0);
 }
@@ -240,7 +269,7 @@ For ex for login title I did login-title instead of title
     #a34373c2
   );
   background-size: 200% 200%;
-  animation: base-gradientShift 10s ease infinite; /* Ambient animated background */
+  animation: base-gradientShift 10s ease infinite;
   box-shadow: 3px 0 15px rgba(0, 0, 0, 0.5);
   color: #fff;
   height: 100%;
@@ -277,11 +306,11 @@ For ex for login title I did login-title instead of title
 .base-submenu {
   display: none;
   list-style: none;
-  max-height: 0; /* Initially set max-height to 0 */
+  max-height: 0;
   opacity: 0;
   padding-left: 20px;
   transform: translateY(-10px);
-  transition: max-height 0.7s ease, opacity 0.7s ease; /* Add transition */
+  transition: max-height 0.7s ease, opacity 0.7s ease;
 }
 
 .base-submenu li {
@@ -306,7 +335,6 @@ For ex for login title I did login-title instead of title
 }
 
 /* Login/Register A->Z */
-
 .login-alert {
   color: #ff0000;
   border-radius: 4px;
@@ -388,6 +416,17 @@ For ex for login title I did login-title instead of title
   border-bottom: 2px solid #b43333;
 }
 
+/* Login/Register Page Transition */
+.login-page,
+.register-page {
+  animation: log-reg-slideDown 0.8s ease forwards;
+  opacity: 0;
+}
+
+.log-reg-page-transition {
+  animation: log-reg-slideOut 0.5s ease forwards;
+}
+
 .login-title {
   font-size: 5rem;
   margin-bottom: 5rem;
@@ -419,7 +458,7 @@ For ex for login title I did login-title instead of title
 }
 
 .register-btn-submit:hover {
-  background:  #0073d1;
+  background: #0073d1;
   color: #ffffff;
 }
 
