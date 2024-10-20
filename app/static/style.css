@@ -152,10 +152,12 @@ For ex for login title I did login-title instead of title
   0% {
     opacity: 0;
     transform: translateY(-100%);
+    filter: blur(100px);
   }
   100% {
     opacity: 1;
     transform: translateY(0);
+    filter: blur(0);
   }
 }
 
@@ -164,18 +166,20 @@ For ex for login title I did login-title instead of title
   0% {
     opacity: 1;
     transform: translateY(0);
+    filter: blur(100px);
   }
   100% {
     opacity: 0;
     transform: translateY(100%);
+    filter: blur(0);
   }
 }
 
 /* Animation for slide down when there is an alert */
 @keyframes log-reg-slideDown-alert {
   0% {
-    opacity: 0;
-    transform: translateY(-100%);
+    opacity: 1;
+    transform: translateY(0);
   }
   100% {
     opacity: 1;
@@ -188,10 +192,12 @@ For ex for login title I did login-title instead of title
   0% {
     opacity: 1;
     transform: translateY(0);
+    filter: blur(100px);
   }
   100% {
     opacity: 0;
     transform: translateY(100%);
+    filter: blur(0);
   }
 }
 
