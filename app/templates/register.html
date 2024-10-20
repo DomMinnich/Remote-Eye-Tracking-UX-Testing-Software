@@ -22,8 +22,6 @@
 </style>
 
 <div class="register-page">
-  <h2 class="register-title">Register</h2>
-
   <!-- Animated Eye Container -->
   <div class="eye-container">
     <div class="eye-socket">
@@ -49,6 +47,8 @@
     </div>
   </div>
 
+  <h2 class="register-title">Register</h2>
+
   <!-- Flash Messages Section -->
   {% with messages = get_flashed_messages(with_categories=true) %} {% if
   messages %}
@@ -70,7 +70,8 @@
       {{ form.password(id="password", placeholder="Enter your password") }}
     </div>
     <div class="register-form-group">
-      {{ form.confirm_password(id="confirm_password", placeholder="Confirm your password") }}
+      {{ form.confirm_password(id="confirm_password", placeholder="Confirm your
+      password") }}
     </div>
     <div class="register-form-group">
       {{ form.submit(class="register-btn-submit") }}

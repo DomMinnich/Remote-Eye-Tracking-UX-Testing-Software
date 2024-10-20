@@ -197,10 +197,18 @@
   justify-content: center;
   width: 200px;
   height: 200px;
+  z-index: 10;
 }
+
+.eye-container:hover ~ * {
+  filter: blur(10px);
+  transition: filter 0.3s;
+}
+
 
 .eye-container:hover {
   cursor: none;
+  filter: none;
 }
 
 .eye-container.success .cyber-iris {
