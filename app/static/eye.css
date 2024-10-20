@@ -526,5 +526,5 @@
 
 .zoom-effect {
   animation: zoomInAndFade 0.8s forwards;
-  transform-origin: center 42%;
+  transform-origin: center 33%;
 }
