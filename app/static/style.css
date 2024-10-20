@@ -148,7 +148,7 @@ For ex for login title I did login-title instead of title
 }
 
 /* Animation for sliding content in from the top */
-@keyframes log-reg-slideDown {
+@keyframes log-reg-slideDown-normal {
   0% {
     opacity: 0;
     transform: translateY(-100%);
@@ -159,8 +159,32 @@ For ex for login title I did login-title instead of title
   }
 }
 
-/* Animation for sliding content down to hide */
-@keyframes log-reg-slideOut {
+/* Animation for sliding content down to hide (without alert) */
+@keyframes log-reg-slideOut-normal {
+  0% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  100% {
+    opacity: 0;
+    transform: translateY(100%);
+  }
+}
+
+/* Animation for slide down when there is an alert */
+@keyframes log-reg-slideDown-alert {
+  0% {
+    opacity: 0;
+    transform: translateY(-100%);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Animation for slide out when there is an alert */
+@keyframes log-reg-slideOut-alert {
   0% {
     opacity: 1;
     transform: translateY(0);
@@ -419,12 +443,20 @@ For ex for login title I did login-title instead of title
 /* Login/Register Page Transition */
 .login-page,
 .register-page {
-  animation: log-reg-slideDown 0.8s ease forwards;
+  animation: log-reg-slideDown-normal 0.8s ease forwards;
   opacity: 0;
 }
 
-.log-reg-page-transition {
-  animation: log-reg-slideOut 0.5s ease forwards;
+.log-reg-alert-active {
+  animation: log-reg-slideDown-alert 0.00001s ease forwards;
+}
+
+.log-reg-page-transition-normal {
+  animation: log-reg-slideOut-normal 0.5s ease forwards;
+}
+
+.log-reg-page-transition-alert {
+  animation: log-reg-slideOut-alert 0.5s ease forwards;
 }
 
 .login-title {
@@ -524,3 +556,4 @@ For ex for login title I did login-title instead of title
 }
 
 /* ...   A->Z */
+
