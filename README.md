@@ -66,8 +66,8 @@ This software aims to revolutionize UX testing by eliminating physical barriers 
 
 ### Frontend Development
 
-- **JavaScript/TypeScript**: For building interactive, real-time interfaces.
-- **React.js**: A component-based library for developing complex UIs.
+- **JavaScript**: For building interactive, real-time interfaces.
+- **HTML/CSS**: For site structure and styling.
 - **WebRTC**: For handling real-time communication and video streams.
 
 ### Backend Development
@@ -79,7 +79,7 @@ This software aims to revolutionize UX testing by eliminating physical barriers 
 
 ### Computer Vision and Eye-Tracking
 
-- **Dlib or Mediapipe**: Libraries for facial landmarks detection and accurate eye-tracking.
+- **WebGazer.js: Eye tracking script.
 
 ### Data Storage
 
@@ -94,6 +94,22 @@ This software aims to revolutionize UX testing by eliminating physical barriers 
 ### Deployment
 
 - **Docker**: For containerizing the application.
+
+### Requirements
+
+## Functional Requirements
+
+Users can create, edit, and delete their profiles, except for guests whose data won’t be saved.
+Users can create new projects with tasks, descriptions, and URLs.
+The system tracks eye movements in real-time using standard webcams.
+The system records sessions, combining screen recordings with eye-tracking overlays.
+Users can select roles (e.g., Analyst, Project Manager, Admin) and perform tasks based on those roles.
+
+## Non-Functional Requirements
+-**Performance**: Must handle real-time data processing with minimal latency.
+-**Usability**: The system should comply with WCAG 2.1 Level AA accessibility guidelines.
+-**Security**: Use AES-256 encryption and multi-factor authentication.
+-**Scalability**: Support large datasets and concurrent users.
 
 ### Security and Compliance
 
@@ -110,6 +126,14 @@ This software aims to revolutionize UX testing by eliminating physical barriers 
 - **Performance**: Supports real-time video processing and eye-tracking.
 - **Flexibility**: Combines powerful backend data processing with a user-friendly frontend.
 - **Community Support**: Strong community support for chosen technologies.
+
+## Stretch Goals
+-**Mobile Support**: Add support for mobile phones to capture eye-tracking data.
+-**Heat Mapping**: Extract heat maps from user behavior data, highlighting areas of focus on the screen.
+-**Domain Expansion**: Extend support beyond specific domains like Figma to other established or custom websites.
+
+## Methodology
+-**Agile Development**: The team will adopt an Agile methodology to enable continuous improvement based on testing and feedback.
 
 ## Technology Disclosure
 
