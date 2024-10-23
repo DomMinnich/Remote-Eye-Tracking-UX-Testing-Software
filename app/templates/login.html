@@ -1,14 +1,84 @@
+<!-- Dominic Minnich 2024 -->
 <!-- login.html -->
 
-{% extends 'base.html' %}
+{% extends 'base.html' %} {% block content %}
 
-{% block content %}
-<h2>Login</h2>
-<form method="POST">
+<style>
+  /* Reset */
+  * {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+  }
+
+  body {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    background-color: #121212;
+    overflow: hidden;
+  }
+</style>
+
+<!-- Centered Container -->
+<div class="login-page">
+
+
+  <!-- Animated Eye Container -->
+  <div class="eye-container">
+    <div class="eye-socket">
+      <div class="outer-ring"></div>
+      <div class="sclera">
+        <div class="vein-texture"></div>
+        <div class="cyber-iris">
+          <div class="inner-ring-1"></div>
+          <div class="inner-ring-2"></div>
+          <div class="inner-ring-3"></div>
+          <div class="inner-ring-4"></div>
+          <div class="inner-ring-5"></div>
+          <div class="inner-ring-6"></div>
+          <div class="inner-circuitry"></div>
+          <div class="pupil"></div>
+          <div class="tech-overlay"></div>
+          <div class="reflection-layer"></div>
+          <div class="reflection-layer-2"></div>
+        </div>
+      </div>
+      <div class="upper-eyelid"></div>
+      <div class="lower-eyelid"></div>
+    </div>
+  </div>
+
+  <h2 class="login-title">Login</h2>
+
+  <!-- Form Section -->
+  <!-- Flash Messages Section -->
+  {% with messages = get_flashed_messages(with_categories=true) %} {% if
+  messages %}
+  <div class="login-flash-messages">
+    {% for category, message in messages %}
+    <div class="login-alert alert-{{ category }}">{{ message }}</div>
+    {% endfor %}
+  </div>
+  {% endif %} {% endwith %}
+
+  <form method="POST" action="{{ url_for('main.login') }}" class="login-form">
     {{ form.hidden_tag() }}
-    <p>{{ form.username.label }} {{ form.username() }}</p>
-    <p>{{ form.password.label }} {{ form.password() }}</p>
-    <p>{{ form.submit() }}</p>
-    <p>Don't have an account? <a href="{{ url_for('main.register') }}">Register</a></p>
-</form>
+    <div class="login-form-group">
+      {{ form.username(id="username", placeholder="Enter your username") }}
+    </div>
+    <div class="login-form-group">
+      {{ form.password(id="password", placeholder="Enter your password") }}
+    </div>
+    <div class="login-form-group">
+      {{ form.submit(class="login-btn-submit") }}
+    </div>
+    <p class="register-link">
+      Don't have an account?
+      <a href="{{ url_for('main.register') }}">Register</a>
+    </p>
+  </form>
+</div>
+
 {% endblock %}

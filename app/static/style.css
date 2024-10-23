@@ -1,5 +1,569 @@
-/* Style for the app */
+/* Main Style 2024*/
 
-body {
-    font-family: Arial, sans-serif;
+/*
+Do not use generic tags like div, span, etc.
+Be specific with the elements you want to style.
+This ensures that your css will only apply to your desired elements and not everyones.
+For ex for login title I did login-title instead of title
+*/
+
+/*
+      CONTENTS OF THIS FILE
+ Fonts A->Z               | ~Line 20-32    -Dominic Minnich
+ Base Styling A->Z        | ~Line 34-197   -Dominic Minnich
+ Login/Register A->Z      | ~Line 200-269  -Dominic Minnich
+ .?.?.                    | ~Line ?-? 
+ .?.?.                    | ~Line ?-?   
+ */
+
+/* Font Styling A->Z*/
+@font-face {
+  font-family: "Gruppo";
+  src: url("/static/fonts/Gruppo-Regular.ttf") format("truetype");
+  font-weight: normal;
+  font-style: normal;
 }
+
+@font-face {
+  font-family: "Tapestry";
+  src: url("/static/fonts/Tapestry-Regular.ttf") format("truetype");
+  font-weight: normal;
+  font-style: normal;
+}
+
+/* Base Styling A->Z */
+
+/* Footer Styling */
+.base-footer {
+  background: linear-gradient(
+    135deg,
+    #a10050d8,
+    #002657c7,
+    #530534c9,
+    #a34373c2
+  );
+  background-size: 200% 200%;
+  animation: base-gradientShift 10s ease infinite;
+  color: #fff;
+  text-align: center;
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  width: 100%;
+  height: 3%;
+  box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.5);
+  z-index: 1000;
+  padding-bottom: 1px;
+  user-select: none;
+}
+
+/* Footer Links */
+.base-footer a {
+  color: #fff;
+  text-decoration: none;
+  transition: color 0.3s ease;
+  user-select: none;
+}
+
+.base-footer p {
+  margin: 0;
+  margin-top: 10px;
+  font-size: 0.8rem;
+  user-select: none;
+}
+
+/* Corner Menu Toggle Icon */
+.base-menu-toggle {
+  cursor: pointer;
+  left: 20px;
+  position: fixed;
+  top: 20px;
+  z-index: 2001;
+}
+
+/* Menu Toggle Bars */
+.base-menu-toggle .base-bar {
+  background-color: #fff;
+  height: 3px;
+  margin: 5px 0;
+  transition: all 0.4s ease; /* Smooth transition for bars */
+  width: 30px;
+}
+
+.base-menu-toggle.active .base-bar:nth-child(1) {
+  transform: rotate(45deg) translate(5px, 5px);
+}
+
+.base-menu-toggle.active .base-bar:nth-child(2) {
+  opacity: 0;
+}
+
+.base-menu-toggle.active .base-bar:nth-child(3) {
+  transform: rotate(-45deg) translate(5px, -5px);
+}
+
+/* Expand Icon */
+.base-expand-icon {
+  font-size: 38px;
+  transition: transform 0.3s ease;
+}
+
+/* Keyframes for animated gradient */
+@keyframes base-borderFlow {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}
+
+/* Keyframes for Menu Item Fade-in Animation */
+@keyframes base-fadeInMenu {
+  from {
+    opacity: 0;
+    transform: translateX(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+/* Keyframes for animated gradient */
+@keyframes base-gradientShift {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}
+
+/* Animation for sliding content in from the top */
+@keyframes log-reg-slideDown-normal {
+  0% {
+    opacity: 0;
+    transform: translateY(-100%);
+    filter: blur(100px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+    filter: blur(0);
+  }
+}
+
+/* Animation for sliding content down to hide (without alert) */
+@keyframes log-reg-slideOut-normal {
+  0% {
+    opacity: 1;
+    transform: translateY(0);
+    filter: blur(100px);
+  }
+  100% {
+    opacity: 0;
+    transform: translateY(100%);
+    filter: blur(0);
+  }
+}
+
+/* Animation for slide down when there is an alert */
+@keyframes log-reg-slideDown-alert {
+  0% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Animation for slide out when there is an alert */
+@keyframes log-reg-slideOut-alert {
+  0% {
+    opacity: 1;
+    transform: translateY(0);
+    filter: blur(100px);
+  }
+  100% {
+    opacity: 0;
+    transform: translateY(100%);
+    filter: blur(0);
+  }
+}
+
+/* Menu List */
+.base-menu-list {
+  list-style: none;
+  margin-top: 20px;
+  padding: 0;
+}
+
+.base-menu-list > li {
+  animation: base-fadeInMenu 0.6s ease forwards;
+  font-size: 18px;
+  opacity: 0;
+  padding: 15px 20px;
+  position: relative;
+  transform: translateX(-20px);
+  transition: color 0.3s;
+  overflow: hidden;
+}
+
+/* Delay each menu item animation */
+.base-menu-list > li:nth-child(1) {
+  animation-delay: 0.1s;
+}
+
+.base-menu-list > li:nth-child(2) {
+  animation-delay: 0.2s;
+}
+
+.base-menu-list > li:nth-child(3) {
+  animation-delay: 0.3s;
+}
+
+.base-menu-list > li:nth-child(4) {
+  animation-delay: 0.4s;
+}
+
+.base-menu-list > li:nth-child(5) {
+  animation-delay: 0.5s;
+}
+
+/* Menu Item Border */
+.base-menu-list > li::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  border: 2px solid transparent;
+  border-radius: 8px;
+  box-sizing: border-box;
+  background: linear-gradient(60deg, #6a8fc0, #101d49, #697add);
+  background-size: 200% 200%;
+  animation: base-borderFlow 6s ease infinite;
+  z-index: -1;
+  opacity: 0;
+  transition: opacity 0.5s;
+  border: 2px solid #6788c5;
+}
+
+.base-menu-list > li:hover::before {
+  opacity: 1;
+}
+
+.base-menu-list > li > a {
+  align-items: center;
+  color: #fff;
+  display: flex;
+  justify-content: space-between;
+  text-decoration: none;
+  transition: color 0.3s;
+}
+
+/* Hover effect for menu items */
+.base-menu-list > li > a:hover {
+  color: #ffffff;
+}
+
+.base-menu-list > li.active .base-expand-icon {
+  transform: rotate(45deg);
+}
+
+.base-menu-list > li.active .base-submenu {
+  display: block;
+  max-height: 500px;
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* Sidebar Menu */
+.base-sidebar-menu {
+  background: linear-gradient(
+    135deg,
+    #a10050d8,
+    #002657c7,
+    #530534c9,
+    #a34373c2
+  );
+  background-size: 200% 200%;
+  animation: base-gradientShift 10s ease infinite;
+  box-shadow: 3px 0 15px rgba(0, 0, 0, 0.5);
+  color: #fff;
+  height: 100%;
+  left: -100%;
+  padding-top: 50px;
+  position: fixed;
+  top: 0;
+  transition: left 0.6s cubic-bezier(0.25, 1, 0.5, 1); /* Smooth slide-in */
+  user-select: none;
+  width: 300px;
+  z-index: 2000;
+}
+
+.base-sidebar-menu.active {
+  left: 0;
+  border-right: 2px solid #fff;
+}
+
+/* Close Button */
+.base-sidebar-menu .base-close-btn {
+  cursor: pointer;
+  font-size: 0px;
+  position: absolute;
+  right: 20px;
+  top: 20px;
+  transition: color 0.3s;
+}
+
+.base-sidebar-menu .close-btn:hover {
+  color: #ff5733;
+}
+
+/* Submenu */
+.base-submenu {
+  display: none;
+  list-style: none;
+  max-height: 0;
+  opacity: 0;
+  padding-left: 20px;
+  transform: translateY(-10px);
+  transition: max-height 0.7s ease, opacity 0.7s ease;
+}
+
+.base-submenu li {
+  color: #bbbbbb;
+  font-size: 16px;
+  padding: 10px 0;
+  text-decoration: none;
+}
+
+.base-submenu li a {
+  color: #fff;
+  text-decoration: none;
+  transition: color 0.3s;
+}
+
+.base-submenu li a:hover {
+  color: #ffffff;
+  text-decoration: underline;
+  text-underline-offset: 4px;
+  text-decoration-color: #ffffff;
+  text-decoration-thickness: 1px;
+}
+
+/* Login/Register A->Z */
+.login-alert {
+  color: #ff0000;
+  border-radius: 4px;
+  text-align: center;
+  font-size: 1.2rem;
+  font-weight: 500;
+  margin: 0 auto;
+  width: 100%;
+  padding: 1rem;
+}
+
+.login-btn-submit {
+  width: 100%;
+  padding: 0.7rem;
+  font-size: 1rem;
+  background-color: #39516642;
+  color: #ffffff;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.login-btn-submit:hover {
+  background: #0073d1;
+  color: #ffffff;
+}
+
+.login-form {
+  width: 400px;
+  padding: 1.5rem;
+  background-color: #1e1e1e;
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.5);
+}
+
+.login-form-group {
+  margin-bottom: 1.2rem;
+}
+
+.login-link {
+  text-align: center;
+  font-size: 0.85rem;
+  color: #c1c1c1;
+  user-select: none;
+}
+
+.login-link a {
+  color: #ced100;
+  text-decoration: none;
+  user-select: none;
+}
+
+.login-page {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  background-color: #121212;
+  color: #ffffff;
+}
+
+.login-page input[type="text"],
+.login-page input[type="password"] {
+  width: 100%;
+  padding: 0.5rem;
+  font-size: 1rem;
+  color: #fff;
+  background-color: #333;
+  border: none;
+  border-bottom: 2px solid #0062d1;
+  border-radius: 4px;
+}
+
+.login-page input[type="text"]:focus,
+.login-page input[type="password"]:focus {
+  outline: none;
+  border-bottom: 2px solid #b43333;
+}
+
+/* Login/Register Page Transition */
+.login-page,
+.register-page {
+  animation: log-reg-slideDown-normal 0.8s ease forwards;
+  opacity: 0;
+}
+
+.log-reg-alert-active {
+  animation: log-reg-slideDown-alert 0.00001s ease forwards;
+}
+
+.log-reg-page-transition-normal {
+  animation: log-reg-slideOut-normal 0.5s ease forwards;
+}
+
+.log-reg-page-transition-alert {
+  animation: log-reg-slideOut-alert 0.5s ease forwards;
+}
+
+.login-title {
+  position: absolute;
+  top: 10%;
+  font-size: 5rem;
+  margin-bottom: 5rem;
+  text-align: center;
+  color: #0073d1;
+  user-select: none;
+}
+
+.register-alert {
+  color: #ff0000;
+  border-radius: 4px;
+  text-align: center;
+  font-size: 1.2rem;
+  font-weight: 500;
+  margin: 0 auto;
+  width: 100%;
+}
+
+.register-btn-submit {
+  width: 100%;
+  padding: 0.7rem;
+  font-size: 1rem;
+  background-color: #39516642;
+  color: #ffffff;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.register-btn-submit:hover {
+  background: #0073d1;
+  color: #ffffff;
+}
+
+.register-form {
+  width: 400px;
+  padding: 1.5rem;
+  background-color: #1e1e1e;
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.5);
+}
+
+.register-form-group {
+  margin-bottom: 1.2rem;
+}
+
+.register-link {
+  text-align: center;
+  font-size: 0.85rem;
+  color: #c1c1c1;
+  user-select: none;
+}
+
+.register-link a {
+  color: #ced100;
+  text-decoration: none;
+  user-select: none;
+}
+
+.register-page {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  background-color: #121212;
+  color: #ffffff;
+}
+
+.register-page input[type="text"],
+.register-page input[type="password"] {
+  width: 100%;
+  padding: 0.5rem;
+  font-size: 1rem;
+  color: #fff;
+  background-color: #333;
+  border: none;
+  border-bottom: 2px solid #0062d1;
+  border-radius: 4px;
+}
+
+.register-page input[type="text"]:focus,
+.register-page input[type="password"]:focus {
+  outline: none;
+  border-bottom: 2px solid #00d1b2;
+}
+
+.register-title {
+  position: absolute;
+  top: 10%;
+  font-size: 5rem;
+  margin-bottom: 5rem;
+  text-align: center;
+  color: #0073d1;
+  user-select: none;
+}
+
+/* ...   A->Z */
+
