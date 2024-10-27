@@ -1,0 +1,11 @@
+<!-- profile.html -->
+
+{% extends 'base.html' %}
+
+{% block content %}
+<h2>Profile</h2>
+<div>
+    <p><strong>Username:</strong> {{ user.username }}</p>
+    <p><strong>Date joined:</strong> {{ user.date_joined }}</p>
+</div>
+{% endblock %}
