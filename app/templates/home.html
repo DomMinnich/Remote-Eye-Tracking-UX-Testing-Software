@@ -1,9 +1,56 @@
-
+<!-- Dominic Minnich 2024 -->
 <!-- home.html -->
 
-{% extends 'base.html' %}
+{% extends 'base.html' %} {% block content %}
+<style>
+  /* Reset */
+  * {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+  }
 
-{% block content %}
+  body {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    background-color: #121212;
+    overflow: hidden;
+    cursor: url("/static/burger.svg"), auto;
+  p {
+    color: white;
+    font-size: 1.5rem;
+    margin-top: 1rem;
+  }
+
+  h2 {
+    color: white;
+    font-size: 2rem;
+    margin-bottom: 1rem;
+  }
+
+  li {
+    list-style-type: none;
+    margin-top: 1rem;
+  }
+
+  img {
+    transition: transform 0.1s;
+  }
+
+</style>
 <h2>Welcome to the Home Page</h2>
-<p>lalalala</p>
+<p>waddle waddle, waddle... waddle... waddle...</p>
+<img id="duck" src="{{ url_for('static', filename='duck.gif') }}" alt="duck" />
+<script>
+  document.addEventListener('mousemove', function(event) {
+    const duck = document.getElementById('duck');
+    const rect = duck.getBoundingClientRect();
+    const duckX = rect.left + rect.width / 2;
+    const duckY = rect.top + rect.height / 2;
+    const angle = Math.atan2(event.clientY - duckY, event.clientX - duckX) * (180 / Math.PI);
+    duck.style.transform = `rotate(${angle}deg)`;
+  });
+</script>
 {% endblock %}

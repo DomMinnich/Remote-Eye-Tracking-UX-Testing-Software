@@ -1,3 +1,4 @@
+# Dominic Minnich 2024
 # app.py, main application script
 
 from app import create_app

@@ -1,3 +1,5 @@
+
+# Dominic Minnich 2024
 # __init__.py, initialization file for the Flask application
 
 from flask import Flask

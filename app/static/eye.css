@@ -1,0 +1,530 @@
+/* Dominic Minnich 2024 */
+
+/* Eye Styling */
+/* This styles and animates the eye used in the login page and register page. */
+
+/*
+      CONTENTS OF THIS FILE
+ Keyframes A->Z           | ~Line 12-173 -Dominic Minnich
+ Styling A->Z             | ~Line 175-427 -Dominic Minnich
+ */
+
+/* Animations A->Z */
+@keyframes blink {
+  0%,
+  97%,
+  100% {
+    height: 100%;
+  }
+  98%,
+  99% {
+    height: 5%;
+  }
+}
+
+@keyframes blink-lower {
+  0%,
+  100% {
+    transform: translateY(0);
+    left: 50%;
+    transform: translateX(-50%);
+    width: 80%;
+    height: 30%;
+    opacity: 0.35;
+  }
+  50% {
+    transform: translateY(-100px);
+    left: 50%;
+    transform: translateX(-50%);
+    width: 100%;
+    height: 70%;
+    opacity: 1;
+  }
+}
+
+@keyframes blink-upper {
+  0%,
+  100% {
+    transform: translateY(0);
+    left: 50%;
+    transform: translateX(-50%);
+    width: 80%;
+    height: 30%;
+    opacity: 0.35;
+  }
+  50% {
+    transform: translateY(100px);
+    left: 50%;
+    transform: translateX(-50%);
+    width: 100%;
+    height: 70%;
+    opacity: 1;
+  }
+}
+
+@keyframes grow {
+  0%,
+  100% {
+    width: 30px;
+    height: 30px;
+  }
+  50% {
+    width: 35px;
+    height: 35px;
+  }
+}
+
+@keyframes growPupil {
+  0% {
+    width: 30px;
+    height: 30px;
+  }
+  50% {
+    width: 40px;
+    height: 40px;
+  }
+  100% {
+    width: 30px;
+    height: 30px;
+  }
+}
+
+@keyframes irisFocus {
+  0%,
+  50%,
+  100% {
+    transform: scale(1);
+  }
+  25%,
+  75% {
+    transform: scale(0.9);
+  }
+}
+
+@keyframes pulse {
+  0%,
+  100% {
+    box-shadow: inset 0px 0px 30px rgba(102, 153, 255, 0.7),
+      0px 0px 20px rgba(102, 153, 255, 0.5);
+  }
+  50% {
+    box-shadow: inset 0px 0px 50px rgba(102, 153, 255, 0.9),
+      0px 0px 40px rgba(102, 153, 255, 0.7);
+  }
+}
+
+@keyframes pulse-warning {
+  0%,
+  100% {
+    box-shadow: inset 0px 0px 30px rgba(255, 0, 0, 0.7),
+      0px 0px 20px rgba(255, 0, 0, 0.5);
+  }
+  50% {
+    box-shadow: inset 0px 0px 50px rgba(255, 0, 0, 0.9),
+      0px 0px 40px rgba(255, 0, 0, 0.7);
+  }
+}
+
+@keyframes rotateCircuitry {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(-360deg);
+  }
+}
+
+@keyframes rotateInnerRing {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes rotateInnerRingReverse {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(-360deg);
+  }
+}
+
+@keyframes rotateRing {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes zoomInAndFade {
+  from {
+    transform: scale(1);
+    opacity: 1;
+  }
+  to {
+    transform: scale(50);
+    opacity: 0;
+  }
+}
+
+/* Styling A->Z */
+
+.cyber-iris {
+  width: 120px;
+  height: 120px;
+  background: radial-gradient(circle at 50% 50%, #6699ff, #3366cc);
+  border-radius: 50%;
+  box-shadow: inset 0px 0px 30px rgba(102, 153, 255, 0.7),
+    0px 0px 20px rgba(102, 153, 255, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: relative;
+  overflow: hidden;
+  animation: pulse 3s infinite;
+}
+
+.eye-container {
+  position: relative;
+  margin-bottom: 2rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 200px;
+  height: 200px;
+  z-index: 10;
+}
+
+.eye-container:hover ~ * {
+  filter: blur(10px);
+  transition: filter 0.3s;
+}
+
+
+.eye-container:hover {
+  cursor: none;
+  filter: none;
+}
+
+.eye-container.success .cyber-iris {
+  background: radial-gradient(circle at 50% 50%, #00ff00, #00cc00);
+  animation: pulse 3s infinite;
+}
+
+.eye-container.eye-container.success .inner-ring-1 {
+  background: radial-gradient(circle, #00ff008f, transparent 60%);
+}
+
+.eye-container.eye-container.success .inner-ring-2 {
+  background: repeating-conic-gradient(
+    from 0deg,
+    rgba(0, 255, 0, 0.2) 0% 10%,
+    transparent 10% 20%
+  );
+}
+
+.eye-container.eye-container.success .inner-ring-3 {
+  background: radial-gradient(circle, #00ff00, transparent 70%);
+  box-shadow: 0 0 15px rgba(0, 255, 0, 0.8);
+}
+
+.eye-container.success .outer-ring {
+  border-color: #00ff00;
+  box-shadow: 0px 0px 30px rgba(0, 255, 0, 0.8);
+}
+
+.eye-container.success .pupil {
+  background-color: #000;
+  box-shadow: 0px 0px 5px rgba(0, 255, 0, 0.8);
+  animation: growPupil 2s forwards;
+}
+
+.eye-container.success .reflection-layer {
+  background: radial-gradient(
+    circle at 30% 30%,
+    rgba(255, 255, 255, 0.5),
+    transparent 70%
+  );
+}
+
+.eye-container.success .sclera {
+  background: radial-gradient(circle at 50% 50%, #4a4a4a, #1a1a1a 95%);
+}
+
+.eye-container.warning .cyber-iris {
+  background: radial-gradient(circle at 50% 50%, #ff0000, #cc3300);
+  animation: pulse-warning 3s infinite;
+}
+
+.eye-container.warning .inner-ring-1 {
+  background: radial-gradient(circle, #ff00008f, transparent 60%);
+}
+
+.eye-container.warning .inner-ring-2 {
+  background: repeating-conic-gradient(
+    from 0deg,
+    rgba(255, 0, 0, 0.2) 0% 10%,
+    transparent 10% 20%
+  );
+}
+
+.eye-container.warning .inner-ring-3 {
+  background: radial-gradient(circle, #ff0000, transparent 70%);
+  box-shadow: 0 0 15px rgba(255, 0, 0, 0.8);
+}
+
+.eye-container.warning .outer-ring {
+  border-color: #ff0000;
+  box-shadow: 0px 0px 30px rgba(255, 0, 0, 0.8);
+}
+
+.eye-container.warning .pupil {
+  background-color: #000;
+  box-shadow: 0px 0px 5px rgba(255, 0, 0, 0.8);
+  animation: growPupil 2s forwards;
+}
+
+.eye-container.warning .reflection-layer {
+  background: radial-gradient(
+    circle at 30% 30%,
+    rgba(255, 255, 255, 0.5),
+    transparent 70%
+  );
+}
+
+.eye-container.warning .tech-overlay {
+  background: repeating-radial-gradient(
+    circle at 50% 50%,
+    rgba(255, 0, 0, 0.1),
+    transparent 5%
+  );
+  box-shadow: inset 0 0 5px rgba(255, 0, 0, 0.7), 0 0 20px rgba(255, 0, 0, 0.4);
+}
+
+.eye-socket {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  overflow: hidden;
+  animation: blink 4s infinite;
+}
+
+.inner-circuitry {
+  width: 140%;
+  height: 140%;
+  position: absolute;
+  border-radius: 50%;
+  background: repeating-conic-gradient(
+    rgba(102, 153, 255, 0.2) 0% 10%,
+    rgba(0, 0, 0, 0.2) 10% 20%
+  );
+  opacity: 0.9;
+  animation: rotateCircuitry 15s linear infinite;
+  filter: blur(2px);
+}
+
+.inner-ring-1 {
+  width: 90%;
+  height: 90%;
+  border-radius: 50%;
+  position: absolute;
+  background: radial-gradient(circle, #0044ff8f, transparent 60%);
+  opacity: 0.9;
+  animation: rotateInnerRing 8s linear infinite;
+}
+
+.inner-ring-2 {
+  width: 70%;
+  height: 70%;
+  border-radius: 50%;
+  position: absolute;
+  background: repeating-conic-gradient(
+    from 0deg,
+    rgba(102, 153, 255, 0.2) 0% 10%,
+    transparent 10% 20%
+  );
+  opacity: 0.7;
+  animation: rotateInnerRingReverse 10s linear infinite;
+}
+
+.inner-ring-3 {
+  width: 50%;
+  height: 50%;
+  border-radius: 50%;
+  position: absolute;
+  background: radial-gradient(circle, #7066ff, transparent 70%);
+  box-shadow: 0 0 15px rgba(102, 153, 255, 0.8);
+  opacity: 0.8;
+  animation: rotateInnerRing 12s linear infinite;
+}
+
+.inner-ring-4 {
+  width: 30%;
+  height: 30%;
+  border-radius: 50%;
+  position: absolute;
+  background: radial-gradient(circle, #000, #000);
+  opacity: 0.9;
+  animation: rotateInnerRingReverse 15s linear infinite;
+}
+
+.inner-ring-5 {
+  width: 10%;
+  height: 10%;
+  border-radius: 50%;
+  position: absolute;
+  background: radial-gradient(circle, #000, #000);
+  opacity: 0.9;
+  animation: rotateInnerRing 20s linear infinite;
+}
+
+.inner-ring-6 {
+  width: 45%;
+  height: 45%;
+  border-radius: 50%;
+  position: absolute;
+  background: radial-gradient(circle, #000, #000000);
+  opacity: 0.9;
+  animation: rotateInnerRingReverse 25s linear infinite;
+}
+
+.lower-eyelid {
+  position: absolute;
+  width: 95%;
+  height: 20%;
+  background: linear-gradient(to bottom, #000000, rgb(0, 0, 0));
+  border-radius: 30%;
+  left: 50%;
+  transform: translateX(-50%);
+  transform-origin: top;
+  opacity: 0.35;
+  pointer-events: none;
+  transition: width 1.5s, height 1.5s, opacity 1.5s;
+  bottom: 0;
+}
+
+.lower-eyelid.blinking {
+  animation: blink-lower 1.5s forwards;
+}
+
+.outer-ring {
+  position: absolute;
+  border: 2px solid #6699ff;
+  border-radius: 50%;
+  box-shadow: 0px 0px 30px rgba(102, 153, 255, 0.8);
+  animation: rotateRing 12s linear infinite;
+}
+
+.pupil {
+  width: 30px;
+  height: 30px;
+  background-color: #000;
+  border-radius: 50%;
+  box-shadow: 0px 0px 20px rgba(0, 162, 255, 0.8);
+  z-index: 2;
+}
+
+.pupil.grow {
+  animation: grow 1.5s forwards;
+}
+
+.reflection-layer {
+  width: 70px;
+  height: 70px;
+  position: absolute;
+  background: radial-gradient(
+    circle at 30% 30%,
+    rgba(255, 255, 255, 0.5),
+    transparent 70%
+  );
+  border-radius: 50%;
+  top: 8px;
+  left: 8px;
+  z-index: 4;
+  opacity: 0.7;
+}
+
+.reflection-layer-2 {
+  width: 10px;
+  height: 10px;
+  position: absolute;
+  background: rgba(255, 255, 255, 0.151);
+  border-radius: 50%;
+  top: 68px;
+  left: 68px;
+  z-index: 4;
+  opacity: 0.7;
+}
+
+.sclera {
+  width: 200px;
+  height: 200px;
+  background: radial-gradient(circle at 50% 50%, #4a4a4a, #1a1a1a 70%);
+  border-radius: 50%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  overflow: hidden;
+  position: relative;
+  border: 2px solid #0000003a;
+}
+
+.tech-overlay {
+  position: absolute;
+  border-radius: 50%;
+  background: repeating-radial-gradient(
+    circle at 50% 50%,
+    rgba(102, 153, 255, 0.1),
+    transparent 5%
+  );
+  box-shadow: inset 0 0 5px rgba(102, 153, 255, 0.7),
+    0 0 20px rgba(102, 153, 255, 0.4);
+  opacity: 0.5;
+  z-index: 3;
+}
+
+.upper-eyelid {
+  position: absolute;
+  width: 95%;
+  height: 25%;
+  background: linear-gradient(to bottom, #000000, rgb(0, 0, 0));
+  border-radius: 30%;
+  left: 50%;
+  transform: translateX(-50%);
+  transform-origin: bottom;
+  opacity: 0.35;
+  pointer-events: none;
+  transition: width 1.5s, height 1.5s, opacity 1.5s;
+  top: 0;
+}
+
+.upper-eyelid.blinking {
+  animation: blink-upper 1.5s forwards;
+}
+
+.vein-texture {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  background: radial-gradient(
+    circle,
+    transparent,
+    rgba(102, 153, 255, 0.3) 30%,
+    transparent 60%
+  );
+  background-blend-mode: multiply;
+  border-radius: 50%;
+  z-index: 1;
+  opacity: 0.6;
+}
+
+.zoom-effect {
+  animation: zoomInAndFade 0.8s forwards;
+  transform-origin: center 33%;
+}

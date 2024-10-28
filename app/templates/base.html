@@ -1,22 +1,78 @@
-
+<!-- Dominic 2024 -->
 <!-- base.html -->
 
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Flask App</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
-</head>
-<body>
-    <header>
-        <h1>Flask App</h1>
-    </header>
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='style.css') }}"
+    />
+    <link rel="stylesheet" href="{{ url_for('static', filename='eye.css') }}" />
+    <style>
+      body {
+        font-family: "Gruppo", sans-serif;
+      }
+    </style>
+  </head>
+  <body>
     <main>
-        {% block content %}{% endblock %}
+      {% block content %}{% endblock %}
+
+      <!-- Corner Icon for Menu Toggle -->
+      <div class="base-menu-toggle">
+        <div class="base-bar"></div>
+        <div class="base-bar"></div>
+        <div class="base-bar"></div>
+      </div>
+
+      <!-- Sidebar Menu -->
+      <div class="base-sidebar-menu">
+        <div class="base-close-btn">&times;</div>
+        <ul class="base-menu-list">
+          {% if current_user.is_authenticated %}
+          <li><a href="{{ url_for('main.home') }}">HOME</a></li>
+          <li>
+            <a href="#">PROJECTS <span class="base-expand-icon">+</span></a>
+            <ul class="base-submenu">
+              <li><a href="#">MY PROJECTS</a></li>
+              <li><a href="#">NEW PROJECT</a></li>
+            </ul>
+          </li>
+          <li>
+            <a href="#">COMMUNICATION <span class="base-expand-icon">+</span></a>
+            <ul class="base-submenu">
+              <li><a href="#">CHAT</a></li>
+              <li><a href="#">INVITES</a></li>
+            </ul>
+          </li>
+          <li><a href="{{ url_for('main.profile') }}">PROFILE</a></li>
+          <li><a href="{{ url_for('main.settings') }}">SETTINGS</a></li>
+          <!--  if admin  -->
+          <li><a href="#">ADMIN PANEL</a></li>
+          <!--  endif  -->
+
+          <li><a href="#">ABOUT US</a></li>
+          <li><a href="{{ url_for('main.logout') }}">LOGOUT</a></li>
+          {% else %}
+          <li><a href="#">ABOUT US</a></li>
+          <li><a href="{{ url_for('main.login') }}">LOGIN</a></li>
+          <li><a href="{{ url_for('main.register') }}">REGISTER</a></li>
+          {% endif %}
+        </ul>
+      </div>
+
+      <!-- Footer Section -->
+<footer class="base-footer">
+  <p>&copy; 2024  EyeC.Design | All rights reserved.</p>
+</footer>
+
+
     </main>
     <script src="{{ url_for('static', filename='script.js') }}"></script>
-</body>
+    <script src="{{ url_for('static', filename='eye.js') }}"></script>
+  </body>
 </html>
-
