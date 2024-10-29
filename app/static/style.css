@@ -12,8 +12,8 @@ For ex for login title I did login-title instead of title
  Fonts A->Z               | ~Line 20-32    -Dominic Minnich
  Base Styling A->Z        | ~Line 34-197   -Dominic Minnich
  Login/Register A->Z      | ~Line 200-269  -Dominic Minnich
- .?.?.                    | ~Line ?-? 
- .?.?.                    | ~Line ?-?   
+ Profile Page Styles      | ~Line 570-603  -Kyle Benich
+ Settings Page Styles     | ~Line 605-635  -Kyle Benich
  */
 
 /* Font Styling A->Z*/
@@ -567,3 +567,69 @@ For ex for login title I did login-title instead of title
 
 /* ...   A->Z */
 
+/* Kyle Benich */
+/* style.css */
+
+/* Profile Page Styles */
+.profile-page {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100vh;
+  background-color: #07032c;
+}
+
+.profile-title {
+  font-size: 3rem;
+  color: #0073d1;
+  margin-bottom: 2rem;
+  text-align: center;
+}
+
+.profile-details {
+  background-color: #fff;
+  padding: 20px;
+  border-radius: 5px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  width: 50%;
+  text-align: left;
+}
+
+.profile-details p {
+  font-size: 1.2rem;
+  color: #555;
+  margin: 10px 0;
+}
+
+/* Settings Page Styles */
+.settings-page {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100vh;
+  background-color: #07032c;
+}
+
+.settings-title {
+  font-size: 3rem;
+  color: #0073d1;
+  margin-bottom: 2rem;
+  text-align: center;
+}
+
+.settings-details {
+  background-color: #fff;
+  padding: 20px;
+  border-radius: 5px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  width: 50%;
+  text-align: left;
+}
+
+.settings-details p {
+  font-size: 1.2rem;
+  color: #555;
+  margin: 10px 0;
+}

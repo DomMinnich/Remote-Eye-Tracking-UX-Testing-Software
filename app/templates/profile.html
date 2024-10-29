@@ -1,0 +1,14 @@
+<!-- Kyle Benich -->
+<!-- profile.html -->
+
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="profile-page">
+    <h2 class="profile-title">Profile</h2>
+    <div class="profile-details">
+        <p><strong>Username:</strong> {{ user.username }}</p>
+        <p><strong>Date joined:</strong> {{ user.date_joined }}</p>
+    </div>
+</div>
+{% endblock %}

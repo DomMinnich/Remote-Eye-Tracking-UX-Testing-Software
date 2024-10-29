@@ -13,7 +13,8 @@
 #    /login                 | ~Line 35-38   -Dominic Minnich
 #    /register              | ~Line 35-38   -Dominic Minnich
 #    User_loader            | ~Line 35-38   -Dominic Minnich
-#    .?.?.                  | ~Line ??
+#    /profile               | ~Line 96-100   -Kyle Benich
+#    /settings              | ~Line 102-106   -Kyle Benich
 
 
 #Imports
@@ -92,4 +93,15 @@ def register():
 def load_user(user_id):
     return User.query.get(int(user_id))
 
+# /profile
+@main.route('/profile')
+@login_required
+def profile():
+    return render_template('profile.html', user=current_user)
+
+# /settings
+@main.route('/settings')
+@login_required
+def settings():
+    return render_template('settings.html', user=current_user)
 
