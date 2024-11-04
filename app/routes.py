@@ -92,4 +92,8 @@ def register():
 def load_user(user_id):
     return User.query.get(int(user_id))
 
+@main.route('/ViewProjects')
+@login_required
+def ViewProjects():
+    return render_template('ViewProjects.html', user=current_user) 
 

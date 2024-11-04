@@ -1,0 +1,125 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<style>
+  /* Reset */
+  * {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+  }
+
+  body {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: #121212;
+    overflow: hidden;
+  }
+
+  /* Carousel styles */
+  .project-carousel {
+    display: flex;
+    align-items: center;
+    position: relative;
+    overflow: hidden;
+    width: 100%;
+    max-width: 600px;
+    margin: auto;
+    padding: 20px;
+  }
+
+  .carousel-wrapper {
+    overflow: hidden;
+    width: 100%;
+  }
+
+  .carousel-track {
+    display: flex;
+    transition: transform 0.5s ease;
+  }
+
+  .project-card {
+    flex: 0 0 100%;
+    text-align: center;
+  }
+
+  .project-img {
+    width: 100%;
+    height: 300px;
+    object-fit: cover;
+    border-radius: 8px;
+  }
+
+  .project-title {
+    margin-top: 10px;
+    font-size: 18px;
+    color: #fff;
+  }
+
+  .carousel-control {
+    background-color: rgba(0, 0, 0, 0.5);
+    color: white;
+    border: none;
+    cursor: pointer;
+    font-size: 24px;
+    padding: 10px;
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    z-index: 1;
+  }
+
+  .prev {
+    left: 10px;
+  }
+
+  .next {
+    right: 10px;
+  }
+</style>
+
+<div class="project-carousel">
+  <button class="carousel-control prev" onclick="scrollCarousel(-1)">&#10094;</button>
+  <div class="carousel-wrapper">
+    <div class="carousel-track" id="carousel-track">
+      <!-- Dynamic project cards -->
+      <div class="project-card" onclick="goToProject(1)">
+        <img src="https://via.placeholder.com/600" alt="Project 1" class="project-img" />
+        <h3 class="project-title">Project 1</h3>
+      </div>
+      <div class="project-card" onclick="goToProject(2)">
+        <img src="https://via.placeholder.com/600" alt="Project 2" class="project-img" />
+        <h3 class="project-title">Project 2</h3>
+      </div>
+      <div class="project-card" onclick="goToProject(3)">
+        <img src="https://via.placeholder.com/600" alt="Project 3" class="project-img" />
+        <h3 class="project-title">Project 3</h3>
+      </div>
+    </div>
+  </div>
+  <button class="carousel-control next" onclick="scrollCarousel(1)">&#10095;</button>
+</div>
+
+<script>
+  let currentIndex = 0;
+
+  function scrollCarousel(direction) {
+    const track = document.getElementById("carousel-track");
+    const items = document.querySelectorAll(".project-card");
+    const itemWidth = track.offsetWidth;
+
+    currentIndex += direction;
+    if (currentIndex < 0) currentIndex = items.length - 1;
+    if (currentIndex > items.length - 1) currentIndex = 0;
+
+    track.style.transform = `translateX(-${currentIndex * itemWidth}px)`;
+  }
+
+  function goToProject(projectId) {
+    window.location.href = `/project/${projectId}`;
+  }
+</script>
+
+{% endblock %}
+

@@ -39,9 +39,11 @@
             <a href="#">PROJECTS <span class="base-expand-icon">+</span></a>
             <ul class="base-submenu">
               <li><a href="#">MY PROJECTS</a></li>
+              <li><a href="{{ url_for('main.ViewProjects') }}">VIEW PROJECTS</a></li>
               <li><a href="#">NEW PROJECT</a></li>
             </ul>
           </li>
+          <li><a href="{{ url_for('main.ViewProjects') }}">VIEW PROJECTS</a></li> 
           <li>
             <a href="#">COMMUNICATION <span class="base-expand-icon">+</span></a>
             <ul class="base-submenu">
@@ -72,7 +74,7 @@
 
 
     </main>
-    <script src="{{ url_for('static', filename='script.js') }}"></script>
-    <script src="{{ url_for('static', filename='eye.js') }}"></script>
+    <script src="{{ url_for('static', filename='script.js') }}"></script> 
+    <script src="{{ url_for('static', filename='eye.js') }}"></script> 
   </body>
 </html>
