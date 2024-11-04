@@ -13,7 +13,7 @@
 #    /login                 | ~Line 35-38   -Dominic Minnich
 #    /register              | ~Line 35-38   -Dominic Minnich
 #    User_loader            | ~Line 35-38   -Dominic Minnich
-#    .?.?.                  | ~Line ??
+#    .?.?.                  | ~Line 100-104 -Sulaiman Hussain
 
 
 #Imports
@@ -96,4 +96,16 @@ def load_user(user_id):
 @login_required
 def ViewProjects():
     return render_template('ViewProjects.html', user=current_user) 
+
+# /profile
+@main.route('/profile')
+@login_required
+def profile():
+    return render_template('profile.html', user=current_user)
+
+# /settings
+@main.route('/settings')
+@login_required
+def settings():
+    return render_template('settings.html', user=current_user)
 
