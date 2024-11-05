@@ -41,7 +41,7 @@ expandableItems.forEach((item) => {
   item.addEventListener("click", (e) => {
     // Only toggle if the item has a submenu
     const submenu = item.querySelector(".base-submenu");
-    if (submenu) {
+    if (submenu && !e.target.closest(".base-submenu a")) {
       e.preventDefault();
       // Toggle the active class for smooth open/close
       item.classList.toggle("active");
@@ -53,6 +53,14 @@ expandableItems.forEach((item) => {
         submenu.style.maxHeight = submenu.scrollHeight + "px"; // Expand to content height
       }
     }
+  });
+
+  // Prevent submenu links from closing the submenu
+  const links = item.querySelectorAll(".base-submenu a");
+  links.forEach((link) => {
+    link.addEventListener("click", (e) => {
+      e.stopPropagation();
+    });
   });
 });
 
