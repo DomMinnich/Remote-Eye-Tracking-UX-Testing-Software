@@ -27,3 +27,15 @@ class User(db.Model, UserMixin):  # Inherit from UserMixin to add necessary prop
 
     def check_password(self, password):
         return check_password_hash(self.password_hash, password)
+    
+#Kyle Benich
+class Project(db.Model):
+    id = db.Column(db.Integer, primary_key=True) # Primary key, unique identifier for each project
+    link = db.Column(db.String(255), unique=True, nullable=False) # Unique link to Figma
+    created_at = db.Column(db.DateTime, nullable=False, default=datetime.utcnow) # Time of creation, used for EoL
+    username = db.Column(db.String(150), nullable=False) # Username of creator
+    visibility = db.Column(db.String(50), nullable=False) # Public or private, could do bool but idk which would default true
+    tasks = db.Column(db.JSON, nullable=False) # JSON object of tasks (could swap to array, but json is more flexible)
+    max_submissions = db.Column(db.Integer, nullable=False) # Max number of submissions
+    eol_time = db.Column(db.DateTime, nullable=False) # End of life time
+    collaborators = db.Column(db.JSON, nullable=False) # JSON object of collaborators (could swap to array, but json is more flexible)
