@@ -15,7 +15,7 @@
 #    User_loader            | ~Line 35-38   -Dominic Minnich
 #    /profile               | ~Line 96-100   -Kyle Benich
 #    /settings              | ~Line 102-106   -Kyle Benich
-
+#    /viewProjects          | ~Line 108-111   -Sulaiman Hussain
 
 #Imports
 from flask import Blueprint, render_template, redirect, session, url_for, flash, request, jsonify
@@ -105,3 +105,7 @@ def profile():
 def settings():
     return render_template('settings.html', user=current_user)
 
+@main.route('/ViewProjects')
+@login_required
+def ViewProjects():
+    return render_template('ViewProjects.html', user=current_user) 
