@@ -85,6 +85,10 @@
   <div class="register-form-group">
     {{ form.submit(class="register-btn-submit") }}
   </div>
+  <p class="login-link">
+    Already have an account?
+    <a href="{{ url_for('main.login') }}">Login</a>
+  </p>
 </form>
 </div>
 
