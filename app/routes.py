@@ -98,6 +98,7 @@ def register():
 # User_loader
 @login_manager.user_loader
 def load_user(user_id):
+    # Since user_id is now a UUID string, I removed the int() conversion
     return User.query.get(user_id)
 
 # /profile
