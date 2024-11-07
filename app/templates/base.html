@@ -60,7 +60,7 @@
           <li><a href="#">ABOUT US</a></li>
           <li><a href="{{ url_for('main.logout') }}">LOGOUT</a></li>
           {% else %}
-          <li><a href="#">ABOUT US</a></li>
+          <li><a href="{{ url_for('main.aboutUs') }}">ABOUT US</a></li>
           <li><a href="{{ url_for('main.login') }}">LOGIN</a></li>
           <li><a href="{{ url_for('main.register') }}">REGISTER</a></li>
           {% endif %}

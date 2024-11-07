@@ -1,0 +1,86 @@
+{% extends 'base.html' %}
+{% block content %}
+    <style>
+      body {
+        margin: 0;
+        overflow: hidden;
+      }
+      canvas {
+        display: block;
+      }
+      #controls {
+        position: absolute;
+        top: 10px;
+        left: 10px;
+        background-color: rgba(207, 150, 111, 0.438);
+        padding: 10px;
+        border-radius: 8px;
+        z-index: 1;
+        font-weight: bold;
+      }
+      input[type="range"] {
+        width: 100%;
+      }
+      #toggleControls {
+        position: absolute;
+        top: 10px;
+        right: 10px;
+        z-index: 1;
+        background-color: rgba(207, 150, 111, 0.438);
+        padding: 10px;
+        border-radius: 8px;
+        cursor: pointer;
+      }
+    </style>
+    <div id="controls">
+      <label> <input type="checkbox" id="draggable" /> Draggable </label><br />
+      <label>
+        <input type="checkbox" id="enableWallpaperMovement" /> Enable Wallpaper
+        Movement </label
+      ><br />
+      <label> <input type="checkbox" id="softOrbit" /> Soft Orbit </label><br />
+      <label>
+        Soft Orbit Speed:
+        <input
+          type="range"
+          id="softOrbitSpeed"
+          min="0.0001"
+          max="0.01"
+          step="0.0001"
+          value="0.001"
+        /> </label
+      ><br />
+      <label>
+        Orbit Focal Distance:
+        <input
+          type="number"
+          id="orbitFocalDistance"
+          min="1"
+          max="20"
+          step="0.2"
+          value="1"
+          onkeydown="return false;"
+          style="pointer-events: none;"
+          onmousedown="this.style.pointerEvents='auto';"
+          onmouseup="this.style.pointerEvents='none';"
+        />
+      </label>
+    </div>
+     <div id="toggleControls" style="user-select: none;">Toggle Controls</div>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/GLTFLoader.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/tween.js/18.6.4/tween.umd.js"></script>
+    <script src="script.js"></script>
+    <script>
+      document.getElementById('toggleControls').addEventListener('click', () => {
+        const controls = document.getElementById('controls');
+        if (controls.style.display === 'none') {
+          controls.style.display = 'block';
+        } else {
+          controls.style.display = 'none';
+        }
+      });
+    </script>
+    <script src="{{ url_for('static', filename='aboutUs3d.js') }}"></script>
+{% endblock %}

@@ -36,6 +36,12 @@ login_manager = LoginManager()
 def home():
     return render_template('home.html')
 
+# /aboutUs route
+@main.route('/aboutUs')
+def aboutUs():
+    return render_template('aboutUs.html')
+
+
 # /clear-login-success
 @main.route('/clear-login-success', methods=['POST'])
 def clear_login_success():
@@ -91,7 +97,7 @@ def register():
 # User_loader
 @login_manager.user_loader
 def load_user(user_id):
-    return User.query.get(int(user_id))
+    return User.query.get(user_id)
 
 # /profile
 @main.route('/profile')
