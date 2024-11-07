@@ -16,6 +16,7 @@
 #    /profile               | ~Line 96-100   -Kyle Benich
 #    /settings              | ~Line 102-106   -Kyle Benich
 #    /viewProjects          | ~Line 108-111   -Sulaiman Hussain
+#    /aboutUs               | ~Line 35-38   -Dominic Minnich
 
 #Imports
 from flask import Blueprint, render_template, redirect, session, url_for, flash, request, jsonify

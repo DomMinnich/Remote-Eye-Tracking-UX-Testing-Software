@@ -1,3 +1,7 @@
+// Dominic Minnich 2024
+// aboutUs3d.js
+
+
 // Configuration options
 const config = {
     draggable: true,
