@@ -8,15 +8,15 @@
 #    LoginManager Instance          | ~Line 35-38   -Dominic Minnich
 #               ROUTES A->Z
 #    /                      | ~Line 35-38   -Dominic Minnich
-#    /clear-login-sucess    | ~Line 39-43   -Dominic Minnich
-#    /logout                | ~Line 46-50   -Dominic Minnich
-#    /login                 | ~Line 52-68   -Dominic Minnich
-#    /register              | ~Line 73-95   -Dominic Minnich
-#    /User_loader           | ~Line 97-101  -Dominic Minnich
-#    /profile               | ~Line 104-108 -Kyle Benich
-#    /settings              | ~Line 110-114 -Kyle Benich
-#    /viewProjects          | ~Line 116-119 -Sulaiman Hussain
-#    /adminPanel            | ~Line 121-127 -Dominic Minnich
+#    /clear-login-sucess    | ~Line 35-38   -Dominic Minnich
+#    /logout                | ~Line 35-38   -Dominic Minnich
+#    /login                 | ~Line 35-38   -Dominic Minnich
+#    /register              | ~Line 35-38   -Dominic Minnich
+#    User_loader            | ~Line 35-38   -Dominic Minnich
+#    /profile               | ~Line 96-100   -Kyle Benich
+#    /settings              | ~Line 102-106   -Kyle Benich
+#    /viewProjects          | ~Line 108-111   -Sulaiman Hussain
+#    /aboutUs               | ~Line 35-38   -Dominic Minnich
 
 # Imports
 from flask import (
@@ -36,6 +36,7 @@ from flask_login import (
     current_user,
     LoginManager,
 )
+
 from .models import db, User
 from .forms import RegistrationForm, LoginForm
 
@@ -51,6 +52,12 @@ login_manager = LoginManager()
 @login_required
 def home():
     return render_template("home.html", user=current_user)
+
+
+# /aboutUs route
+@main.route('/aboutUs')
+def aboutUs():
+    return render_template('aboutUs.html')
 
 
 # /clear-login-success
@@ -139,7 +146,6 @@ def register():
 def load_user(user_id):
     # Since user_id is now a UUID string, I removed the int() conversion
     return User.query.get(user_id)
-
 
 # /profile
 @main.route("/profile")
