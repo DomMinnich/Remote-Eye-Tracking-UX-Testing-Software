@@ -26,6 +26,11 @@ This project is a Senior Capstone focused on developing an innovative software s
 
 The goal of this project is to develop a software tool that allows for remote UX testing by tracking eye movements using the built-in cameras of users' devices. By leveraging advanced algorithms, the software processes video feeds to provide quantitative data on user focus areas during digital interactions.
 
+## Vision Explanation -Dominic Minnich (Team Leader)
+For much better zoom quality go here🔎:
+[Vision_Explanation.pdf](https://github.com/user-attachments/files/17666940/Vision_Explanation.pdf)
+![Vision_Explanation-1](https://github.com/user-attachments/assets/92582af9-428a-440a-8bfa-901e11573cec)
+
 ### Key Features
 
 1. **Camera-Based Eye Tracking**: Tracks eye movement using standard webcams, eliminating the need for specialized hardware.
