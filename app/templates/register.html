@@ -64,17 +64,75 @@
   <form method="POST" class="register-form">
     {{ form.hidden_tag() }}
     <div class="register-form-group">
-      {{ form.username(id="username", placeholder="Enter your username") }}
+      {{ form.username(id="username", placeholder="Enter your username") }} {%
+      if form.username.errors %}
+      <div class="form-error">
+        {% for error in form.username.errors %}
+        <small class="text-danger">{{ error }}</small>
+        {% endfor %}
+      </div>
+      {% endif %}
     </div>
+
     <div class="register-form-group">
-      {{ form.password(id="password", placeholder="Enter your password") }}
+      {{ form.email(id="email", placeholder="Enter your email") }} {% if
+      form.email.errors %}
+      <div class="form-error">
+        {% for error in form.email.errors %}
+        <small class="text-danger">{{ error }}</small>
+        {% endfor %}
+      </div>
+      {% endif %}
     </div>
+
     <div class="register-form-group">
-      {{ form.confirm_password(id="confirm_password", placeholder="Confirm your password") }}
+      {{ form.first_name(id="first_name", placeholder="Enter your first name")
+      }} {% if form.first_name.errors %}
+      <div class="form-error">
+        {% for error in form.first_name.errors %}
+        <small class="text-danger">{{ error }}</small>
+        {% endfor %}
+      </div>
+      {% endif %}
     </div>
+
+    <div class="register-form-group">
+      {{ form.last_name(id="last_name", placeholder="Enter your last name") }}
+      {% if form.last_name.errors %}
+      <div class="form-error">
+        {% for error in form.last_name.errors %}
+        <small class="text-danger">{{ error }}</small>
+        {% endfor %}
+      </div>
+      {% endif %}
+    </div>
+
+    <div class="register-form-group">
+      {{ form.password(id="password", placeholder="Enter your password") }} {%
+      if form.password.errors %}
+      <div class="form-error">
+        {% for error in form.password.errors %}
+        <small class="text-danger">{{ error }}</small>
+        {% endfor %}
+      </div>
+      {% endif %}
+    </div>
+
+    <div class="register-form-group">
+      {{ form.confirm_password(id="confirm_password", placeholder="Confirm your
+      password") }} {% if form.confirm_password.errors %}
+      <div class="form-error">
+        {% for error in form.confirm_password.errors %}
+        <small class="text-danger">{{ error }}</small>
+        {% endfor %}
+      </div>
+      {% endif %}
+    </div>
+
     <div class="register-form-group">
       {{ form.submit(class="register-btn-submit") }}
     </div>
+
     <p class="login-link">
       Already have an account?
       <a href="{{ url_for('main.login') }}">Login</a>

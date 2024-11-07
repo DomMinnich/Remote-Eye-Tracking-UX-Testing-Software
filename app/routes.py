@@ -8,14 +8,15 @@
 #    LoginManager Instance          | ~Line 35-38   -Dominic Minnich
 #               ROUTES A->Z
 #    /                      | ~Line 35-38   -Dominic Minnich
-#    /clear-login-sucess    | ~Line 35-38   -Dominic Minnich
-#    /logout                | ~Line 35-38   -Dominic Minnich
-#    /login                 | ~Line 35-38   -Dominic Minnich
-#    /register              | ~Line 35-38   -Dominic Minnich
-#    User_loader            | ~Line 35-38   -Dominic Minnich
-#    /profile               | ~Line 96-100   -Kyle Benich
-#    /settings              | ~Line 102-106   -Kyle Benich
-#    /viewProjects          | ~Line 108-111   -Sulaiman Hussain
+#    /clear-login-sucess    | ~Line 39-43   -Dominic Minnich
+#    /logout                | ~Line 46-50   -Dominic Minnich
+#    /login                 | ~Line 52-68   -Dominic Minnich
+#    /register              | ~Line 73-95   -Dominic Minnich
+#    /User_loader           | ~Line 97-101  -Dominic Minnich
+#    /profile               | ~Line 104-108 -Kyle Benich
+#    /settings              | ~Line 110-114 -Kyle Benich
+#    /viewProjects          | ~Line 116-119 -Sulaiman Hussain
+#    /adminPanel            | ~Line 121-127 -Dominic Minnich
 
 #Imports
 from flask import Blueprint, render_template, redirect, session, url_for, flash, request, jsonify
@@ -29,12 +30,11 @@ login_manager = LoginManager()
 
 
 # Routes
-
 # /
 @main.route('/')
 @login_required
 def home():
-    return render_template('home.html')
+    return render_template('home.html', user=current_user)
 
 # /clear-login-success
 @main.route('/clear-login-success', methods=['POST'])
@@ -67,20 +67,23 @@ def login():
 
     return render_template('login.html', form=form)
 
-
-    return render_template('login.html', form=form)
-
 # /register
 @main.route('/register', methods=['GET', 'POST'])
 def register():
     form = RegistrationForm()
     if form.validate_on_submit():
         user = User.query.filter_by(username=form.username.data).first()
-        
         if user:
             flash('Username already exists. Please choose a different username.', 'danger')
         else:
-            new_user = User(username=form.username.data)
+            new_user = User(
+                username=form.username.data,
+                email=form.email.data,
+                first_name=form.first_name.data,
+                last_name=form.last_name.data,
+                role='student',  # default role
+                calibrated=False  # default value
+            )
             new_user.set_password(form.password.data)
             db.session.add(new_user)
             db.session.commit()
@@ -91,7 +94,9 @@ def register():
 # User_loader
 @login_manager.user_loader
 def load_user(user_id):
-    return User.query.get(int(user_id))
+    # Since user_id is now a UUID string, I removed the int() conversion
+    return User.query.get(user_id)
+
 
 # /profile
 @main.route('/profile')
@@ -109,3 +114,11 @@ def settings():
 @login_required
 def ViewProjects():
     return render_template('ViewProjects.html', user=current_user) 
+
+@main.route('/adminPanel')
+@login_required
+def adminPanel():
+    if current_user.role == 'admin': # Only admins can access the admin panel
+        return render_template('adminPanel.html', user=current_user)
+    else:
+        return redirect(url_for('main.home')) # Redirect to home if not an admin
