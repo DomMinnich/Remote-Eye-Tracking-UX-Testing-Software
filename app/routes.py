@@ -171,6 +171,10 @@ def settings():
 def view_projects():
     # Assuming `current_user` has a `projects` attribute as shown in your uploaded image
     projects_list = current_user.projects  # Access the projects list (e.g., from a JSON attribute)
+    
+    if projects_list is None:
+        projects_list = []
+    
     project_ids = [project['project_id'] for project in projects_list]
     # Query the Project table to get details for all associated projects
     projects = Project.query.filter(Project.id.in_(project_ids)).all()
