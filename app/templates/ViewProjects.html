@@ -116,31 +116,30 @@
     display: inline-block;
     width: 150px; /* Ensures alignment */
   }
+
+  /* styling for project unavailable */
+  #unavailable {
+    font-size: 30px;
+    color: white;
+  }
 </style>
 
 <div class="project-container">
+  {% for project in projects %}
   <button class="edit-button" onclick="editProject()">Edit</button>
   <div class="project-carousel">
     <button class="carousel-control prev" onclick="scrollCarousel(-1)">&#10094;</button>
     <div class="carousel-wrapper">
       <div class="carousel-track" id="carousel-track">
         <!-- Dynamic project cards -->
-        <div class="project-card" onclick="goToProject(1)">
-          <img src="https://via.placeholder.com/600" alt="Project 1" class="project-img" />
-          <h3 class="project-title">Project 1</h3>
-        </div>
-        <div class="project-card" onclick="goToProject(2)">
-          <img src="https://via.placeholder.com/600" alt="Project 2" class="project-img" />
-          <h3 class="project-title">Project 2</h3>
-        </div>
-        <div class="project-card" onclick="goToProject(3)">
-          <img src="https://via.placeholder.com/600" alt="Project 3" class="project-img" />
-          <h3 class="project-title">Project 3</h3>
+        <div class="project-card" onclick="goToProject({{ project.id }})">
+          <img src="https://via.placeholder.com/600" alt="Project {{ project.id }}" class="project-img" />
+          <h3 class="project-title">{{ project.title }}</h3>
         </div>
       </div>
     </div>
     <button class="carousel-control next" onclick="scrollCarousel(1)">&#10095;</button>
-  </div>
+    {% endfor %}
 
   <!-- Project details -->
   {% if projects %}
@@ -161,11 +160,13 @@
       <span class="detail-title">Reviews:</span> <span>{{ projects[0].reviews }}</span>
     </div>
   </div>
+    {% else %}
+    <p id = "unavailable">No Projects Available</p>
+    <img id="duck" src="{{ url_for('static', filename='duck.gif') }}" alt="duck" />
+
+
   {% endif %}
 </div>
-
- 
-  
 
 <script>
   let currentIndex = 0;
