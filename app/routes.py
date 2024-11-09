@@ -166,9 +166,9 @@ def settings():
 #def ViewProjects():
  # return render_template("ViewProjects.html", user=current_user)
 
-@main.route("/ViewProjects")
+@main.route("/viewProjects")
 @login_required
-def view_projects():
+def viewProjects():
     # Assuming `current_user` has a `projects` attribute as shown in your uploaded image
     projects_list = current_user.projects  # Access the projects list (e.g., from a JSON attribute)
     

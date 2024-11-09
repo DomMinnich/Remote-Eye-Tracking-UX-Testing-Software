@@ -143,23 +143,27 @@
   </div>
 
   <!-- Project details -->
+  {% if projects %}
   <div class="project-details">
-      <div class="detail-item">
-          <span class="detail-title">Title:</span> <span>{{ project.title }}</span>
-      </div>
-      <div class="detail-item">
-          <span class="detail-title">Description:</span> <span>{{ project.description }}</span>
-      </div>
-      <div class="detail-item">
-          <span class="detail-title">Visibility:</span> <span>{{ 'Public' if project.visibility else 'Private' }}</span>
-      </div>
-      <div class="detail-item">
-          <span class="detail-title">Shareable time left:</span> <span>{{ project.eol_time }}</span>
-      </div>
-      <div class="detail-item">
-          <span class="detail-title">Reviews:</span> <span>{{ project.reviews }}</span>
-      </div>
+    <div class="detail-item">
+      <span class="detail-title">Title:</span> <span>{{ projects[0].title }}</span>
+    </div>
+    <div class="detail-item">
+      <span class="detail-title">Description:</span> <span>{{ projects[0].description }}</span>
+    </div>
+    <div class="detail-item">
+      <span class="detail-title">Visibility:</span> <span>{{ 'Public' if projects[0].visibility else 'Private' }}</span>
+    </div>
+    <div class="detail-item">
+      <span class="detail-title">Shareable time left:</span> <span>{{ projects[0].eol_time }}</span>
+    </div>
+    <div class="detail-item">
+      <span class="detail-title">Reviews:</span> <span>{{ projects[0].reviews }}</span>
+    </div>
   </div>
+  {% endif %}
+</div>
+
  
   
 
