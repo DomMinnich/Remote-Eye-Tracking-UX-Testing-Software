@@ -37,7 +37,7 @@ from flask_login import (
     LoginManager,
 )
 
-from .models import db, User
+from .models import db, User, Project
 from .forms import RegistrationForm, LoginForm
 
 # Blueprint
@@ -161,10 +161,24 @@ def settings():
     return render_template("settings.html", user=current_user)
 
 
-@main.route("/ViewProjects")
+#@main.route("/ViewProjects")
+#@login_required
+#def ViewProjects():
+ # return render_template("ViewProjects.html", user=current_user)
+
+@main.route("/viewProjects")
 @login_required
-def ViewProjects():
-    return render_template("ViewProjects.html", user=current_user)
+def viewProjects():
+    # Assuming `current_user` has a `projects` attribute as shown in your uploaded image
+    projects_list = current_user.projects  # Access the projects list (e.g., from a JSON attribute)
+    
+    if projects_list is None:
+        projects_list = []
+    
+    project_ids = [project['project_id'] for project in projects_list]
+    # Query the Project table to get details for all associated projects
+    projects = Project.query.filter(Project.id.in_(project_ids)).all()
+    return render_template("ViewProjects.html", user=current_user, projects=projects)
 
 
 @main.route("/adminPanel")
