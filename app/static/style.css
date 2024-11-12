@@ -14,6 +14,7 @@ For ex for login title I did login-title instead of title
  Login/Register A->Z      | ~Line 200-269  -Dominic Minnich
  Profile Page Styles      | ~Line 570-603  -Kyle Benich
  Settings Page Styles     | ~Line 605-635  -Kyle Benich
+ create-project Styles    | ~Line 637-676  -Kyle Benich
  */
 
 /* Font Styling A->Z*/
@@ -632,4 +633,97 @@ For ex for login title I did login-title instead of title
   font-size: 1.2rem;
   color: #555;
   margin: 10px 0;
+}
+
+/* Create Project Page Styles */
+.create-project-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  background-color: #0d0d0d; /* Darker background */
+  color: #ffffff;
+  padding: 20px;
+}
+
+.create-project-container h2 {
+  font-size: 2.5rem;
+  color: #0073d1;
+  margin-bottom: 20px;
+}
+
+.create-project-container .form-group {
+  margin-bottom: 15px;
+  text-align: center; /* Center text */
+}
+
+.create-project-container .form-group label {
+  font-size: 1rem;
+  color: #ffffff;
+}
+
+.create-project-container .form-group input[type="text"],
+.create-project-container .form-group input[type="password"],
+.create-project-container .form-group input[type="email"],
+.create-project-container .form-group input[type="number"],
+.create-project-container .form-group textarea {
+  width: 100%;
+  padding: 10px;
+  font-size: 1rem;
+  color: #ffffff;
+  background-color: #333;
+  border: none;
+  border-bottom: 2px solid #0062d1;
+  border-radius: 4px;
+  margin-bottom: 10px; /* Add space between inputs */
+}
+
+.create-project-container .form-group input[type="text"]:focus,
+.create-project-container .form-group input[type="password"]:focus,
+.create-project-container .form-group input[type="email"]:focus,
+.create-project-container .form-group input[type="number"]:focus,
+.create-project-container .form-group textarea:focus {
+  outline: none;
+  border-bottom: 2px solid #00d1b2;
+}
+
+.create-project-container .form-error {
+  color: #ff0000;
+  font-size: 0.875rem;
+}
+
+.create-project-container .btn-submit {
+  width: 100%;
+  padding: 10px;
+  font-size: 1rem;
+  background-color: #0073d1;
+  color: #ffffff;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.create-project-container .btn-submit:hover {
+  background-color: #005bb5;
+}
+
+.add-task-btn,
+.add-collaborator-btn {
+  background-color: #0073d1;
+  color: #ffffff;
+  border: none;
+  border-radius: 50%;
+  cursor: pointer;
+  font-size: 1.5rem;
+  width: 30px;
+  height: 30px;
+  margin-top: 10px;
+  transition: background-color 0.3s;
+}
+
+.add-task-btn:hover,
+.add-collaborator-btn:hover {
+  background-color: #005bb5;
 }

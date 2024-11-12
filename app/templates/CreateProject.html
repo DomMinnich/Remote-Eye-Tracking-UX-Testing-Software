@@ -1,0 +1,77 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="create-project-container">
+  <h2>Create New Project</h2>
+  <form method="POST" action="{{ url_for('main.createProject') }}" onsubmit="return validateForm()">
+    {{ form.hidden_tag() }}
+    <div class="form-group">
+      {{ form.link.label }}<br>
+      {{ form.link(size=32) }}<br>
+      <span id="link-error" class="form-error" style="display: none;">[Invalid link. Only Figma domain links are allowed.]</span>
+      {% for error in form.link.errors %}
+        <span class="form-error">[{{ error }}]</span>
+      {% endfor %}
+    </div>
+    <div class="form-group">
+      {{ form.tasks.label }}<br>
+      <div id="tasks-container">
+        {{ form.tasks(size=32) }}<br>
+      </div>
+      <button type="button" class="add-task-btn">+</button>
+      {% for error in form.tasks.errors %}
+        <span class="form-error">[{{ error }}]</span>
+      {% endfor %}
+    </div>
+    <div class="form-group">
+      {{ form.collaborators.label }}<br>
+      <div id="collaborators-container">
+        {{ form.collaborators(size=32) }}<br>
+      </div>
+      <button type="button" class="add-collaborator-btn">+</button>
+      {% for error in form.collaborators.errors %}
+        <span class="form-error">[{{ error }}]</span>
+      {% endfor %}
+    </div>
+    <div class="form-group">
+      <input type="submit" value="Create Project" class="btn-submit">
+    </div>
+  </form>
+</div>
+
+<script>
+  document.querySelector('.add-task-btn').addEventListener('click', function() {
+    const container = document.getElementById('tasks-container');
+    const input = document.createElement('input');
+    input.type = 'text';
+    input.name = 'tasks';
+    input.size = 32;
+    container.appendChild(input);
+    container.appendChild(document.createElement('br'));
+  });
+
+  document.querySelector('.add-collaborator-btn').addEventListener('click', function() {
+    const container = document.getElementById('collaborators-container');
+    const input = document.createElement('input');
+    input.type = 'text';
+    input.name = 'collaborators';
+    input.size = 32;
+    container.appendChild(input);
+    container.appendChild(document.createElement('br'));
+  });
+
+  function validateForm() {
+    const linkInput = document.querySelector('input[name="link"]');
+    const linkError = document.getElementById('link-error');
+    const figmaPattern = /^https:\/\/www\.figma\.com\/(file|design)\/.+$/;
+
+    if (!figmaPattern.test(linkInput.value)) {
+      linkError.style.display = 'block';
+      return false;
+    }
+
+    linkError.style.display = 'none';
+    return true;
+  }
+</script>
+{% endblock %}

@@ -17,6 +17,7 @@
 #    /settings              | ~Line 102-106   -Kyle Benich
 #    /viewProjects          | ~Line 108-111   -Sulaiman Hussain
 #    /aboutUs               | ~Line 35-38   -Dominic Minnich
+#    /createProject         | ~Line 194-212   -Kyle Benich
 
 # Imports
 from flask import (
@@ -38,7 +39,9 @@ from flask_login import (
 )
 
 from .models import db, User, Project
-from .forms import RegistrationForm, LoginForm
+from .forms import RegistrationForm, LoginForm, CreateProjectForm  # Import the form
+import json  # Import json module
+import logging  # Import logging module
 
 # Blueprint
 main = Blueprint("main", __name__)
@@ -169,14 +172,12 @@ def settings():
 @main.route("/viewProjects")
 @login_required
 def viewProjects():
-    # Assuming `current_user` has a `projects` attribute as shown in your uploaded image
     projects_list = current_user.projects  # Access the projects list (e.g., from a JSON attribute)
     
     if projects_list is None:
         projects_list = []
     
     project_ids = [project['project_id'] for project in projects_list]
-    # Query the Project table to get details for all associated projects
     projects = Project.query.filter(Project.id.in_(project_ids)).all()
     return render_template("ViewProjects.html", user=current_user, projects=projects)
 
@@ -188,3 +189,28 @@ def adminPanel():
         return render_template("adminPanel.html", user=current_user)
     else:
         return redirect(url_for("main.home"))  # Redirect to home if not an admin
+
+# Configure logging KB
+logging.basicConfig(level=logging.INFO) #Can be deleted later, just for testing
+
+@main.route("/createProject", methods=["GET", "POST"])
+@login_required
+def createProject():
+    form = CreateProjectForm()
+    if form.validate_on_submit():
+        new_project = Project(
+            link=form.link.data,
+            creator=current_user.id,
+            priviledged=True,
+            tasks=json.loads(form.tasks.data),  # Convert tasks to JSON
+            max_submissions=form.max_submissions.data,
+            eol_time=form.eol_time.data,
+            collaborators=json.loads(form.collaborators.data),  # Convert collaborators to JSON
+            numPauses=0
+        )
+        db.session.add(new_project)
+        db.session.commit()
+        logging.info(f"Project created: {new_project}")  # Log project details, checking if it was created successfully
+        flash("Project created successfully!", "success")
+        return redirect(url_for("main.viewProjects"))
+    return render_template("CreateProject.html", form=form)
