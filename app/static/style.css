@@ -677,6 +677,7 @@ For ex for login title I did login-title instead of title
   border-bottom: 2px solid #0062d1;
   border-radius: 4px;
   margin-bottom: 10px; /* Add space between inputs */
+  resize: none; /* Prevent manual resizing */
 }
 
 .create-project-container .form-group input[type="text"]:focus,
@@ -726,4 +727,28 @@ For ex for login title I did login-title instead of title
 .add-task-btn:hover,
 .add-collaborator-btn:hover {
   background-color: #005bb5;
+}
+
+/* Styles for input wrapper and remove button */
+.input-wrapper {
+  display: flex;
+  align-items: center;
+  margin-bottom: 10px;
+}
+
+.remove-btn {
+  background-color: #888;
+  color: #fff;
+  border: none;
+  border-radius: 50%;
+  cursor: pointer;
+  font-size: 1rem;
+  width: 20px;
+  height: 20px;
+  margin-left: 10px;
+  transition: background-color 0.3s;
+}
+
+.remove-btn:hover {
+  background-color: #555;
 }

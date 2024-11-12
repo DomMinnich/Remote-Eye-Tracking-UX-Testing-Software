@@ -42,6 +42,7 @@ from .models import db, User, Project
 from .forms import RegistrationForm, LoginForm, CreateProjectForm  # Import the form
 import json  # Import json module
 import logging  # Import logging module
+from datetime import datetime, timedelta  # Import datetime and timedelta
 
 # Blueprint
 main = Blueprint("main", __name__)
@@ -198,19 +199,30 @@ logging.basicConfig(level=logging.INFO) #Can be deleted later, just for testing
 def createProject():
     form = CreateProjectForm()
     if form.validate_on_submit():
+        default_eol_time = datetime.utcnow() + timedelta(weeks=1)  # Set default end of life time to 1 week from now
+        default_max_submissions = 100  # Set default max submissions
+
+        # Handle tasks and collaborators as JSON arrays
+        tasks = json.loads(form.tasks.data)
+        collaborators = json.loads(form.collaborators.data)
+
         new_project = Project(
             link=form.link.data,
             creator=current_user.id,
             priviledged=True,
-            tasks=json.loads(form.tasks.data),  # Convert tasks to JSON
-            max_submissions=form.max_submissions.data,
-            eol_time=form.eol_time.data,
-            collaborators=json.loads(form.collaborators.data),  # Convert collaborators to JSON
+            tasks=tasks,  # Use tasks JSON
+            max_submissions=default_max_submissions,  # Use default max submissions
+            eol_time=default_eol_time,  # Use default end of life time
+            collaborators=collaborators,  # Use collaborators JSON
             numPauses=0
         )
         db.session.add(new_project)
         db.session.commit()
-        logging.info(f"Project created: {new_project}")  # Log project details, checking if it was created successfully
         flash("Project created successfully!", "success")
         return redirect(url_for("main.viewProjects"))
+    else:
+        logging.warning("Form validation failed")  # Log when the form validation fails
+        for field, errors in form.errors.items():
+            for error in errors:
+                logging.warning(f"Validation error in {field}: {error}")  # Log validation errors
     return render_template("CreateProject.html", form=form)

@@ -10,6 +10,7 @@
 
 from wtforms import PasswordField
 from wtforms import StringField, SubmitField, PasswordField, BooleanField, IntegerField, DateTimeField
+from wtforms import TextAreaField  # Add this import
 from wtforms.validators import DataRequired, Length, EqualTo, Email, URL
 from .models import User
 from flask_wtf import FlaskForm
@@ -54,7 +55,6 @@ class LoginForm(FlaskForm):
 # CreateProjectForm class, inherits from FlaskForm
 class CreateProjectForm(FlaskForm):
     link = StringField('Project Link', validators=[DataRequired(), URL()])
-    tasks = StringField('Tasks', validators=[DataRequired()])
-    max_submissions = IntegerField('Max Submissions', validators=[DataRequired()])
-    eol_time = DateTimeField('End of Life Time', validators=[DataRequired()])
-    collaborators = StringField('Collaborators', validators=[DataRequired()])
+    tasks = TextAreaField('Tasks', validators=[DataRequired()])
+    collaborators = TextAreaField('Collaborators', validators=[DataRequired()])
+    submit = SubmitField('Create Project')

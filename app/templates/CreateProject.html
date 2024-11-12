@@ -3,7 +3,7 @@
 {% block content %}
 <div class="create-project-container">
   <h2>Create New Project</h2>
-  <form method="POST" action="{{ url_for('main.createProject') }}" onsubmit="return validateForm()">
+  <form method="POST" action="{{ url_for('main.createProject') }}" onsubmit="return prepareForm()">
     {{ form.hidden_tag() }}
     <div class="form-group">
       {{ form.link.label }}<br>
@@ -16,7 +16,7 @@
     <div class="form-group">
       {{ form.tasks.label }}<br>
       <div id="tasks-container">
-        {{ form.tasks(size=32) }}<br>
+        {{ form.tasks(rows=1, oninput="autoResize(this)") }}<br>
       </div>
       <button type="button" class="add-task-btn">+</button>
       {% for error in form.tasks.errors %}
@@ -26,7 +26,7 @@
     <div class="form-group">
       {{ form.collaborators.label }}<br>
       <div id="collaborators-container">
-        {{ form.collaborators(size=32) }}<br>
+        {{ form.collaborators(rows=1, oninput="autoResize(this)") }}<br>
       </div>
       <button type="button" class="add-collaborator-btn">+</button>
       {% for error in form.collaborators.errors %}
@@ -42,22 +42,44 @@
 <script>
   document.querySelector('.add-task-btn').addEventListener('click', function() {
     const container = document.getElementById('tasks-container');
-    const input = document.createElement('input');
-    input.type = 'text';
+    const inputWrapper = document.createElement('div');
+    inputWrapper.className = 'input-wrapper';
+    const input = document.createElement('textarea');
     input.name = 'tasks';
-    input.size = 32;
-    container.appendChild(input);
-    container.appendChild(document.createElement('br'));
+    input.rows = 1;
+    input.cols = 32;
+    input.oninput = function() { autoResize(this); };
+    const removeBtn = document.createElement('button');
+    removeBtn.type = 'button';
+    removeBtn.className = 'remove-btn';
+    removeBtn.innerHTML = 'x';
+    removeBtn.addEventListener('click', function() {
+      container.removeChild(inputWrapper);
+    });
+    inputWrapper.appendChild(input);
+    inputWrapper.appendChild(removeBtn);
+    container.appendChild(inputWrapper);
   });
 
   document.querySelector('.add-collaborator-btn').addEventListener('click', function() {
     const container = document.getElementById('collaborators-container');
-    const input = document.createElement('input');
-    input.type = 'text';
+    const inputWrapper = document.createElement('div');
+    inputWrapper.className = 'input-wrapper';
+    const input = document.createElement('textarea');
     input.name = 'collaborators';
-    input.size = 32;
-    container.appendChild(input);
-    container.appendChild(document.createElement('br'));
+    input.rows = 1;
+    input.cols = 32;
+    input.oninput = function() { autoResize(this); };
+    const removeBtn = document.createElement('button');
+    removeBtn.type = 'button';
+    removeBtn.className = 'remove-btn';
+    removeBtn.innerHTML = 'x';
+    removeBtn.addEventListener('click', function() {
+      container.removeChild(inputWrapper);
+    });
+    inputWrapper.appendChild(input);
+    inputWrapper.appendChild(removeBtn);
+    container.appendChild(inputWrapper);
   });
 
   function validateForm() {
@@ -71,6 +93,27 @@
     }
 
     linkError.style.display = 'none';
+    return true;
+  }
+
+  function autoResize(textarea) {
+    textarea.style.height = 'auto';
+    textarea.style.height = textarea.scrollHeight + 'px';
+  }
+
+  function prepareForm() {
+    if (!validateForm()) {
+      return false;
+    }
+
+    const tasksContainer = document.getElementById('tasks-container');
+    const tasks = Array.from(tasksContainer.querySelectorAll('textarea')).map(textarea => textarea.value);
+    document.querySelector('textarea[name="tasks"]').value = JSON.stringify(tasks);
+
+    const collaboratorsContainer = document.getElementById('collaborators-container');
+    const collaborators = Array.from(collaboratorsContainer.querySelectorAll('textarea')).map(textarea => textarea.value);
+    document.querySelector('textarea[name="collaborators"]').value = JSON.stringify(collaborators);
+
     return true;
   }
 </script>
