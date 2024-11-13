@@ -6,12 +6,12 @@
 #    *Imports                     | ~Line 12-17
 #    Login                      | ~Line 22-30   -Dominic Minnich
 #    Registration               | ~Line 35-38   -Dominic Minnich
-#    .?.?.                      | ~Line ??
-
+#    Create Project             | ~Line 54-60   -Kyle Benich
 
 from wtforms import PasswordField
-from wtforms import StringField, SubmitField, PasswordField, BooleanField
-from wtforms.validators import DataRequired, Length, EqualTo, Email
+from wtforms import StringField, SubmitField, PasswordField, BooleanField, IntegerField, DateTimeField
+from wtforms import TextAreaField  # Add this import
+from wtforms.validators import DataRequired, Length, EqualTo, Email, URL
 from .models import User
 from flask_wtf import FlaskForm
 
@@ -50,3 +50,11 @@ class LoginForm(FlaskForm):
     password = PasswordField("Password", validators=[DataRequired()])
     remember_me = BooleanField("Remember Me")
     submit = SubmitField("Login")
+
+
+# CreateProjectForm class, inherits from FlaskForm
+class CreateProjectForm(FlaskForm):
+    link = StringField('Project Link', validators=[DataRequired(), URL()])
+    tasks = TextAreaField('Tasks', validators=[DataRequired()])
+    collaborators = TextAreaField('Collaborators', validators=[DataRequired()])
+    submit = SubmitField('Create Project')
