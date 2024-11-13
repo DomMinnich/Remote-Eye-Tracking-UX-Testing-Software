@@ -15,6 +15,8 @@ const menuToggle = document.querySelector(".base-menu-toggle");
 const sidebarMenu = document.querySelector(".base-sidebar-menu");
 const closeBtn = document.querySelector(".base-close-btn");
 const expandableItems = document.querySelectorAll(".base-menu-list > li");
+const dimmingOverlay = document.querySelector(".base-dimming-overlay");
+
 
 // Set initial max-height for submenus
 expandableItems.forEach((item) => {
@@ -28,12 +30,20 @@ expandableItems.forEach((item) => {
 menuToggle.addEventListener("click", () => {
   sidebarMenu.classList.toggle("active");
   menuToggle.classList.toggle("active"); // Rotate bars to "X" shape
+  if (sidebarMenu.classList.contains("active")) {
+    dimmingOverlay.classList.add("active");
+    dimmingOverlay.classList.remove("inactive");
+  } else {
+    dimmingOverlay.classList.add("inactive");
+    dimmingOverlay.classList.remove("active");
+  }
 });
 
-// Close the sidebar when the close button is clicked
 closeBtn.addEventListener("click", () => {
   sidebarMenu.classList.remove("active");
   menuToggle.classList.remove("active"); // Reset menu icon to bars
+  dimmingOverlay.classList.add("inactive");
+  dimmingOverlay.classList.remove("active");
 });
 
 // Expand/Collapse submenus with smooth animation

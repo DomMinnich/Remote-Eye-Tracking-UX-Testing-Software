@@ -6,6 +6,7 @@
 #    *Imports                     | ~Line 12-17
 #    Blueprint                      | ~Line 22-30   -Dominic Minnich
 #    LoginManager Instance          | ~Line 35-38   -Dominic Minnich
+#    ValueSet                       | ~Line 35-38   -Dominic Minnich
 #               ROUTES A->Z
 #    /                      | ~Line 35-38   -Dominic Minnich
 #    /clear-login-sucess    | ~Line 35-38   -Dominic Minnich
@@ -18,6 +19,7 @@
 #    /viewProjects          | ~Line 108-111   -Sulaiman Hussain
 #    /aboutUs               | ~Line 35-38   -Dominic Minnich
 #    /createProject         | ~Line 194-212   -Kyle Benich
+
 
 # Imports
 from flask import (
@@ -50,18 +52,45 @@ main = Blueprint("main", __name__)
 login_manager = LoginManager()
 
 
+# VALUESET (for ease of value changing)  --Notice how these values are called in home.html route (mimic this)
+
+# Max number of submissions per privilaged project
+MAX_SUBMISSIONS_PER_USER_PRIVILAGED = 100
+# Max number of submissions per unprivilaged project
+MAX_SUBMISSIONS_PER_USER_UNPRIVILAGED = 10
+# Max number of projects per Project Manager/Admin
+MAX_PROJECTS_PER_USER_PRILVILAGED = 100
+# Max number of projects per student
+MAX_PROJECTS_PER_USER_UNPRIVILAGED = 4
+# End of life time for a privilaged project
+EOL_TIME_PRIVILAGED = 300
+# End of life time for a unprivilaged project
+EOL_TIME_UNPRIVILAGED = 10
+
+
 # Routes
 # /
 @main.route("/")
 @login_required
 def home():
-    return render_template("home.html", user=current_user)
+    projects = (
+        current_user.projects or []
+    )  # Get the user's projects or an empty list if None
+    return render_template(
+        "home.html",
+        user=current_user,
+        projects=projects,
+        max_projects_per_user_unprivilaged=MAX_PROJECTS_PER_USER_UNPRIVILAGED,
+        max_projects_per_user_privilaged=MAX_PROJECTS_PER_USER_PRILVILAGED,
+        max_submissions_per_user_privilaged=MAX_SUBMISSIONS_PER_USER_PRIVILAGED,
+        max_submissions_per_user_unprivilaged=MAX_SUBMISSIONS_PER_USER_UNPRIVILAGED,
+    )
 
 
 # /aboutUs route
-@main.route('/aboutUs')
+@main.route("/aboutUs")
 def aboutUs():
-    return render_template('aboutUs.html')
+    return render_template("aboutUs.html")
 
 
 # /clear-login-success
@@ -151,6 +180,7 @@ def load_user(user_id):
     # Since user_id is now a UUID string, I removed the int() conversion
     return User.query.get(user_id)
 
+
 # /profile
 @main.route("/profile")
 @login_required
@@ -165,10 +195,11 @@ def settings():
     return render_template("settings.html", user=current_user)
 
 
-#@main.route("/ViewProjects")
-#@login_required
-#def ViewProjects():
- # return render_template("ViewProjects.html", user=current_user)
+# @main.route("/ViewProjects")
+# @login_required
+# def ViewProjects():
+# return render_template("ViewProjects.html", user=current_user)
+
 
 @main.route("/viewProjects")
 @login_required
@@ -226,3 +257,4 @@ def createProject():
             for error in errors:
                 logging.warning(f"Validation error in {field}: {error}")  # Log validation errors
     return render_template("CreateProject.html", form=form)
+
