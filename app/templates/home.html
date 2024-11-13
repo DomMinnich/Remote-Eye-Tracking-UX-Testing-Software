@@ -1,7 +1,6 @@
 {% extends 'base.html' %} {% block content %}
 
 <style>
-  /* Reset and Base Styling */
 
   body,
   html {
@@ -11,13 +10,22 @@
     color: #ffffff;
   }
 
-  /* Main Content Styling */
+
   .main-content {
     flex: 1;
     padding: 20px;
     overflow-y: auto;
     position: relative;
     z-index: 1;
+  }
+
+  .main-content::-webkit-scrollbar {
+    display: none;
+  }
+
+  .main-content {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
   }
 
   /* Header with Profile */
@@ -75,6 +83,8 @@
     flex-direction: column;
     justify-content: center;
     color: #ffffff;
+    opacity: 0; /* Start invisible */
+    animation: bounceIn 1s ease-out forwards;
   }
 
   .card h2 {
@@ -82,7 +92,6 @@
     margin-bottom: 10px;
   }
 
-  /* Small and Large Card Variants */
   .card-small {
     height: 150px;
   }
@@ -210,6 +219,25 @@
     animation: base-gradientShift 10s ease infinite;
     border: 1px solid #fff;
     border-radius: 5px;
+  }
+
+  /* Bounce Animation */
+  @keyframes bounceIn {
+    0% {
+      transform: translateY(-100vh);
+      opacity: 0;
+    }
+    60% {
+      transform: translateY(30px);
+      opacity: 1;
+    }
+    80% {
+      transform: translateY(-10px);
+    }
+    100% {
+      transform: translateY(0);
+      opacity: 1;
+    }
   }
 </style>
 
@@ -361,7 +389,13 @@
     }
 
     setInterval(createRaindrop, 150);
+
+    // Trigger bounce animation on cards
+    cards.forEach((card, index) => {
+      card.style.animationDelay = `${index * 0.1}s`;
+    });
   });
+
   document.addEventListener("DOMContentLoaded", function () {
     const projectCount = document.getElementById("projectCount").innerText;
     const projectTotal = document.getElementById("projectTotal").innerText;
