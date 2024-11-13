@@ -218,6 +218,14 @@ def createProject():
         )
         db.session.add(new_project)
         db.session.commit()
+ 
+        # KB 
+        # Update user's projects JSON. 
+        if current_user.projects is None:
+            current_user.projects = []
+        current_user.projects.append(new_project.id)
+        db.session.commit()
+
         flash("Project created successfully!", "success")
         return redirect(url_for("main.viewProjects"))
     else:
