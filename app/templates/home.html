@@ -5,16 +5,10 @@
 />
 <style>
         /* Reset and Base Styling */
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: 'Roboto', sans-serif;
-        }
+   
 
         body, html {
             height: 100%;
-            display: flex;
             overflow: hidden;
             background: #1E1E2F;
             color: #FFFFFF;
@@ -47,6 +41,9 @@
             display: flex;
             align-items: center;
             gap: 10px;
+            position: absolute;
+            top: 10px;
+            right: 10px;
         }
 
         .profile img {
@@ -195,8 +192,8 @@
   <div class="dashboard-header">
     <h1>Dashboard</h1>
     <div class="profile">
-      <img src="https://via.placeholder.com/40" alt="Profile Picture" />
-      <span class="profile-name">John Doe</span>
+      <img src="{{ current_user.picture or 'https://via.placeholder.com/40' }}" alt="Profile Picture" />
+      <span class="profile-name">{{ current_user.first_name }} {{ current_user.last_name }}</span>
     </div>
   </div>
 
@@ -206,17 +203,17 @@
     <div class="card card-small">
       <h2>Profile</h2>
       <div class="profile-info">
-        <p>Name: John Doe</p>
-        <p>Email: john.doe@example.com</p>
-        <p>Role: Admin</p>
+        <p>Name: {{ current_user.first_name }} {{ current_user.last_name }}</p>
+        <p>Email: {{ current_user.email }}</p>
+        <p>Role: {{ current_user.role }}</p>
       </div>
     </div>
     <div class="card card-small">
       <h2>Projects Owned</h2>
       <div class="project-chart">
         <p>
-          <span id="projectCount">4</span> out of
-          <span id="projectTotal">10</span>
+          <span id="projectCount">{{ projects|length }}</span> out of
+          <span id="projectTotal">{{ max_projects_per_user_privilaged if current_user.role == "admin" else max_projects_per_user_unprivilaged }}</span>
         </p>
         <div class="progress-bar">
           <div class="progress-fill" id="progressFill"></div>
@@ -231,20 +228,20 @@
     </div>
 
     <!-- Large Cards -->
-    <div class="card card-large">
+       <div class="card card-large">
       <h2>Projects List</h2>
       <ul style="list-style: none; padding-left: 0">
-        <li>Project 1: Web Application</li>
-        <li>Project 2: Mobile App</li>
-        <li>Project 3: Data Analysis</li>
+        {% for project in projects %}
+          <li>{{ project.title }}</li>
+        {% endfor %}
       </ul>
     </div>
     <div class="card card-large">
-      <h2>Duplicate Profile Card</h2>
+      <h2>Card</h2>
       <div class="profile-info">
-        <p>Name: John Doe</p>
-        <p>Email: john.doe@example.com</p>
-        <p>Role: Admin</p>
+        <p>Waddle</p>
+        <p>Waddle</p>
+        <p>Waddle</p>
       </div>
     </div>
   </div>

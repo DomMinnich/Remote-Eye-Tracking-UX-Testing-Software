@@ -6,6 +6,7 @@
 #    *Imports                     | ~Line 12-17
 #    Blueprint                      | ~Line 22-30   -Dominic Minnich
 #    LoginManager Instance          | ~Line 35-38   -Dominic Minnich
+#    ValueSet                       | ~Line 35-38   -Dominic Minnich
 #               ROUTES A->Z
 #    /                      | ~Line 35-38   -Dominic Minnich
 #    /clear-login-sucess    | ~Line 35-38   -Dominic Minnich
@@ -17,6 +18,8 @@
 #    /settings              | ~Line 102-106   -Kyle Benich
 #    /viewProjects          | ~Line 108-111   -Sulaiman Hussain
 #    /aboutUs               | ~Line 35-38   -Dominic Minnich
+#    /get_user_projects     | ~Line 35-38   -Dominic Minnich
+
 
 # Imports
 from flask import (
@@ -46,18 +49,45 @@ main = Blueprint("main", __name__)
 login_manager = LoginManager()
 
 
+# VALUESET (for ease of value changing)  --Notice how these values are called in home.html route (mimic this)
+
+# Max number of submissions per privilaged project
+MAX_SUBMISSIONS_PER_USER_PRIVILAGED = 100
+# Max number of submissions per unprivilaged project
+MAX_SUBMISSIONS_PER_USER_UNPRIVILAGED = 10
+# Max number of projects per Project Manager/Admin
+MAX_PROJECTS_PER_USER_PRILVILAGED = 100
+# Max number of projects per student
+MAX_PROJECTS_PER_USER_UNPRIVILAGED = 4
+# End of life time for a privilaged project
+EOL_TIME_PRIVILAGED = 300
+# End of life time for a unprivilaged project
+EOL_TIME_UNPRIVILAGED = 10
+
+
 # Routes
 # /
 @main.route("/")
 @login_required
 def home():
-    return render_template("home.html", user=current_user)
+    projects = (
+        current_user.projects or []
+    )  # Get the user's projects or an empty list if None
+    return render_template(
+        "home.html",
+        user=current_user,
+        projects=projects,
+        max_projects_per_user_unprivilaged=MAX_PROJECTS_PER_USER_UNPRIVILAGED,
+        max_projects_per_user_privilaged=MAX_PROJECTS_PER_USER_PRILVILAGED,
+        max_submissions_per_user_privilaged=MAX_SUBMISSIONS_PER_USER_PRIVILAGED,
+        max_submissions_per_user_unprivilaged=MAX_SUBMISSIONS_PER_USER_UNPRIVILAGED,
+    )
 
 
 # /aboutUs route
-@main.route('/aboutUs')
+@main.route("/aboutUs")
 def aboutUs():
-    return render_template('aboutUs.html')
+    return render_template("aboutUs.html")
 
 
 # /clear-login-success
@@ -147,6 +177,7 @@ def load_user(user_id):
     # Since user_id is now a UUID string, I removed the int() conversion
     return User.query.get(user_id)
 
+
 # /profile
 @main.route("/profile")
 @login_required
@@ -161,21 +192,24 @@ def settings():
     return render_template("settings.html", user=current_user)
 
 
-#@main.route("/ViewProjects")
-#@login_required
-#def ViewProjects():
- # return render_template("ViewProjects.html", user=current_user)
+# @main.route("/ViewProjects")
+# @login_required
+# def ViewProjects():
+# return render_template("ViewProjects.html", user=current_user)
+
 
 @main.route("/viewProjects")
 @login_required
 def viewProjects():
     # Assuming `current_user` has a `projects` attribute as shown in your uploaded image
-    projects_list = current_user.projects  # Access the projects list (e.g., from a JSON attribute)
-    
+    projects_list = (
+        current_user.projects
+    )  # Access the projects list (e.g., from a JSON attribute)
+
     if projects_list is None:
         projects_list = []
-    
-    project_ids = [project['project_id'] for project in projects_list]
+
+    project_ids = [project["project_id"] for project in projects_list]
     # Query the Project table to get details for all associated projects
     projects = Project.query.filter(Project.id.in_(project_ids)).all()
     return render_template("ViewProjects.html", user=current_user, projects=projects)
@@ -188,3 +222,14 @@ def adminPanel():
         return render_template("adminPanel.html", user=current_user)
     else:
         return redirect(url_for("main.home"))  # Redirect to home if not an admin
+
+
+# Get current user projects (ids) route
+@main.route("/get_user_projects", methods=["GET"])
+@login_required
+def get_user_projects():
+    user_id = current_user.id
+    user_projects = User.query.get(user_id).projects
+    if user_projects is None:
+        user_projects = []
+    return jsonify(user_projects)
