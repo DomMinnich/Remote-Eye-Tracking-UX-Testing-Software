@@ -1,8 +1,5 @@
 {% extends 'base.html' %} {% block content %}
-<link
-  href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;700&display=swap"
-  rel="stylesheet"
-/>
+
 <style>
   /* Reset and Base Styling */
 
@@ -237,9 +234,8 @@
     </div>
   </div>
 
-  <!-- Dashboard Cards (Modular) -->
+  <!-- Dashboard Cards-->
   <div class="card-container">
-    <!-- Small Cards -->
     <div class="card card-small">
       <a href="/profile" class="card-button">Go to Profile</a>
       <h2>Profile</h2>
@@ -271,7 +267,6 @@
       <h2>Blank Card</h2>
     </div>
 
-    <!-- Large Cards -->
     <div class="card card-large">
       <a href="/viewProjects" class="card-button">Go to Projects List</a>
       <h2>Projects List</h2>
@@ -293,7 +288,7 @@
   </div>
 </div>
 
-<!-- Rain and Splash Effect Script -->
+<!-- Rain and Splash Effect -->
 <script>
   document.addEventListener("DOMContentLoaded", function () {
     const rainContainer = document.querySelector(".raindrops");
