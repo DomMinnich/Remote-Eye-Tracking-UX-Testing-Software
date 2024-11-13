@@ -18,7 +18,6 @@
 #    /settings              | ~Line 102-106   -Kyle Benich
 #    /viewProjects          | ~Line 108-111   -Sulaiman Hussain
 #    /aboutUs               | ~Line 35-38   -Dominic Minnich
-#    /get_user_projects     | ~Line 35-38   -Dominic Minnich
 
 
 # Imports
@@ -224,12 +223,3 @@ def adminPanel():
         return redirect(url_for("main.home"))  # Redirect to home if not an admin
 
 
-# Get current user projects (ids) route
-@main.route("/get_user_projects", methods=["GET"])
-@login_required
-def get_user_projects():
-    user_id = current_user.id
-    user_projects = User.query.get(user_id).projects
-    if user_projects is None:
-        user_projects = []
-    return jsonify(user_projects)
