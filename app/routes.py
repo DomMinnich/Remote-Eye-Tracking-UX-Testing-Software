@@ -194,11 +194,17 @@ def profile():
 def settings():
     return render_template("settings.html", user=current_user)
 
-
-# @main.route("/ViewProjects")
-# @login_required
-# def ViewProjects():
-# return render_template("ViewProjects.html", user=current_user)
+@main.route("/editProjects")
+@login_required
+def editProjects():
+    projects_list = current_user.projects  # Access the projects list (e.g., from a JSON attribute)
+    
+    if projects_list is None:
+        projects_list = []
+    
+    project_ids = [project['project_id'] for project in projects_list]
+    projects = Project.query.filter(Project.id.in_(project_ids)).all()
+    return render_template("EditProjects.html", user=current_user, projects=projects)
 
 
 @main.route("/viewProjects")
