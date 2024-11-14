@@ -155,78 +155,79 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 });
 
-// Home page animations
 document.addEventListener("DOMContentLoaded", function () {
   const rainContainer = document.querySelector(".home-raindrops");
   const cards = document.querySelectorAll(".home-card");
 
-  function createRaindrop() {
-    const raindrop = document.createElement("div");
-    raindrop.classList.add("home-raindrop");
-    const leftPosition = Math.random() * 100;
-    raindrop.style.left = `${leftPosition}vw`;
-    const fallDuration = Math.random() * 2 + 1;
-    raindrop.style.animationDuration = `${fallDuration}s`;
+  if (rainContainer) {
+    function createRaindrop() {
+      const raindrop = document.createElement("div");
+      raindrop.classList.add("home-raindrop");
+      const leftPosition = Math.random() * 100;
+      raindrop.style.left = `${leftPosition}vw`;
+      const fallDuration = Math.random() * 2 + 1;
+      raindrop.style.animationDuration = `${fallDuration}s`;
 
-    rainContainer.appendChild(raindrop);
+      rainContainer.appendChild(raindrop);
 
-    const collisionInterval = setInterval(() => {
-      const hitElement = checkCollision(raindrop, cards);
-      if (hitElement) {
-        createSplashOnElement(raindrop, hitElement);
-        clearInterval(collisionInterval);
-      }
-    }, 20);
+      const collisionInterval = setInterval(() => {
+        const hitElement = checkCollision(raindrop, cards);
+        if (hitElement) {
+          createSplashOnElement(raindrop, hitElement);
+          clearInterval(collisionInterval);
+        }
+      }, 20);
 
-    setTimeout(() => {
-      if (raindrop.parentNode) {
-        createSplashAtBottom(raindrop.style.left);
-        raindrop.remove();
-      }
-    }, fallDuration * 1000);
-  }
-
-  function createSplashAtBottom(leftPosition) {
-    const splash = document.createElement("div");
-    splash.classList.add("home-splash");
-    splash.style.left = leftPosition;
-    splash.style.bottom = "0";
-    rainContainer.appendChild(splash);
-    setTimeout(() => {
-      splash.remove();
-    }, 400);
-  }
-
-  function createSplashOnElement(raindrop, element) {
-    const raindropRect = raindrop.getBoundingClientRect();
-    raindrop.remove();
-    const splash = document.createElement("div");
-    splash.classList.add("home-splash");
-    splash.style.left = `${raindropRect.left}px`;
-    splash.style.top = `${raindropRect.top}px`;
-    document.body.appendChild(splash);
-    setTimeout(() => {
-      splash.remove();
-    }, 400);
-  }
-
-  function checkCollision(raindrop, elements) {
-    const raindropRect = raindrop.getBoundingClientRect();
-    for (let element of elements) {
-      const rect = element.getBoundingClientRect();
-      if (
-        raindropRect.right > rect.left &&
-        raindropRect.left < rect.right &&
-        raindropRect.bottom > rect.top &&
-        raindropRect.top < rect.bottom
-      ) {
-        return element;
-      }
+      setTimeout(() => {
+        if (raindrop.parentNode) {
+          createSplashAtBottom(raindrop.style.left);
+          raindrop.remove();
+        }
+      }, fallDuration * 1000);
     }
-    return null;
-  }
 
-  setInterval(createRaindrop, 150);
+    function createSplashAtBottom(leftPosition) {
+      const splash = document.createElement("div");
+      splash.classList.add("home-splash");
+      splash.style.left = leftPosition;
+      splash.style.bottom = "0";
+      rainContainer.appendChild(splash);
+      setTimeout(() => {
+        splash.remove();
+      }, 400);
+    }
+
+    function createSplashOnElement(raindrop, element) {
+      const raindropRect = raindrop.getBoundingClientRect();
+      raindrop.remove();
+      const splash = document.createElement("div");
+      splash.classList.add("home-splash");
+      splash.style.left = `${raindropRect.left}px`;
+      splash.style.top = `${raindropRect.top}px`;
+      document.body.appendChild(splash);
+      setTimeout(() => {
+        splash.remove();
+      }, 400);
+    }
+
+    function checkCollision(raindrop, elements) {
+      const raindropRect = raindrop.getBoundingClientRect();
+      for (let element of elements) {
+        const rect = element.getBoundingClientRect();
+        if (
+          raindropRect.right > rect.left &&
+          raindropRect.left < rect.right &&
+          raindropRect.bottom > rect.top &&
+          raindropRect.top < rect.bottom
+        ) {
+          return element;
+        }
+      }
+      return null;
+    }
+
+    setInterval(createRaindrop, 150);
+  }
 
   // Trigger bounce animation on cards
   cards.forEach((card, index) => {
@@ -235,16 +236,18 @@ document.addEventListener("DOMContentLoaded", function () {
 });
 
 document.addEventListener("DOMContentLoaded", function () {
-  const projectCount = document.getElementById("home-projectCount").innerText;
-  const projectTotal = document.getElementById("home-projectTotal").innerText;
+  const projectCount = document.getElementById("home-projectCount");
+  const projectTotal = document.getElementById("home-projectTotal");
   const progressFill = document.getElementById("home-progressFill");
 
-  function updateProgressBar() {
-    const count = parseInt(projectCount);
-    const total = parseInt(projectTotal);
-    const percentage = (count / total) * 100;
-    progressFill.style.width = `${percentage}%`;
-  }
+  if (projectCount && projectTotal && progressFill) {
+    function updateProgressBar() {
+      const count = parseInt(projectCount.innerText);
+      const total = parseInt(projectTotal.innerText);
+      const percentage = (count / total) * 100;
+      progressFill.style.width = `${percentage}%`;
+    }
 
-  updateProgressBar();
+    updateProgressBar();
+  }
 });

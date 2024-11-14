@@ -3,6 +3,7 @@
 
 {% extends 'base.html' %} {% block content %}
 
+<link rel="stylesheet" href="{{ url_for('static', filename='eye.css') }}" />
 <style>
   /* Reset */
   * {
@@ -23,8 +24,6 @@
 
 <!-- Centered Container -->
 <div class="login-page">
-
-
   <!-- Animated Eye Container -->
   <div class="eye-container">
     <div class="eye-socket">
@@ -80,5 +79,7 @@
     </p>
   </form>
 </div>
+<script src="{{ url_for('static', filename='eye.js') }}"></script>
+
 
 {% endblock %}

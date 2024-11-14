@@ -3,6 +3,7 @@
 
 {% extends 'base.html' %} {% block content %}
 
+<link rel="stylesheet" href="{{ url_for('static', filename='eye.css') }}" />
 <style>
   /* Reset */
   * {
@@ -61,35 +62,38 @@
   {% endif %} {% endwith %}
 
   <!-- Form Section -->
- <!-- Form Section -->
-<form method="POST" class="register-form">
-  {{ form.hidden_tag() }}
-  <div class="register-form-group">
-    {{ form.username(id="username", placeholder="Enter your username") }}
-  </div>
-  <div class="register-form-group">
-    {{ form.email(id="email", placeholder="Enter your email") }}
-  </div>
-  <div class="register-form-group">
-    {{ form.first_name(id="first_name", placeholder="Enter your first name") }}
-  </div>
-  <div class="register-form-group">
-    {{ form.last_name(id="last_name", placeholder="Enter your last name") }}
-  </div>
-  <div class="register-form-group">
-    {{ form.password(id="password", placeholder="Enter your password") }}
-  </div>
-  <div class="register-form-group">
-    {{ form.confirm_password(id="confirm_password", placeholder="Confirm your password") }}
-  </div>
-  <div class="register-form-group">
-    {{ form.submit(class="register-btn-submit") }}
-  </div>
-  <p class="login-link">
-    Already have an account?
-    <a href="{{ url_for('main.login') }}">Login</a>
-  </p>
-</form>
+  <!-- Form Section -->
+  <form method="POST" class="register-form">
+    {{ form.hidden_tag() }}
+    <div class="register-form-group">
+      {{ form.username(id="username", placeholder="Enter your username") }}
+    </div>
+    <div class="register-form-group">
+      {{ form.email(id="email", placeholder="Enter your email") }}
+    </div>
+    <div class="register-form-group">
+      {{ form.first_name(id="first_name", placeholder="Enter your first name")
+      }}
+    </div>
+    <div class="register-form-group">
+      {{ form.last_name(id="last_name", placeholder="Enter your last name") }}
+    </div>
+    <div class="register-form-group">
+      {{ form.password(id="password", placeholder="Enter your password") }}
+    </div>
+    <div class="register-form-group">
+      {{ form.confirm_password(id="confirm_password", placeholder="Confirm your
+      password") }}
+    </div>
+    <div class="register-form-group">
+      {{ form.submit(class="register-btn-submit") }}
+    </div>
+    <p class="login-link">
+      Already have an account?
+      <a href="{{ url_for('main.login') }}">Login</a>
+    </p>
+  </form>
 </div>
+<script src="{{ url_for('static', filename='eye.js') }}"></script>
 
 {% endblock %}
