@@ -17,6 +17,7 @@ For ex for login title I did login-title instead of title
  Profile Page Styles      | ~Line 570-603  -Kyle Benich
  Settings Page Styles     | ~Line 605-635  -Kyle Benich
  create-project Styles    | ~Line 637-676  -Kyle Benich
+ View Project Specific    | ~Line 1061-1284-Dominic Minnich
  */
 
 /* Font Styling A->Z*/
@@ -470,12 +471,12 @@ For ex for login title I did login-title instead of title
   margin-bottom: 10px;
 }
 
- /* Clock and Date Styles */
- .home-clock-date {
+/* Clock and Date Styles */
+.home-clock-date {
   display: flex;
   flex-direction: column;
   align-items: center;
-  font-family: 'Courier New', Courier, monospace;
+  font-family: "Courier New", Courier, monospace;
   font-size: 2rem;
   color: #f0f0f0;
   padding: 20px;
@@ -501,8 +502,6 @@ For ex for login title I did login-title instead of title
     opacity: 1;
   }
 }
-
-
 
 .home-dashboard-header {
   display: flex;
@@ -1055,3 +1054,233 @@ For ex for login title I did login-title instead of title
 .remove-btn:hover {
   background-color: #555;
 }
+
+/* VRS viewReviewSpecific   A->Z */
+
+.vrs-arrow {
+  width: 10px;
+  height: 10px;
+  background: #fff;
+  clip-path: polygon(50% 0%, 0% 100%, 100% 100%);
+}
+
+.vrs-back-button {
+  position: absolute;
+  top: 5%;
+  left: 10%;
+  background-color: #6a5acd;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 16px;
+  text-decoration: none;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+  transition: background-color 0.3s, transform 0.3s;
+}
+
+.vrs-back-button:hover {
+  background-color: #483d8b;
+  transform: scale(1.05);
+}
+
+.vrs-box {
+  border: 2px solid #fff;
+  box-shadow: 0 0 10px rgba(255, 255, 255, 0.237);
+  border-radius: 50px;
+  padding: 0;
+  margin: 0;
+}
+
+.vrs-controls {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 15px;
+  background: #000000;
+  position: absolute;
+  bottom: 0;
+  width: 100%;
+  box-sizing: border-box;
+  opacity: 0;
+  transition: opacity 0.5s ease-in-out;
+  color: #fff;
+}
+
+.vrs-controls button {
+  background: none;
+  border: 2px solid #fff;
+  color: #fff;
+  cursor: pointer;
+  padding: 10px;
+  margin: 0 5px;
+  border-radius: 50%;
+  transition: background 0.3s, transform 0.3s, color 0.3s;
+  box-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
+  width: 40px;
+  height: 40px;
+}
+
+.vrs-controls button:hover {
+  background: rgba(255, 255, 255, 0.2);
+  transform: scale(1.1);
+  color: #ffddf4;
+}
+
+.vrs-lens {
+  position: absolute;
+  border: 2px solid #000;
+  width: 100px;
+  height: 100px;
+  overflow: hidden;
+  pointer-events: none;
+  background-color: rgba(255, 255, 255, 0.5);
+  border-radius: 50%;
+}
+
+.vrs-review_date {
+  color: white;
+  font-size: 1.5rem;
+  margin-top: 1rem;
+  float: right;
+}
+
+.vrs-review_id {
+  color: white;
+  font-size: 1.5rem;
+  margin-top: 1rem;
+  float: left;
+}
+
+.vrs-review_tasks {
+  color: white;
+  font-size: 1.5rem;
+  margin-top: 1rem;
+}
+
+.vrs-review_title {
+  color: white;
+  font-size: 1.5rem;
+  margin-top: 1rem;
+}
+
+.vrs-seek-bar,
+.vrs-volume-bar {
+  flex: 1;
+  margin: 0 10px;
+  appearance: none;
+  background: #2f2f5a;
+  height: 8px;
+  border-radius: 5px;
+  cursor: pointer;
+  outline: none;
+}
+
+.vrs-seek-bar::-webkit-slider-thumb,
+.vrs-volume-bar::-webkit-slider-thumb {
+  appearance: none;
+  width: 16px;
+  height: 16px;
+  background: #fff;
+  border-radius: 50%;
+  cursor: pointer;
+  box-shadow: 0 0 10px #ff6ec7;
+  transition: box-shadow 0.2s ease-in-out;
+}
+
+.vrs-seek-bar::-webkit-slider-thumb:hover,
+.vrs-volume-bar::-webkit-slider-thumb:hover {
+  box-shadow: 0 0 20px #ff6ec7;
+}
+
+.vrs-time-display {
+  font-size: 16px;
+  color: #fff;
+  text-shadow: 0 0 5px #6a5acd;
+  padding-right: 10px;
+  margin-right: 10px;
+  border-right: 1px solid #fff;
+  font-weight: bold;
+}
+
+.vrs-tooltip-icon {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  font-size: 24px;
+  color: #fff;
+  background: rgba(0, 0, 0, 0.5);
+  padding: 5px;
+  border-radius: 50%;
+  cursor: pointer;
+  z-index: 10;
+}
+
+.vrs-tooltip-item {
+  position: absolute;
+  color: #fff;
+  font-size: 14px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.vrs-tooltip-item p {
+  margin: 5px 0;
+}
+
+.vrs-tooltip-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.7);
+  display: none;
+  align-items: center;
+  justify-content: center;
+  z-index: 9;
+}
+
+.vrs-video-container {
+  position: relative;
+  width: 900px;
+  height: 500px;
+  border-radius: 20px;
+  overflow: hidden;
+  background-color: #000;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.6), 0 0 20px #3a2a5e;
+  border: 3px solid #6a5acd;
+}
+
+.vrs-video-container:hover .vrs-controls {
+  opacity: 1;
+}
+
+#vrs-backward {
+  padding: 0;
+  margin: 0;
+}
+
+#vrs-forward {
+  padding: 0;
+  margin: 0;
+}
+
+#vrs-fullscreen {
+  margin-left: 10px;
+  border-radius: 0;
+}
+
+#vrs-speed-control {
+  background: #19192f;
+  color: #fff;
+  border: 2px solid #fff;
+  padding: 5px;
+  border-radius: 5px;
+  cursor: pointer;
+  outline: none;
+}
+
+/* ??? */
