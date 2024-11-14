@@ -501,7 +501,7 @@ For ex for login title I did login-title instead of title
 }
 
 .login-title {
-  position: absolute;
+  position: relative;
   top: 10%;
   font-size: 5rem;
   margin-bottom: 5rem;
@@ -591,7 +591,7 @@ For ex for login title I did login-title instead of title
 }
 
 .register-title {
-  position: absolute;
+  position: relative;
   top: 10%;
   font-size: 5rem;
   margin-bottom: 5rem;
