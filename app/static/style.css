@@ -1078,6 +1078,7 @@ For ex for login title I did login-title instead of title
   text-decoration: none;
   box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
   transition: background-color 0.3s, transform 0.3s;
+  animation: home-fadeIn 4s ease-in-out;
 }
 
 .vrs-back-button:hover {
@@ -1144,6 +1145,7 @@ For ex for login title I did login-title instead of title
   font-size: 1.5rem;
   margin-top: 1rem;
   float: right;
+  animation: home-fadeIn 4s ease-in-out;
 }
 
 .vrs-review_id {
@@ -1151,18 +1153,21 @@ For ex for login title I did login-title instead of title
   font-size: 1.5rem;
   margin-top: 1rem;
   float: left;
+  animation: home-fadeIn 4s ease-in-out;
 }
 
 .vrs-review_tasks {
   color: white;
   font-size: 1.5rem;
   margin-top: 1rem;
+  animation: home-fadeIn 4s ease-in-out;
 }
 
 .vrs-review_title {
   color: white;
   font-size: 1.5rem;
   margin-top: 1rem;
+  animation: home-fadeIn 4s ease-in-out;
 }
 
 .vrs-seek-bar,
@@ -1252,6 +1257,7 @@ For ex for login title I did login-title instead of title
   background-color: #000;
   box-shadow: 0 10px 30px rgba(0, 0, 0, 0.6), 0 0 20px #3a2a5e;
   border: 3px solid #6a5acd;
+  animation: home-bounceIn 1s ease-out forwards;
 }
 
 .vrs-video-container:hover .vrs-controls {
