@@ -410,13 +410,14 @@ For ex for login title I did login-title instead of title
   position: relative;
   overflow: hidden;
   box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.5);
-  transition: home-transform 0.2s;
+  transition: box-shadow 0.2s, outline 0.2s;
   display: flex;
   flex-direction: column;
   justify-content: center;
   color: #ffffff;
   opacity: 0; /* Start invisible */
   animation: home-bounceIn 1s ease-out forwards;
+  z-index: 1;
 }
 
 .home-card-container {
@@ -436,7 +437,8 @@ For ex for login title I did login-title instead of title
 }
 
 .home-card:hover {
-  box-shadow: 0px 0px 30px rgba(255, 0, 128, 0.342);
+  box-shadow: 0px 0px 25px rgb(79, 15, 48);
+  outline: 2px solid #ffffff;
 }
 
 .home-card .home-card-button {
@@ -452,7 +454,7 @@ For ex for login title I did login-title instead of title
   text-decoration: none;
   background: linear-gradient(
     135deg,
-    #a10050d8,
+    #cb0769d8,
     #002657c7,
     #530534c9,
     #a34373c2
