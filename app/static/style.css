@@ -479,6 +479,7 @@ For ex for login title I did login-title instead of title
   font-size: 2rem;
   color: #f0f0f0;
   padding: 20px;
+  animation: home-fadeIn 4s ease-in-out;
 }
 
 .home-clock {
@@ -492,11 +493,23 @@ For ex for login title I did login-title instead of title
   opacity: 0.8;
 }
 
+@keyframes home-fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+
+
 .home-dashboard-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
   padding: 10px 0;
+  animation: home-fadeIn 4s ease-in-out;
 }
 
 .home-dashboard-header h1 {
