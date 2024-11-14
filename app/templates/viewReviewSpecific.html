@@ -1,0 +1,534 @@
+<!-- Dominic Minnich 2024 -->
+<!-- viewReviewSpecific.html -->
+
+{% extends 'base.html' %} {% block content %}
+
+<title>Review Player</title>
+<style>
+  body {
+    background-color: #1a1a2e;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    margin: 0;
+  }
+
+  .video-container {
+    position: relative;
+    width: 900px;
+    height: 500px;
+    border-radius: 20px;
+    overflow: hidden;
+    background-color: #000;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.6), 0 0 20px #3a2a5e;
+    border: 3px solid #6a5acd;
+  }
+
+  video {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    display: block;
+  }
+
+  .controls {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 15px;
+    background: #000000;
+    position: absolute;
+    bottom: 0;
+    width: 100%;
+    box-sizing: border-box;
+    opacity: 0;
+    transition: opacity 0.5s ease-in-out;
+    color: #fff;
+  }
+
+  .video-container:hover .controls {
+    opacity: 1;
+  }
+
+  .controls button {
+    background: none;
+    border: 2px solid #fff;
+    color: #fff;
+    cursor: pointer;
+    padding: 10px;
+    margin: 0 5px;
+    border-radius: 50%;
+    transition: background 0.3s, transform 0.3s, color 0.3s;
+    box-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
+    width: 40px;
+    height: 40px;
+  }
+
+  .box {
+    border: 2px solid #fff;
+    box-shadow: 0 0 10px rgba(255, 255, 255, 0.237);
+    border-radius: 50px;
+    padding: 0;
+    margin: 0;
+  }
+
+  .controls button:hover {
+    background: rgba(255, 255, 255, 0.2);
+    transform: scale(1.1);
+    color: #ffddf4;
+  }
+
+  .seek-bar,
+  .volume-bar {
+    flex: 1;
+    margin: 0 10px;
+    appearance: none;
+    background: #2f2f5a;
+    height: 8px;
+    border-radius: 5px;
+    cursor: pointer;
+    outline: none;
+  }
+
+  .seek-bar::-webkit-slider-thumb,
+  .volume-bar::-webkit-slider-thumb {
+    appearance: none;
+    width: 16px;
+    height: 16px;
+    background: #fff;
+    border-radius: 50%;
+    cursor: pointer;
+    box-shadow: 0 0 10px #ff6ec7;
+    transition: box-shadow 0.2s ease-in-out;
+  }
+
+  .seek-bar::-webkit-slider-thumb:hover,
+  .volume-bar::-webkit-slider-thumb:hover {
+    box-shadow: 0 0 20px #ff6ec7;
+  }
+
+  .time-display {
+    font-size: 16px;
+    color: #fff;
+    text-shadow: 0 0 5px #6a5acd;
+    padding-right: 10px;
+    margin-right: 10px;
+    border-right: 1px solid #fff;
+    font-weight: bold;
+  }
+
+  /* Tooltip Icon and Overlay */
+  .tooltip-icon {
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    font-size: 24px;
+    color: #fff;
+    background: rgba(0, 0, 0, 0.5);
+    padding: 5px;
+    border-radius: 50%;
+    cursor: pointer;
+    z-index: 10;
+  }
+
+  .tooltip-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.7);
+    display: none;
+    align-items: center;
+    justify-content: center;
+    z-index: 9;
+  }
+
+  .tooltip-item {
+    position: absolute;
+    color: #fff;
+    font-size: 14px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .tooltip-item p {
+    margin: 5px 0;
+  }
+
+  .arrow {
+    width: 10px;
+    height: 10px;
+    background: #fff;
+    clip-path: polygon(50% 0%, 0% 100%, 100% 100%);
+  }
+
+  #speed-control {
+    background: #19192f;
+    color: #fff;
+    border: 2px solid #fff;
+    padding: 5px;
+    border-radius: 5px;
+    cursor: pointer;
+    outline: none;
+  }
+
+  #backward {
+    padding: 0;
+    margin: 0;
+  }
+
+  #forward {
+    padding: 0;
+    margin: 0;
+  }
+
+  #fullscreen {
+    margin-left: 10px;
+    border-radius: 0;
+  }
+
+  .review_id {
+    color: white;
+    font-size: 1.5rem;
+    margin-top: 1rem;
+    float: left;
+  }
+  .review_date {
+    color: white;
+    font-size: 1.5rem;
+    margin-top: 1rem;
+    float: right;
+  }
+
+  .review_title {
+    color: white;
+    font-size: 1.5rem;
+    margin-top: 1rem;
+  }
+
+  .review_tasks {
+    color: white;
+    font-size: 1.5rem;
+    margin-top: 1rem;
+  }
+
+  .lens {
+    position: absolute;
+    border: 2px solid #000;
+    width: 100px;
+    height: 100px;
+    overflow: hidden;
+    pointer-events: none;
+    background-color: rgba(255, 255, 255, 0.5);
+    border-radius: 50%;
+  }
+
+  .back-button {
+    position: absolute;
+    top: 5%;
+    left: 10%;
+    background-color: #6a5acd;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 16px;
+    text-decoration: none;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+    transition: background-color 0.3s, transform 0.3s;
+  }
+
+  .back-button:hover {
+    background-color: #483d8b;
+    transform: scale(1.05);
+  }
+</style>
+<a href="javascript:history.back()" class="back-button">Back to Submissions</a>
+<!-- This make it go back to submissions technically back because of shared versus my pages are different so go back to sources-->
+<p class="review_id">ID:</p>
+<p class="review_date">Date:</p>
+<br />
+<div class="video-container">
+  <video
+    id="video"
+    src="static/video.mp4"
+    poster="static/Playbutton.png"
+    preload="metadata"
+  ></video>
+
+  <!-- Tooltip Icon and Overlay -->
+  <div class="tooltip-icon" title="Show Controls Guide">❔</div>
+  <div class="tooltip-overlay">
+    <div class="tooltip-item" style="top: 75%; left: 1%">
+      <p>Back 5</p>
+      <div class="arrow" style="transform: rotate(180deg)"></div>
+    </div>
+    <div class="tooltip-item" style="top: 80%; left: 5.5%">
+      <p>Play/Pause</p>
+      <div class="arrow" style="transform: rotate(180deg)"></div>
+    </div>
+    <div class="tooltip-item" style="top: 75%; left: 12%">
+      <p>Foward 5</p>
+      <div class="arrow" style="transform: rotate(180deg)"></div>
+    </div>
+    <div class="tooltip-item" style="top: 82%; left: 30%">
+      <p>Time Slider</p>
+      <div class="arrow" style="transform: rotate(180deg)"></div>
+    </div>
+    <div class="tooltip-item" style="top: 30%; left: 40%">
+      <p><br />Hold Shift For Magnifier<br /></p>
+      <div class="arrow" style="transform: rotate(180deg)"></div>
+    </div>
+    <div class="tooltip-item" style="top: 80%; left: 51.5%">
+      <p>Mute/Unmute</p>
+      <div class="arrow" style="transform: rotate(180deg)"></div>
+    </div>
+    <div class="tooltip-item" style="top: 75%; left: 84%">
+      <p>Video Speed</p>
+      <div class="arrow" style="transform: rotate(180deg)"></div>
+    </div>
+    <div class="tooltip-item" style="top: 80%; left: 92%">
+      <p>Fullscreen</p>
+      <div class="arrow" style="transform: rotate(180deg)"></div>
+    </div>
+  </div>
+
+  <div class="controls">
+    <div class="box">
+      <button id="backward" aria-label="Backward 5 seconds" class="sparkle">
+        -5
+      </button>
+      <button id="play-pause" aria-label="Play/Pause" class="sparkle">▶</button>
+      <button id="forward" aria-label="Forward 5 seconds" class="sparkle">
+        +5
+      </button>
+    </div>
+    <input type="range" id="seek-bar" class="seek-bar" value="0" />
+    <span id="time-display" class="time-display">0:00 / 0:00</span>
+
+    <button id="mute" aria-label="Mute/Unmute" class="sparkle">🔈</button>
+    <input
+      type="range"
+      id="volume-bar"
+      class="volume-bar"
+      min="0"
+      max="1"
+      step="0.1"
+      value="1"
+    />
+    <select id="speed-control" aria-label="Speed Control">
+      <option value="0.5">0.5x</option>
+      <option value="1" selected>1x</option>
+      <option value="1.5">1.5x</option>
+      <option value="2">2x</option>
+    </select>
+    <button id="fullscreen" aria-label="Fullscreen" class="sparkle">⛶</button>
+  </div>
+</div>
+<p class="review_title">Title</p>
+<p class="review_tasks">Tasks</p>
+<div class="lens" id="lens"></div>
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    const tooltipIcon = document.querySelector(".tooltip-icon");
+    const tooltipOverlay = document.querySelector(".tooltip-overlay");
+
+    tooltipIcon.addEventListener("mouseover", () => {
+      tooltipOverlay.style.display = "flex";
+    });
+
+    tooltipIcon.addEventListener("mouseout", () => {
+      tooltipOverlay.style.display = "none";
+    });
+
+    const video = document.getElementById("video");
+    const playPauseBtn = document.getElementById("play-pause");
+    const seekBar = document.getElementById("seek-bar");
+    const timeDisplay = document.getElementById("time-display");
+    const muteBtn = document.getElementById("mute");
+    const volumeBar = document.getElementById("volume-bar");
+    const fullscreenBtn = document.getElementById("fullscreen");
+    const speedControl = document.getElementById("speed-control");
+    const forwardBtn = document.getElementById("forward");
+    const backwardBtn = document.getElementById("backward");
+
+    playPauseBtn.addEventListener("click", () => {
+      if (video.paused || video.ended) {
+        video.play();
+        playPauseBtn.textContent = "❚❚";
+      } else {
+        video.pause();
+        playPauseBtn.textContent = "▶";
+      }
+    });
+
+    video.addEventListener("click", () => {
+      if (video.paused || video.ended) {
+        video.play();
+        playPauseBtn.textContent = "❚❚";
+      } else {
+        video.pause();
+        playPauseBtn.textContent = "▶";
+      }
+    });
+
+    forwardBtn.addEventListener("click", () => {
+      video.currentTime = Math.min(video.currentTime + 5, video.duration);
+    });
+
+    backwardBtn.addEventListener("click", () => {
+      video.currentTime = Math.max(video.currentTime - 5, 0);
+    });
+
+    video.addEventListener("timeupdate", () => {
+      const progress = (video.currentTime / video.duration) * 100;
+      seekBar.value = progress;
+      timeDisplay.textContent = `${formatTime(
+        video.currentTime
+      )} / ${formatTime(video.duration)}`;
+    });
+
+    seekBar.addEventListener("input", () => {
+      const time = (seekBar.value / 100) * video.duration;
+      video.currentTime = time;
+    });
+
+    muteBtn.addEventListener("click", () => {
+      video.muted = !video.muted;
+      muteBtn.textContent = video.muted ? "🔇" : "🔈";
+    });
+
+    volumeBar.addEventListener("input", () => {
+      video.volume = volumeBar.value;
+    });
+
+    fullscreenBtn.addEventListener("click", () => {
+      if (!document.fullscreenElement) {
+        video.requestFullscreen();
+      } else {
+        document.exitFullscreen();
+      }
+    });
+
+    speedControl.addEventListener("change", () => {
+      video.playbackRate = speedControl.value;
+    });
+
+    function formatTime(seconds) {
+      const minutes = Math.floor(seconds / 60);
+      const secs = Math.floor(seconds % 60);
+      return `${minutes}:${secs < 10 ? "0" : ""}${secs}`;
+    }
+
+    video.addEventListener("loadedmetadata", () => {
+      timeDisplay.textContent = `0:00 / ${formatTime(video.duration)}`;
+    });
+  });
+
+  const lens = document.getElementById("lens");
+
+  // Lens width and height
+  const lensWidth = lens.offsetWidth;
+  const lensHeight = lens.offsetHeight;
+
+  // Track if the Shift key is pressed
+  let isShiftPressed = false;
+  let x = 0,
+    y = 0;
+
+  lens.style.display = "none";
+
+  // Event listeners for key down and key up
+  window.addEventListener("keydown", (e) => {
+    if (e.key === "Shift") {
+      isShiftPressed = true;
+      lens.style.display = "block"; // Show the lens when Shift is pressed
+      //hide the cursor
+      document.body.style.cursor = "none";
+    }
+  });
+
+  window.addEventListener("keyup", (e) => {
+    if (e.key === "Shift") {
+      isShiftPressed = false;
+      lens.style.display = "none"; // Hide the lens when Shift is released
+      //show the cursor
+      document.body.style.cursor = "auto";
+    }
+  });
+
+  // Event listeners for mouse movement and touch
+  video.addEventListener("mousemove", moveLens);
+  video.addEventListener("touchmove", moveLens);
+
+  // Function to move the lens on mouse or touch input
+  function moveLens(e) {
+    if (!isShiftPressed) return; // Only move the lens if Shift is pressed
+
+    e.preventDefault();
+    const pos = getCursorPos(e);
+
+    // Adjust x and y to ensure the center of the lens matches the mouse position
+    x = pos.x - lensWidth / 2;
+    y = pos.y - lensHeight / 2;
+
+    // Ensure the lens stays within the video boundaries
+    const videoBounds = video.getBoundingClientRect();
+    const maxX = videoBounds.width - lensWidth;
+    const maxY = videoBounds.height - lensHeight;
+
+    x = Math.max(0, Math.min(x, maxX));
+    y = Math.max(0, Math.min(y, maxY));
+
+    // Position the lens correctly
+    lens.style.left = `${x + videoBounds.left}px`;
+    lens.style.top = `${y + videoBounds.top}px`;
+
+    // Capture and display the video frame for zoom effect
+    captureAndDisplayFrame(pos);
+  }
+
+  // Function to capture and display the video frame inside the lens
+  function captureAndDisplayFrame(pos) {
+    if (!isShiftPressed) return;
+
+    // Capture the current video frame
+    const frame = captureVideoFrame(video);
+    lens.style.backgroundImage = `url('${frame}')`;
+    lens.style.backgroundSize = `${video.videoWidth * 2}px ${
+      video.videoHeight * 2
+    }px`;
+
+    // Calculate the offset for the zoom effect accurately
+    const scaleFactorX = video.videoWidth / video.clientWidth;
+    const scaleFactorY = video.videoHeight / video.clientHeight;
+    const backgroundX = (pos.x * scaleFactorX - lensWidth / 2) * 2;
+    const backgroundY = (pos.y * scaleFactorY - lensHeight / 2) * 2;
+
+    lens.style.backgroundPosition = `-${backgroundX}px -${backgroundY}px`;
+  }
+
+  // Function to get the cursor position relative to the video
+  function getCursorPos(e) {
+    const rect = video.getBoundingClientRect();
+    const x = e.clientX - rect.left;
+    const y = e.clientY - rect.top;
+    return { x, y };
+  }
+
+  // Function to capture the current video frame
+  function captureVideoFrame(videoElement) {
+    const canvas = document.createElement("canvas");
+    canvas.width = videoElement.videoWidth;
+    canvas.height = videoElement.videoHeight;
+    const ctx = canvas.getContext("2d");
+    ctx.drawImage(videoElement, 0, 0, canvas.width, canvas.height);
+    return canvas.toDataURL("image/png");
+  }
+</script>
+
+{% endblock %}
