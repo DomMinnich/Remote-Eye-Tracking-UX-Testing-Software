@@ -470,6 +470,28 @@ For ex for login title I did login-title instead of title
   margin-bottom: 10px;
 }
 
+ /* Clock and Date Styles */
+ .home-clock-date {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  font-family: 'Courier New', Courier, monospace;
+  font-size: 2rem;
+  color: #f0f0f0;
+  padding: 20px;
+}
+
+.home-clock {
+  font-size: 3rem;
+  font-weight: bold;
+  margin: 10px 0;
+}
+
+.home-date {
+  font-size: 1.5rem;
+  opacity: 0.8;
+}
+
 .home-dashboard-header {
   display: flex;
   justify-content: space-between;

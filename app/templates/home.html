@@ -9,28 +9,6 @@
     color: #ffffff;
     user-select: none;
   }
-
-  /* Clock and Date Styles */
-  .home-clock-date {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    font-family: 'Courier New', Courier, monospace;
-    font-size: 2rem;
-    color: #f0f0f0;
-    padding: 20px;
-  }
-
-  .home-clock {
-    font-size: 3rem;
-    font-weight: bold;
-    margin: 10px 0;
-  }
-
-  .home-date {
-    font-size: 1.5rem;
-    opacity: 0.8;
-  }
 </style>
 
 <!-- Main Content -->
@@ -113,31 +91,5 @@
     </div>
   </div>
 </div>
-
-<!-- JavaScript for Clock and Date -->
-<script>
-  function updateClockAndDate() {
-    const clockElement = document.getElementById('clock');
-    const dateElement = document.getElementById('date');
-
-    const now = new Date();
-    const hours = String(now.getHours()).padStart(2, '0');
-    const minutes = String(now.getMinutes()).padStart(2, '0');
-    const seconds = String(now.getSeconds()).padStart(2, '0');
-    const timeString = `${hours}:${minutes}:${seconds}`;
-
-    const day = String(now.getDate()).padStart(2, '0');
-    const month = String(now.getMonth() + 1).padStart(2, '0'); // Months are zero-indexed
-    const year = now.getFullYear();
-    const dateString = `${day}-${month}-${year}`;
-
-    clockElement.textContent = timeString;
-    dateElement.textContent = dateString;
-  }
-
-  // Update clock and date every second
-  setInterval(updateClockAndDate, 1000);
-  updateClockAndDate(); // Initial call
-</script>
 
 {% endblock %}
