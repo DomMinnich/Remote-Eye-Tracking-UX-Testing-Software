@@ -39,13 +39,19 @@
             <a href="#">PROJECTS <span class="base-expand-icon">+</span></a>
             <ul class="base-submenu">
               <li><a href="#">MY PROJECTS</a></li>
-              <li><a href="{{ url_for('main.viewProjects') }}">VIEW PROJECTS</a></li>
-              <li><a href="{{ url_for('main.createProject') }}">NEW PROJECT</a></li> 
+              <li>
+                <a href="{{ url_for('main.viewProjects') }}">VIEW PROJECTS</a>
+              </li>
+              <li>
+                <a href="{{ url_for('main.createProject') }}">NEW PROJECT</a>
+              </li>
               <li><a href="#">EDIT PROJECT</a></li>
             </ul>
           </li>
           <li>
-            <a href="#">COMMUNICATION <span class="base-expand-icon">+</span></a>
+            <a href="#"
+              >COMMUNICATION <span class="base-expand-icon">+</span></a
+            >
             <ul class="base-submenu">
               <li><a href="#">CHAT</a></li>
               <li><a href="#">INVITES</a></li>
@@ -67,24 +73,26 @@
           {% endif %}
         </ul>
       </div>
-
-
-      <div class="home-profile">
+      
+      {% if current_user.role %}
+      <div class="base-profile">
         <img
           src="{{ current_user.picture or 'https://via.placeholder.com/40' }}"
-          alt="home-Profile Picture"
+          alt="base-profile Picture"
         />
-        <span class="home-profile-name"
+        <span class="base-profile-name"
           >{{ current_user.first_name }} {{ current_user.last_name }}</span
         >
       </div>
+      {% endif %}
 
       <!-- Footer Section -->
-<footer class="base-footer">
-  <p>Version 1.0.00 &emsp;|&emsp; &copy; 2024 EyeC.Design &emsp;|&emsp; All rights reserved.</p>
-</footer>
-
-
+      <footer class="base-footer">
+        <p>
+          Version 1.0.00 &emsp;|&emsp; &copy; 2024 EyeC.Design &emsp;|&emsp; All
+          rights reserved.
+        </p>
+      </footer>
     </main>
     <script src="{{ url_for('static', filename='script.js') }}"></script>
   </body>

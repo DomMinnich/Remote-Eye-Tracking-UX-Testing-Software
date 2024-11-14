@@ -534,7 +534,7 @@ For ex for login title I did login-title instead of title
   scrollbar-width: none;
 }
 
-.home-profile {
+.base-profile {
   display: flex;
   align-items: center;
   gap: 10px;
@@ -543,18 +543,18 @@ For ex for login title I did login-title instead of title
   right: 10px;
 }
 
-.home-profile img {
+.base-profile img {
   width: 40px;
   height: 40px;
   border-radius: 50%;
 }
 
-.home-profile-info {
+.base-profile-info {
   font-size: 0.9em;
   line-height: 1.6;
 }
 
-.home-profile-name {
+.base-profile-name {
   font-size: 1em;
   font-weight: 500;
   color: #ffffff;

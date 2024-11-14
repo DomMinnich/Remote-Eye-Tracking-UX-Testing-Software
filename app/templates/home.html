@@ -1,5 +1,4 @@
-{% extends 'base.html' %} 
-{% block content %}
+{% extends 'base.html' %} {% block content %}
 <style>
   body,
   html {
@@ -21,7 +20,6 @@
   <!-- Dashboard Header with Profile -->
   <div class="home-dashboard-header">
     <h1>Dashboard</h1>
-    
   </div>
 
   <!-- Clock and Date Display -->
@@ -35,7 +33,7 @@
     <div class="home-card home-card-small">
       <a href="/profile" class="home-card-button">Go to Profile</a>
       <h2>Profile</h2>
-      <div class="home-profile-info">
+      <div class="base-profile-info">
         <p>Name: {{ current_user.first_name }} {{ current_user.last_name }}</p>
         <p>Email: {{ current_user.email }}</p>
         <p>Role: {{ current_user.role }}</p>
@@ -75,7 +73,7 @@
     <div class="home-card home-card-large">
       <a href="/card" class="home-card-button">Go to Card</a>
       <h2>Card</h2>
-      <div class="home-profile-info">
+      <div class="base-profile-info">
         <p>Waddle</p>
         <p>Waddle</p>
         <p>Waddle</p>
