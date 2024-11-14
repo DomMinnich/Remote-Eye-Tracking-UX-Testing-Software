@@ -214,13 +214,13 @@ def viewProjects():
     return render_template("ViewProjects.html", user=current_user, projects=projects)
 
 
-@main.route("/adminPanel")
-@login_required
-def adminPanel():
-    if current_user.role == "admin":  # Only admins can access the admin panel
-        return render_template("adminPanel.html", user=current_user)
-    else:
-        return redirect(url_for("main.home"))  # Redirect to home if not an admin
+#@main.route("/adminPanel")
+#@login_required
+#def adminPanel():
+#    if current_user.role == "admin":  # Only admins can access the admin panel
+#        return render_template("adminPanel.html", user=current_user)
+ #   else:
+  #      return redirect(url_for("main.home"))  # Redirect to home if not an admin
 
 # Configure logging KB
 logging.basicConfig(level=logging.INFO) #Can be deleted later, just for testing
@@ -258,3 +258,50 @@ def createProject():
                 logging.warning(f"Validation error in {field}: {error}")  # Log validation errors
     return render_template("CreateProject.html", form=form)
 
+@main.route("/adminPanel", methods=["GET", "POST"])
+@login_required
+def adminPanel():
+    if current_user.role != "admin":
+        return redirect(url_for("main.home"))  # Only allow access if user is an admin
+
+    if request.method == "POST":
+        action = request.form.get("action", "").strip()  # Get 'action', default to an empty string if not found
+
+        if action == "edit_role":
+            username = request.form.get("username")
+            new_role = request.form.get("role")
+            user = User.query.filter_by(username=username).first()
+
+            if user:
+                if user.role != new_role:
+                    user.role = new_role
+                    db.session.commit()
+                    flash(f"Role updated for {username} to {new_role}.", "success")
+                else:
+                    flash(f"{username} already has the role {new_role}.", "info")
+            else:
+                flash(f"User {username} not found.", "danger")
+
+        elif action == "delete_user":
+            username = request.form.get("username")
+            user = User.query.filter_by(username=username).first()
+
+            if user:
+                db.session.delete(user)
+                db.session.commit()
+                flash(f"User {username} deleted.", "success")
+            else:
+                flash(f"User {username} not found.", "danger")
+
+        elif action == "delete_project":
+            project_id = request.form.get("project_id")
+            project = Project.query.filter_by(id=project_id).first()
+
+            if project:
+                db.session.delete(project)
+                db.session.commit()
+                flash(f"Project {project_id} deleted.", "success")
+            else:
+                flash(f"Project {project_id} not found.", "danger")
+
+    return render_template("adminPanel.html", user=current_user)

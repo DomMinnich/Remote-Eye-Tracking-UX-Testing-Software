@@ -1,41 +1,118 @@
-<!-- Dominic Minnich 2024 -->
-<!-- admin.html -->
+{% extends 'base.html' %}
 
-{% extends 'base.html' %} {% block content %}
+{% block content %}
 <style>
-    /* Reset */
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-    }
-  
-    body {
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      height: 100vh;
-      background-color: #121212;
-      overflow: hidden;
-    cursor: url("/static/burger.svg"), auto;
-    }
-    
-    p {
-      color: white;
-      font-size: 1.5rem;
-      margin-top: 1rem;
-    }
-  
-    h2 {
-      color: white;
-      font-size: 2rem;
-      margin-bottom: 1rem;
-    }
-  
+  .admin-panel {
+      margin: 20px;
+      padding: 15px;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+      max-width: 400px; /* Optional: Set max width for better centering */
+      margin-left: auto;
+      margin-right: auto;
+  }
+
+  section {
+      margin-bottom: 20px;
+      text-align: center; /* Centers text within the section */
+  }
+
+  label {
+      display: block;
+      margin-bottom: 5px;
+  }
+
+  input, select, button {
+      margin-bottom: 10px;
+      display: block;
+      padding: 8px;
+      width: 90%; /* Adjust width as needed */
+      margin-left: auto;
+      margin-right: auto;
+  }
+
+  button {
+      cursor: pointer;
+  }
 </style>
 
-<h2>Welcome, {{ user.first_name }}!</h2>
-<p>Your role is: {{ user.role }}</p>
-<p>waddle waddle, waddle... waddle... waddle...</p>
-<p>Only admins in here</p>
+<div class="admin-panel">
+    <!-- Edit Account Type Section -->
+    <section class="edit-account">
+        <h3>Edit Account Type</h3>
+        <label for="edit-username">Username:</label>
+        <input type="text" id="edit-username" placeholder="Enter username" />
+        
+        <label for="edit-role">Role:</label>
+        <select id="edit-role">
+            <option value="Student">Student</option>
+            <option value="Project Manager">Project Manager</option>
+            <option value="Admin">Admin</option>
+        </select>
+        
+        <button id="edit-confirm-btn" onclick="editAccountType()">Confirm</button>
+        <p id="edit-message"></p>
+    </section>
+
+    <!-- Delete User Section -->
+    <section class="delete-user">
+        <h3>Delete User</h3>
+        <label for="delete-username">Username:</label>
+        <input type="text" id="delete-username" placeholder="Enter username to delete" />
+        <button id="delete-user-btn" onclick="deleteUser()">Delete User</button>
+        <p id="delete-user-message"></p>
+    </section>
+
+    <!-- Delete Project Section -->
+    <section class="delete-project">
+        <h3>Delete Project</h3>
+        <label for="delete-project-id">Project ID:</label>
+        <input type="text" id="delete-project-id" placeholder="Enter project ID" />
+        <button id="delete-project-btn" onclick="deleteProject()">Delete Project</button>
+        <p id="delete-project-message"></p>
+    </section>
+</div>
+
+<script>
+    function editAccountType() {
+        const username = document.getElementById('edit-username').value;
+        const role = document.getElementById('edit-role').value;
+        const messageEl = document.getElementById('edit-message');
+
+        if (!username) {
+            messageEl.textContent = 'Error: Username cannot be empty.';
+            messageEl.style.color = 'red';
+        } else {
+            messageEl.textContent = `User "${username}" role updated to "${role}".`;
+            messageEl.style.color = 'green';
+        }
+    }
+
+    function deleteUser() {
+        const username = document.getElementById('delete-username').value;
+        const messageEl = document.getElementById('delete-user-message');
+
+        if (!username) {
+            messageEl.textContent = 'Error: Username cannot be empty.';
+            messageEl.style.color = 'red';
+        } else {
+            messageEl.textContent = `User "${username}" has been deleted.`;
+            messageEl.style.color = 'green';
+        }
+    }
+
+    function deleteProject() {
+        const projectId = document.getElementById('delete-project-id').value;
+        const messageEl = document.getElementById('delete-project-message');
+
+        if (!projectId) {
+            messageEl.textContent = 'Error: Project ID cannot be empty.';
+            messageEl.style.color = 'red';
+        } else {
+            messageEl.textContent = `Project with ID "${projectId}" has been deleted.`;
+            messageEl.style.color = 'green';
+        }
+    }
+</script>
+
 {% endblock %}
