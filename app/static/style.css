@@ -458,7 +458,7 @@ For ex for login title I did login-title instead of title
     #a34373c2
   );
   background-size: 200% 200%;
-  animation: home-base-gradientShift 10s ease infinite;
+  animation: base-gradientShift 10s ease infinite;
   border: 1px solid #fff;
   border-radius: 5px;
 }
@@ -546,7 +546,7 @@ For ex for login title I did login-title instead of title
     #a34373c2
   );
   background-size: 200% 200%;
-  animation: home-base-gradientShift 10s ease infinite;
+  animation: base-gradientShift 10s ease infinite;
   border: 1px solid #fff;
   border-radius: 5px;
 }
