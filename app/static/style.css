@@ -10,8 +10,10 @@ For ex for login title I did login-title instead of title
 /*
       CONTENTS OF THIS FILE
  Fonts A->Z               | ~Line 20-32    -Dominic Minnich
- Base Styling A->Z        | ~Line 34-197   -Dominic Minnich
- Login/Register A->Z      | ~Line 200-269  -Dominic Minnich
+ Base Styling A->Z        | ~Line 34-400   -Dominic Minnich
+ Home Page A-Z            | ~Line 402-630  -Dominic Minnich
+ Login  A->Z              | ~Line 632-740  -Dominic Minnich
+ Register A->Z            | ~Line 744-832  -Dominic Minnich
  Profile Page Styles      | ~Line 570-603  -Kyle Benich
  Settings Page Styles     | ~Line 605-635  -Kyle Benich
  create-project Styles    | ~Line 637-676  -Kyle Benich
@@ -399,6 +401,234 @@ For ex for login title I did login-title instead of title
   text-decoration-thickness: 1px;
 }
 
+/* Home Page Styles */
+
+.home-card {
+  background: #282a36;
+  border-radius: 10px;
+  padding: 20px;
+  position: relative;
+  overflow: hidden;
+  box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.5);
+  transition: home-transform 0.2s;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  color: #ffffff;
+  opacity: 0; /* Start invisible */
+  animation: home-bounceIn 1s ease-out forwards;
+}
+
+.home-card-container {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 20px;
+  margin-top: 20px;
+}
+
+.home-card-large {
+  grid-column: span 2;
+  height: 300px;
+}
+
+.home-card-small {
+  height: 150px;
+}
+
+.home-card:hover {
+  box-shadow: 0px 0px 30px rgba(255, 0, 128, 0.342);
+}
+
+.home-card .home-card-button {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  background-color: #000000;
+  color: white;
+  border: none;
+  padding: 5px 10px;
+  border-radius: 5px;
+  cursor: pointer;
+  text-decoration: none;
+  background: linear-gradient(
+    135deg,
+    #a10050d8,
+    #002657c7,
+    #530534c9,
+    #a34373c2
+  );
+  background-size: 200% 200%;
+  animation: home-base-gradientShift 10s ease infinite;
+  border: 1px solid #fff;
+  border-radius: 5px;
+}
+
+.home-card h2 {
+  font-size: 1.2em;
+  margin-bottom: 10px;
+}
+
+.home-dashboard-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 0;
+}
+
+.home-dashboard-header h1 {
+  font-size: 1.5em;
+  font-weight: 700;
+  margin-top: 30px;
+}
+
+.home-main-content {
+  flex: 1;
+  padding: 20px;
+  overflow-y: auto;
+  position: relative;
+  z-index: 1;
+}
+
+.home-main-content::-webkit-scrollbar {
+  display: none;
+}
+
+.home-main-content {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+.home-profile {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  position: absolute;
+  top: 10px;
+  right: 10px;
+}
+
+.home-profile img {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+}
+
+.home-profile-info {
+  font-size: 0.9em;
+  line-height: 1.6;
+}
+
+.home-profile-name {
+  font-size: 1em;
+  font-weight: 500;
+  color: #ffffff;
+}
+
+.home-progress-bar {
+  width: 100%;
+  height: 20px;
+  background-color: #444;
+  border-radius: 5px;
+  overflow: hidden;
+  position: relative;
+}
+
+.home-progress-fill {
+  height: 100%;
+  background-color: #000000;
+  width: 50%; /* Example capacity: 5 out of 10 */
+  transition: width 0.3s ease;
+  background: linear-gradient(
+    135deg,
+    #a10050d8,
+    #002657c7,
+    #530534c9,
+    #a34373c2
+  );
+  background-size: 200% 200%;
+  animation: home-base-gradientShift 10s ease infinite;
+  border: 1px solid #fff;
+  border-radius: 5px;
+}
+
+.home-project-chart {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.home-rain-container {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  z-index: 0;
+  pointer-events: none;
+}
+
+.home-raindrop {
+  position: absolute;
+  bottom: 100%;
+  width: 2px;
+  height: 20px;
+  background: rgba(111, 124, 158, 0.772);
+  animation: home-fall linear infinite;
+  opacity: 0.6;
+}
+
+.home-splash {
+  position: absolute;
+  width: 10px;
+  height: 10px;
+  background: rgba(255, 255, 255, 0.4);
+  border-radius: 50%;
+  transform: scale(0);
+  opacity: 1;
+  animation: home-splashAnimation 0.4s ease-out forwards;
+}
+
+@keyframes home-bounceIn {
+  0% {
+    transform: translateY(-100vh);
+    opacity: 0;
+  }
+  60% {
+    transform: translateY(30px);
+    opacity: 1;
+  }
+  80% {
+    transform: translateY(-10px);
+  }
+  100% {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+@keyframes home-fall {
+  0% {
+    transform: translateY(0);
+    opacity: 0.6;
+  }
+  100% {
+    transform: translateY(100vh);
+    opacity: 0;
+  }
+}
+
+@keyframes home-splashAnimation {
+  0% {
+    transform: scale(0);
+    opacity: 0.6;
+  }
+  100% {
+    transform: scale(1.5);
+    opacity: 0;
+  }
+}
+
 /* Login/Register A->Z */
 .login-alert {
   color: #ff0000;
@@ -509,6 +739,8 @@ For ex for login title I did login-title instead of title
   color: #0073d1;
   user-select: none;
 }
+
+/* Register Page Styles */
 
 .register-alert {
   color: #ff0000;
