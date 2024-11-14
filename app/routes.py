@@ -204,12 +204,14 @@ def settings():
 @main.route("/viewProjects")
 @login_required
 def viewProjects():
-    projects_list = current_user.projects  # Access the projects list (e.g., from a JSON attribute)
-    
+    projects_list = (
+        current_user.projects
+    )  # Access the projects list (e.g., from a JSON attribute)
+
     if projects_list is None:
         projects_list = []
-    
-    project_ids = [project['project_id'] for project in projects_list]
+
+    project_ids = [project["project_id"] for project in projects_list]
     projects = Project.query.filter(Project.id.in_(project_ids)).all()
     return render_template("ViewProjects.html", user=current_user, projects=projects)
 
@@ -222,15 +224,19 @@ def adminPanel():
     else:
         return redirect(url_for("main.home"))  # Redirect to home if not an admin
 
+
 # Configure logging KB
-logging.basicConfig(level=logging.INFO) #Can be deleted later, just for testing
+logging.basicConfig(level=logging.INFO)  # Can be deleted later, just for testing
+
 
 @main.route("/createProject", methods=["GET", "POST"])
 @login_required
 def createProject():
     form = CreateProjectForm()
     if form.validate_on_submit():
-        default_eol_time = datetime.utcnow() + timedelta(weeks=1)  # Set default end of life time to 1 week from now
+        default_eol_time = datetime.utcnow() + timedelta(
+            weeks=1
+        )  # Set default end of life time to 1 week from now
         default_max_submissions = 100  # Set default max submissions
 
         # Handle tasks and collaborators as JSON arrays
@@ -245,7 +251,7 @@ def createProject():
             max_submissions=default_max_submissions,  # Use default max submissions
             eol_time=default_eol_time,  # Use default end of life time
             collaborators=collaborators,  # Use collaborators JSON
-            numPauses=0
+            numPauses=0,
         )
         db.session.add(new_project)
         db.session.commit()
@@ -255,6 +261,14 @@ def createProject():
         logging.warning("Form validation failed")  # Log when the form validation fails
         for field, errors in form.errors.items():
             for error in errors:
-                logging.warning(f"Validation error in {field}: {error}")  # Log validation errors
+                logging.warning(
+                    f"Validation error in {field}: {error}"
+                )  # Log validation errors
     return render_template("CreateProject.html", form=form)
 
+
+# /viewReviewSpecific
+@main.route("/viewReviewSpecific")
+@login_required
+def viewReviewSpecific():
+    return render_template("viewReviewSpecific.html", user=current_user)
