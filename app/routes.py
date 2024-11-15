@@ -195,6 +195,11 @@ def settings():
     return render_template("settings.html", user=current_user)
 
 
+@main.route("/EditProject")
+@login_required
+def EditProject():
+    return render_template("EditProject.html, user=current_user")
+
 # @main.route("/ViewProjects")
 # @login_required
 # def ViewProjects():
