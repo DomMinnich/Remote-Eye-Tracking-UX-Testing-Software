@@ -1,58 +1,85 @@
-<!-- Dominic Minnich 2024 -->
-<!-- home.html -->
-
 {% extends 'base.html' %} {% block content %}
 <style>
-  /* Reset */
-  * {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-  }
-
-  body {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 100vh;
-    background-color: #121212;
+  body,
+  html {
+    height: 100%;
     overflow: hidden;
-  cursor: url("/static/burger.svg"), auto;
+    background: #1e1e2f;
+    color: #ffffff;
+    user-select: none;
   }
-  
-  p {
-    color: white;
-    font-size: 1.5rem;
-    margin-top: 1rem;
-  }
-
-  h2 {
-    color: white;
-    font-size: 2rem;
-    margin-bottom: 1rem;
-  }
-
-  li {
-    list-style-type: none;
-    margin-top: 1rem;
-  }
-
-  img {
-    transition: transform 0.1s;
-  }
-
 </style>
-<h2>Welcome, {{ user.first_name }}!</h2>
-<p>waddle waddle, waddle... waddle... waddle...</p>
-<img id="duck" src="{{ url_for('static', filename='duck.gif') }}" alt="duck" />
-<script>
-  document.addEventListener('mousemove', function(event) {
-    const duck = document.getElementById('duck');
-    const rect = duck.getBoundingClientRect();
-    const duckX = rect.left + rect.width / 2;
-    const duckY = rect.top + rect.height / 2;
-    const angle = Math.atan2(event.clientY - duckY, event.clientX - duckX) * (180 / Math.PI);
-    duck.style.transform = `rotate(${angle}deg)`;
-  });
-</script>
+
+<!-- Main Content -->
+<div class="home-main-content">
+  <!-- Rain Animation Container -->
+  <div class="home-rain-container">
+    <div class="home-raindrops"></div>
+  </div>
+
+  <!-- Dashboard Header with Profile -->
+  <div class="home-dashboard-header">
+    <h1>Dashboard</h1>
+  </div>
+
+  <!-- Clock and Date Display -->
+  <div class="home-clock-date">
+    <div class="home-clock" id="clock">--:--:--</div>
+    <div class="home-date" id="date">Loading date...</div>
+  </div>
+
+  <!-- Dashboard Cards-->
+  <div class="home-card-container">
+    <div class="home-card home-card-small">
+      <a href="/profile" class="home-card-button">Go to Profile</a>
+      <h2>Profile</h2>
+      <div class="base-profile-info">
+        <p>Name: {{ current_user.first_name }} {{ current_user.last_name }}</p>
+        <p>Email: {{ current_user.email }}</p>
+        <p>Role: {{ current_user.role }}</p>
+      </div>
+    </div>
+    <div class="home-card home-card-small">
+      <h2>Projects Owned</h2>
+      <div class="home-project-chart">
+        <p>
+          <span id="home-projectCount">{{ projects|length }}</span> out of
+          <span id="home-projectTotal"
+            >{{ max_projects_per_user_privilaged if current_user.role == "admin"
+            else max_projects_per_user_unprivilaged }}</span
+          >
+        </p>
+        <div class="home-progress-bar">
+          <div class="home-progress-fill" id="home-progressFill"></div>
+        </div>
+      </div>
+    </div>
+    <div class="home-card home-card-small">
+      <h2>Blank Card</h2>
+    </div>
+    <div class="home-card home-card-small">
+      <h2>Blank Card</h2>
+    </div>
+
+    <div class="home-card home-card-large">
+      <a href="/viewProjects" class="home-card-button">Go to Projects List</a>
+      <h2>Projects List</h2>
+      <ul style="list-style: none; padding-left: 0">
+        {% for project in projects %}
+        <li>{{ project.title }}</li>
+        {% endfor %}
+      </ul>
+    </div>
+    <div class="home-card home-card-large">
+      <a href="/card" class="home-card-button">Go to Card</a>
+      <h2>Card</h2>
+      <div class="base-profile-info">
+        <p>Waddle</p>
+        <p>Waddle</p>
+        <p>Waddle</p>
+      </div>
+    </div>
+  </div>
+</div>
+
 {% endblock %}

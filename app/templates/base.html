@@ -11,17 +11,17 @@
       rel="stylesheet"
       href="{{ url_for('static', filename='style.css') }}"
     />
-    <link rel="stylesheet" href="{{ url_for('static', filename='eye.css') }}" />
     <style>
       body {
         font-family: "Gruppo", sans-serif;
+        background: #1e1e2f;
       }
     </style>
   </head>
   <body>
     <main>
       {% block content %}{% endblock %}
-
+      <div class="base-dimming-overlay"></div>
       <!-- Corner Icon for Menu Toggle -->
       <div class="base-menu-toggle">
         <div class="base-bar"></div>
@@ -38,14 +38,20 @@
           <li>
             <a href="#">PROJECTS <span class="base-expand-icon">+</span></a>
             <ul class="base-submenu">
-              <li><a href="#">MY PROJECTS</a></li>
-              <li><a href="{{ url_for('main.viewProjects') }}">VIEW PROJECTS</a></li>
-              <li><a href="{{ url_for('main.createProject') }}">NEW PROJECT</a></li> 
+              <li><a href="{{ url_for('main.EditProject') }}">MY PROJECTS</a></li>
+              <li>
+                <a href="{{ url_for('main.viewProjects') }}">VIEW PROJECTS</a>
+              </li>
+              <li>
+                <a href="{{ url_for('main.createProject') }}">NEW PROJECT</a>
+              </li>
               <li><a href="#">EDIT PROJECT</a></li>
             </ul>
           </li>
           <li>
-            <a href="#">COMMUNICATION <span class="base-expand-icon">+</span></a>
+            <a href="#"
+              >COMMUNICATION <span class="base-expand-icon">+</span></a
+            >
             <ul class="base-submenu">
               <li><a href="#">CHAT</a></li>
               <li><a href="#">INVITES</a></li>
@@ -67,15 +73,27 @@
           {% endif %}
         </ul>
       </div>
+      
+      {% if current_user.role %}
+      <div class="base-profile">
+        <img
+          src="{{ current_user.picture or 'https://via.placeholder.com/40' }}"
+          alt="base-profile Picture"
+        />
+        <span class="base-profile-name"
+          >{{ current_user.first_name }} {{ current_user.last_name }}</span
+        >
+      </div>
+      {% endif %}
 
       <!-- Footer Section -->
-<footer class="base-footer">
-  <p>&copy; 2024  EyeC.Design | All rights reserved.</p>
-</footer>
-
-
+      <footer class="base-footer">
+        <p>
+          Version 1.0.00 &emsp;|&emsp; &copy; 2024 EyeC.Design &emsp;|&emsp; All
+          rights reserved.
+        </p>
+      </footer>
     </main>
     <script src="{{ url_for('static', filename='script.js') }}"></script>
-    <script src="{{ url_for('static', filename='eye.js') }}"></script>
   </body>
 </html>
