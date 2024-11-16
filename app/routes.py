@@ -238,6 +238,7 @@ def settings():
     return render_template("settings.html", user=current_user)
 
 
+
 @main.route('/editProject')
 def editProject():
     project_id = request.args.get('id')
@@ -247,7 +248,6 @@ def editProject():
         return render_template('editProject.html', project=project)
     else:
         return "Project ID not provided", 400
-
 
 
 # @main.route("/ViewProjects")
