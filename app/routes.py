@@ -199,14 +199,30 @@ logging.basicConfig(level=logging.INFO) #Can be deleted later, just for testing
 def createProject():
     form = CreateProjectForm()
     if form.validate_on_submit():
+        # Check for duplicate Figma link
+        existing_project = Project.query.filter_by(link=form.link.data).first()
+        if existing_project:
+            flash("A project with this Figma link already exists.", "danger")
+            return render_template("CreateProject.html", form=form)
+
         default_eol_time = datetime.utcnow() + timedelta(weeks=1)  # Set default end of life time to 1 week from now
         default_max_submissions = 100  # Set default max submissions
 
         # Handle tasks and collaborators as JSON arrays
         tasks = json.loads(form.tasks.data)
-        collaborators = json.loads(form.collaborators.data)
+        collaborators_emails = json.loads(form.collaborators.data)
+        collaborators = []
+
+        for email in collaborators_emails:
+            user_id = Project.find_user_id_by_email(email)
+            if user_id:
+                collaborators.append(user_id)
+            else:
+                flash(f"Collaborator with email {email} not found.", "danger")
+                return render_template("CreateProject.html", form=form)
 
         new_project = Project(
+            id=Project.generate_unique_id(),  # Ensure unique ID
             link=form.link.data,
             creator=current_user.id,
             priviledged=True,
@@ -218,7 +234,7 @@ def createProject():
         )
         db.session.add(new_project)
         db.session.commit()
- 
+
         # KB 
         # Update user's projects JSON. 
         if current_user.projects is None:
