@@ -162,6 +162,7 @@
     <div class="detail-item">
       <span class="detail-title">Reviews:</span> <span id="detail-reviews">{{ projects[0].reviews }}</span>
     </div>
+    <button class="edit-button" onclick="editProject({{ projects[0].id }})">Edit Project</button>
   </div>
     {% else %}
     <p id="unavailable">No Projects Available</p>
@@ -191,6 +192,9 @@
     document.getElementById('detail-visibility').innerText = currentProject.getAttribute('data-visibility');
     document.getElementById('detail-eol_time').innerText = currentProject.getAttribute('data-eol_time');
     document.getElementById('detail-reviews').innerText = currentProject.getAttribute('data-reviews');
+
+    // Update edit button
+    document.querySelector('.edit-button').setAttribute('onclick', `editProject(${currentProject.getAttribute('data-id')})`);
   }
 
   function goToProject(projectId) {
