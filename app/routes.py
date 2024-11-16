@@ -9,6 +9,7 @@
 #    ValueSet                       | ~Line 35-38   -Dominic Minnich
 #   get_user_projects                | ~Line 35-38   -Dominic Minnich
 #   get_project_by_id                | ~Line 35-38   -Dominic Minnich
+#   get_shared_projects              | ~Line 35-38   -Dominic Minnich
 
 #               ROUTES A->Z
 #    /                      | ~Line 35-38   -Dominic Minnich
@@ -78,6 +79,20 @@ def get_user_projects(user_id):
 
     try:
         project_ids = [project["project_id"] for project in json.loads(user.projects)]
+        projects = Project.query.filter(Project.id.in_(project_ids)).all()
+        project_data = [{"id": project.id, "link": project.link, "tasks": project.tasks, "collaborators": project.collaborators} for project in projects]
+        return jsonify(project_data), 200
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+    
+#Function to get shared project for a user, using shared_projects.json from user to establish nice filter to projects table ids-Dominic Minnich
+def get_shared_projects(user_id):
+    user = User.query.get(user_id)
+    if not user or not user.shared_projects:
+        return jsonify({"error": "User not found or no shared projects available"}), 404
+
+    try:
+        project_ids = [project["project_id"] for project in json.loads(user.shared_projects)]
         projects = Project.query.filter(Project.id.in_(project_ids)).all()
         project_data = [{"id": project.id, "link": project.link, "tasks": project.tasks, "collaborators": project.collaborators} for project in projects]
         return jsonify(project_data), 200
