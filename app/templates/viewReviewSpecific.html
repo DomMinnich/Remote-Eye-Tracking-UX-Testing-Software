@@ -1,0 +1,126 @@
+<!-- Dominic Minnich 2024 -->
+<!-- viewReviewSpecific.html -->
+
+{% extends 'base.html' %} {% block content %}
+
+<title>Review Player</title>
+<style>
+  body {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    margin: 0;
+  }
+
+  video {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    display: block;
+  }
+
+
+</style>
+<a href="javascript:history.back()" class="vrs-back-button"
+  >Back to Submissions</a
+>
+<p class="vrs-review_id">ID:</p>
+<p class="vrs-review_date">Date:</p>
+<br />
+<div class="vrs-video-container">
+  <video
+    id="vrs-video"
+    src="static/video.mp4"
+    poster="static/Playbutton.png"
+    preload="metadata"
+  ></video>
+
+  <div class="vrs-tooltip-icon" title="Show Controls Guide">❔</div>
+  <div class="vrs-tooltip-overlay">
+    <div class="vrs-tooltip-item" style="top: 75%; left: 1%">
+      <p>Back 5</p>
+      <div class="vrs-arrow" style="transform: rotate(180deg)"></div>
+    </div>
+    <div class="vrs-tooltip-item" style="top: 80%; left: 5.5%">
+      <p>Play/Pause</p>
+      <div class="vrs-arrow" style="transform: rotate(180deg)"></div>
+    </div>
+    <div class="vrs-tooltip-item" style="top: 75%; left: 12%">
+      <p>Foward 5</p>
+      <div class="vrs-arrow" style="transform: rotate(180deg)"></div>
+    </div>
+    <div class="vrs-tooltip-item" style="top: 82%; left: 30%">
+      <p>Time Slider</p>
+      <div class="vrs-arrow" style="transform: rotate(180deg)"></div>
+    </div>
+    <div class="vrs-tooltip-item" style="top: 30%; left: 40%">
+      <p><br />Hold Shift For Magnifier<br /></p>
+      <div class="vrs-arrow" style="transform: rotate(180deg)"></div>
+    </div>
+    <div class="vrs-tooltip-item" style="top: 80%; left: 51.5%">
+      <p>Mute/Unmute</p>
+      <div class="vrs-arrow" style="transform: rotate(180deg)"></div>
+    </div>
+    <div class="vrs-tooltip-item" style="top: 75%; left: 84%">
+      <p>Video Speed</p>
+      <div class="vrs-arrow" style="transform: rotate(180deg)"></div>
+    </div>
+    <div class="vrs-tooltip-item" style="top: 80%; left: 92%">
+      <p>Fullscreen</p>
+      <div class="vrs-arrow" style="transform: rotate(180deg)"></div>
+    </div>
+  </div>
+
+  <div class="vrs-controls">
+    <div class="vrs-box">
+      <button
+        id="vrs-backward"
+        aria-label="Backward 5 seconds"
+        class="vrs-sparkle"
+      >
+        -5
+      </button>
+      <button id="vrs-play-pause" aria-label="Play/Pause" class="vrs-sparkle">
+        ▶
+      </button>
+      <button
+        id="vrs-forward"
+        aria-label="Forward 5 seconds"
+        class="vrs-sparkle"
+      >
+        +5
+      </button>
+    </div>
+    <input type="range" id="vrs-seek-bar" class="vrs-seek-bar" value="0" />
+    <span id="vrs-time-display" class="vrs-time-display">0:00 / 0:00</span>
+
+    <button id="vrs-mute" aria-label="Mute/Unmute" class="vrs-sparkle">
+      🔈
+    </button>
+    <input
+      type="range"
+      id="vrs-volume-bar"
+      class="vrs-volume-bar"
+      min="0"
+      max="1"
+      step="0.1"
+      value="1"
+    />
+    <select id="vrs-speed-control" aria-label="Speed Control">
+      <option value="0.5">0.5x</option>
+      <option value="1" selected>1x</option>
+      <option value="1.5">1.5x</option>
+      <option value="2">2x</option>
+    </select>
+    <button id="vrs-fullscreen" aria-label="Fullscreen" class="vrs-sparkle">
+      ⛶
+    </button>
+  </div>
+</div>
+<p class="vrs-review_title">Title</p>
+<p class="vrs-review_tasks">Tasks</p>
+<div class="vrs-lens" id="vrs-lens"></div>
+
+
+{% endblock %}
