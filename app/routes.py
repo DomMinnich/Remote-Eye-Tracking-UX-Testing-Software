@@ -7,6 +7,9 @@
 #    Blueprint                      | ~Line 22-30   -Dominic Minnich
 #    LoginManager Instance          | ~Line 35-38   -Dominic Minnich
 #    ValueSet                       | ~Line 35-38   -Dominic Minnich
+#   get_user_projects                | ~Line 35-38   -Dominic Minnich
+#   get_project_by_id                | ~Line 35-38   -Dominic Minnich
+
 #               ROUTES A->Z
 #    /                      | ~Line 35-38   -Dominic Minnich
 #    /clear-login-sucess    | ~Line 35-38   -Dominic Minnich
@@ -80,6 +83,14 @@ def get_user_projects(user_id):
         return jsonify(project_data), 200
     except Exception as e:
         return jsonify({"error": str(e)}), 500
+    
+def get_project_by_id(project_id):
+    # Needs adjusting...
+    return {
+        'id': project_id,
+        'title': 'Sample Project',
+        'description': 'This is a sample project description.'
+    }
 
 
 # Routes
@@ -212,10 +223,17 @@ def settings():
     return render_template("settings.html", user=current_user)
 
 
-@main.route("/EditProject")
-@login_required
-def EditProject():
-    return render_template("EditProject.html, user=current_user")
+@main.route('/editProject')
+def editProject():
+    project_id = request.args.get('id')
+    if project_id:
+        # Fetch project details using project_id
+        project = get_project_by_id(project_id)  # Replace with your actual data fetching logic
+        return render_template('editProject.html', project=project)
+    else:
+        return "Project ID not provided", 400
+
+
 
 # @main.route("/ViewProjects")
 # @login_required
