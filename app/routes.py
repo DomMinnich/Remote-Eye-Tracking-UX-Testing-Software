@@ -197,8 +197,17 @@ def settings():
 
 @main.route("/EditProject")
 @login_required
-def EditProject():
-    return render_template("EditProject.html, user=current_user")
+def editProject():
+    projects_list = (
+        current_user.projects
+    )
+
+    if projects_list is None:
+        projects_list = []
+
+    project_ids = [project["project_id"] for project in projects_list] if projects_list else []
+    projects = Project.query.filter(Project.id.in_(project_ids)).all() if project_ids else []
+    return render_template("EditProject.html", user=current_user)
 
 # @main.route("/ViewProjects")
 # @login_required

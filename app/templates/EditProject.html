@@ -1,0 +1,12 @@
+{% extends 'base.html' %}
+
+{% block content %}
+  <!-- Project details -->
+  {% if projects %}
+    {% else %}
+    <p id = "unavailable">No Projects Available</p>
+    <img id="duck" src="{{ url_for('static', filename='duck.gif') }}" alt="duck" />
+
+
+  {% endif %}
+{% endblock %}
