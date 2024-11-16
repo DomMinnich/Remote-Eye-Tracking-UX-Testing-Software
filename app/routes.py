@@ -7,6 +7,10 @@
 #    Blueprint                      | ~Line 22-30   -Dominic Minnich
 #    LoginManager Instance          | ~Line 35-38   -Dominic Minnich
 #    ValueSet                       | ~Line 35-38   -Dominic Minnich
+#   get_user_projects                | ~Line 35-38   -Dominic Minnich
+#   get_project_by_id                | ~Line 35-38   -Dominic Minnich
+#   get_shared_projects              | ~Line 35-38   -Dominic Minnich
+
 #               ROUTES A->Z
 #    /                      | ~Line 35-38   -Dominic Minnich
 #    /clear-login-sucess    | ~Line 35-38   -Dominic Minnich
@@ -67,15 +71,54 @@ EOL_TIME_PRIVILAGED = 300
 # End of life time for a unprivilaged project
 EOL_TIME_UNPRIVILAGED = 10
 
+# Function to get all projects for a user, using projecs.json from user to establish nice filter to projects table ids-Dominic Minnich
+def get_user_projects(user_id):
+    user = User.query.get(user_id)
+    if not user or not user.projects:
+        return jsonify({"error": "User not found or no projects available"}), 404
+
+    try:
+        project_ids = [project["project_id"] for project in json.loads(user.projects)]
+        projects = Project.query.filter(Project.id.in_(project_ids)).all()
+        project_data = [{"id": project.id, "link": project.link, "tasks": project.tasks, "collaborators": project.collaborators} for project in projects]
+        return jsonify(project_data), 200
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+    
+#Function to get shared project for a user, using shared_projects.json from user to establish nice filter to projects table ids-Dominic Minnich
+def get_shared_projects(user_id):
+    user = User.query.get(user_id)
+    if not user or not user.shared_projects:
+        return jsonify({"error": "User not found or no shared projects available"}), 404
+
+    try:
+        project_ids = [project["project_id"] for project in json.loads(user.shared_projects)]
+        projects = Project.query.filter(Project.id.in_(project_ids)).all()
+        project_data = [{"id": project.id, "link": project.link, "tasks": project.tasks, "collaborators": project.collaborators} for project in projects]
+        return jsonify(project_data), 200
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+    
+def get_project_by_id(project_id):
+    # Needs adjusting...
+    return {
+        'id': project_id,
+        'title': 'Sample Project',
+        'description': 'This is a sample project description.'
+    }
+
 
 # Routes
 # /
 @main.route("/")
 @login_required
 def home():
-    projects = (
-        current_user.projects or []
-    )  # Get the user's projects or an empty list if None
+    user_projects_response = get_user_projects(current_user.id)
+    if user_projects_response[1] == 200:
+        projects = user_projects_response[0].json
+    else:
+        projects = []
+
     return render_template(
         "home.html",
         user=current_user,
@@ -195,10 +238,17 @@ def settings():
     return render_template("settings.html", user=current_user)
 
 
-@main.route("/EditProject")
-@login_required
-def EditProject():
-    return render_template("EditProject.html, user=current_user")
+
+@main.route('/editProject')
+def editProject():
+    project_id = request.args.get('id')
+    if project_id:
+        # Fetch project details using project_id
+        project = get_project_by_id(project_id)  # Replace with your actual data fetching logic
+        return render_template('editProject.html', project=project)
+    else:
+        return "Project ID not provided", 400
+
 
 # @main.route("/ViewProjects")
 # @login_required
@@ -208,16 +258,22 @@ def EditProject():
 @main.route("/viewProjects")
 @login_required
 def viewProjects():
-    projects_list = (
-        current_user.projects
-    )  # Access the projects list (e.g., from a JSON attribute)
-
-    if projects_list is None:
+    if current_user.projects:
+        projects_list = json.loads(current_user.projects)
+    else:
         projects_list = []
 
     project_ids = [project["project_id"] for project in projects_list]
     projects = Project.query.filter(Project.id.in_(project_ids)).all()
-    return render_template("ViewProjects.html", user=current_user, projects=projects)
+    return render_template("viewProjects.html", projects=projects)
+
+@main.route("/adminPanel")
+@login_required
+def adminPanel():
+    if current_user.role == "admin":  # Only admins can access the admin panel
+        return render_template("adminPanel.html", user=current_user)
+    else:
+        return redirect(url_for("main.home"))  # Redirect to home if not an admin
 
 # Configure logging KB
 logging.basicConfig(level=logging.INFO)  # Can be deleted later, just for testing
@@ -249,6 +305,17 @@ def createProject():
         )
         db.session.add(new_project)
         db.session.commit()
+
+        # Add the created project ID to the 'projects' JSON under user table
+        if current_user.projects:
+            user_projects = json.loads(current_user.projects)
+        else:
+            user_projects = []
+
+        user_projects.append({"project_id": new_project.id})
+        current_user.projects = json.dumps(user_projects)
+        db.session.commit()
+
         flash("Project created successfully!", "success")
         return redirect(url_for("main.viewProjects"))
     else:
@@ -312,6 +379,8 @@ def adminPanel():
         delete_user_form=delete_user_form,
         delete_project_form=delete_project_form
     )
+
+
 
 
 # /viewReviewSpecific
