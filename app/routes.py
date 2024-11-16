@@ -21,9 +21,9 @@
 #    /profile               | ~Line 96-100   -Kyle Benich
 #    /settings              | ~Line 102-106   -Kyle Benich
 #    /viewProjects          | ~Line 108-111   -Sulaiman Hussain
+#    /adminPanel            | ~Line 246-298   -Sulaiman Hussain
 #    /aboutUs               | ~Line 35-38   -Dominic Minnich
 #    /createProject         | ~Line 194-212   -Kyle Benich
-
 
 # Imports
 from flask import (
@@ -45,7 +45,7 @@ from flask_login import (
 )
 
 from .models import db, User, Project
-from .forms import RegistrationForm, LoginForm, CreateProjectForm  # Import the form
+from .forms import RegistrationForm, LoginForm, CreateProjectForm, EditAccountTypeForm, DeleteUserForm, DeleteProjectForm  # Import the form
 import json  # Import json module
 import logging  # Import logging module
 from datetime import datetime, timedelta  # Import datetime and timedelta
@@ -255,7 +255,6 @@ def editProject():
 # def ViewProjects():
 # return render_template("ViewProjects.html", user=current_user)
 
-
 @main.route("/viewProjects")
 @login_required
 def viewProjects():
@@ -266,7 +265,6 @@ def viewProjects():
 
     project_ids = [project["project_id"] for project in projects_list]
     projects = Project.query.filter(Project.id.in_(project_ids)).all()
-
     return render_template("viewProjects.html", projects=projects)
 
 @main.route("/adminPanel")
@@ -276,7 +274,6 @@ def adminPanel():
         return render_template("adminPanel.html", user=current_user)
     else:
         return redirect(url_for("main.home"))  # Redirect to home if not an admin
-
 
 # Configure logging KB
 logging.basicConfig(level=logging.INFO)  # Can be deleted later, just for testing
@@ -330,6 +327,59 @@ def createProject():
                 )  # Log validation errors
     return render_template("CreateProject.html", form=form)
 
+@main.route("/adminPanel", methods=["GET", "POST"])
+@login_required
+def adminPanel():
+    if current_user.role != "admin":
+        return redirect(url_for("main.home"))  # Only admins can access
+
+    # Instantiate forms
+    edit_account_form = EditAccountTypeForm()
+    delete_user_form = DeleteUserForm()
+    delete_project_form = DeleteProjectForm()
+
+    # Process Edit Account Type form
+    if edit_account_form.validate_on_submit() and edit_account_form.submit.data:
+        username = edit_account_form.username.data
+        role = edit_account_form.role.data.lower() # This ensures that the role is lowercase.
+        user = User.query.filter_by(username=username).first()
+        if user:
+            user.role = role
+            db.session.commit()
+            flash(f"User {username}'s role updated to {role}.", "success")
+        else:
+            flash("User not found.", "danger")
+
+    # Process Delete User form
+    elif delete_user_form.validate_on_submit() and delete_user_form.submit.data:
+        username = delete_user_form.username.data
+        user = User.query.filter_by(username=username).first()
+        if user:
+            db.session.delete(user)
+            db.session.commit()
+            flash(f"User {username} deleted successfully.", "success")
+        else:
+            flash("User not found.", "danger")
+
+    # Process Delete Project form
+    elif delete_project_form.validate_on_submit() and delete_project_form.submit.data:
+        project_id = delete_project_form.project_id.data
+        project = Project.query.filter_by(id=project_id).first()
+        if project:
+            db.session.delete(project)
+            db.session.commit()
+            flash(f"Project with ID {project_id} deleted successfully.", "success")
+        else:
+            flash("Project not found.", "danger")
+
+    return render_template(
+        "adminPanel.html",
+        user=current_user,
+        edit_account_form=edit_account_form,
+        delete_user_form=delete_user_form,
+        delete_project_form=delete_project_form
+    )
+
 
 
 
@@ -338,3 +388,4 @@ def createProject():
 @login_required
 def viewReviewSpecific():
     return render_template("viewReviewSpecific.html", user=current_user)
+
