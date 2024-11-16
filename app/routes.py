@@ -41,7 +41,7 @@ from flask_login import (
 )
 
 from .models import db, User, Project
-from .forms import RegistrationForm, LoginForm, CreateProjectForm  # Import the form
+from .forms import RegistrationForm, LoginForm, CreateProjectForm, EditAccountTypeForm, DeleteUserForm, DeleteProjectForm  # Import the form
 import json  # Import json module
 import logging  # Import logging module
 from datetime import datetime, timedelta  # Import datetime and timedelta
@@ -194,13 +194,6 @@ def profile():
 def settings():
     return render_template("settings.html", user=current_user)
 
-
-# @main.route("/ViewProjects")
-# @login_required
-# def ViewProjects():
-# return render_template("ViewProjects.html", user=current_user)
-
-
 @main.route("/viewProjects")
 @login_required
 def viewProjects():
@@ -262,46 +255,51 @@ def createProject():
 @login_required
 def adminPanel():
     if current_user.role != "admin":
-        return redirect(url_for("main.home"))  # Only allow access if user is an admin
+        return redirect(url_for("main.home"))  # Only admins can access
 
-    if request.method == "POST":
-        action = request.form.get("action", "").strip()  # Get 'action', default to an empty string if not found
+    # Instantiate forms
+    edit_account_form = EditAccountTypeForm()
+    delete_user_form = DeleteUserForm()
+    delete_project_form = DeleteProjectForm()
 
-        if action == "edit_role":
-            username = request.form.get("username")
-            new_role = request.form.get("role")
-            user = User.query.filter_by(username=username).first()
+    # Process Edit Account Type form
+    if edit_account_form.validate_on_submit() and edit_account_form.submit.data:
+        username = edit_account_form.username.data
+        role = edit_account_form.role.data.lower() # This ensures that the role is lowercase.
+        user = User.query.filter_by(username=username).first()
+        if user:
+            user.role = role
+            db.session.commit()
+            flash(f"User {username}'s role updated to {role}.", "success")
+        else:
+            flash("User not found.", "danger")
 
-            if user:
-                if user.role != new_role:
-                    user.role = new_role
-                    db.session.commit()
-                    flash(f"Role updated for {username} to {new_role}.", "success")
-                else:
-                    flash(f"{username} already has the role {new_role}.", "info")
-            else:
-                flash(f"User {username} not found.", "danger")
+    # Process Delete User form
+    elif delete_user_form.validate_on_submit() and delete_user_form.submit.data:
+        username = delete_user_form.username.data
+        user = User.query.filter_by(username=username).first()
+        if user:
+            db.session.delete(user)
+            db.session.commit()
+            flash(f"User {username} deleted successfully.", "success")
+        else:
+            flash("User not found.", "danger")
 
-        elif action == "delete_user":
-            username = request.form.get("username")
-            user = User.query.filter_by(username=username).first()
+    # Process Delete Project form
+    elif delete_project_form.validate_on_submit() and delete_project_form.submit.data:
+        project_id = delete_project_form.project_id.data
+        project = Project.query.filter_by(id=project_id).first()
+        if project:
+            db.session.delete(project)
+            db.session.commit()
+            flash(f"Project with ID {project_id} deleted successfully.", "success")
+        else:
+            flash("Project not found.", "danger")
 
-            if user:
-                db.session.delete(user)
-                db.session.commit()
-                flash(f"User {username} deleted.", "success")
-            else:
-                flash(f"User {username} not found.", "danger")
-
-        elif action == "delete_project":
-            project_id = request.form.get("project_id")
-            project = Project.query.filter_by(id=project_id).first()
-
-            if project:
-                db.session.delete(project)
-                db.session.commit()
-                flash(f"Project {project_id} deleted.", "success")
-            else:
-                flash(f"Project {project_id} not found.", "danger")
-
-    return render_template("adminPanel.html", user=current_user)
+    return render_template(
+        "adminPanel.html",
+        user=current_user,
+        edit_account_form=edit_account_form,
+        delete_user_form=delete_user_form,
+        delete_project_form=delete_project_form
+    )

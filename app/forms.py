@@ -9,7 +9,7 @@
 #    Create Project             | ~Line 54-60   -Kyle Benich
 
 from wtforms import PasswordField
-from wtforms import StringField, SubmitField, PasswordField, BooleanField, IntegerField, DateTimeField
+from wtforms import StringField, SelectField, SubmitField, PasswordField, BooleanField, IntegerField, DateTimeField
 from wtforms import TextAreaField  # Add this import
 from wtforms.validators import DataRequired, Length, EqualTo, Email, URL
 from .models import User
@@ -58,3 +58,23 @@ class CreateProjectForm(FlaskForm):
     tasks = TextAreaField('Tasks', validators=[DataRequired()])
     collaborators = TextAreaField('Collaborators', validators=[DataRequired()])
     submit = SubmitField('Create Project')
+
+# Form to edit the account type of a user
+class EditAccountTypeForm(FlaskForm):
+    username = StringField("Username", validators=[DataRequired()])
+    role = SelectField(
+        "Role", 
+        choices=[("Student", "Student"), ("Project Manager", "Project Manager"), ("Admin", "Admin")],
+        validators=[DataRequired()]
+    )
+    submit = SubmitField("Confirm")
+
+# Form to delete a user
+class DeleteUserForm(FlaskForm):
+    username = StringField("Username", validators=[DataRequired()])
+    submit = SubmitField("Delete User")
+
+# Form to delete a project
+class DeleteProjectForm(FlaskForm):
+    project_id = StringField("Project ID", validators=[DataRequired()])
+    submit = SubmitField("Delete Project")
