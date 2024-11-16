@@ -17,9 +17,9 @@
 #    /profile               | ~Line 96-100   -Kyle Benich
 #    /settings              | ~Line 102-106   -Kyle Benich
 #    /viewProjects          | ~Line 108-111   -Sulaiman Hussain
+#    /adminPanel            | ~Line 246-298   -Sulaiman Hussain
 #    /aboutUs               | ~Line 35-38   -Dominic Minnich
 #    /createProject         | ~Line 194-212   -Kyle Benich
-
 
 # Imports
 from flask import (
@@ -205,15 +205,6 @@ def viewProjects():
     project_ids = [project['project_id'] for project in projects_list]
     projects = Project.query.filter(Project.id.in_(project_ids)).all()
     return render_template("ViewProjects.html", user=current_user, projects=projects)
-
-
-#@main.route("/adminPanel")
-#@login_required
-#def adminPanel():
-#    if current_user.role == "admin":  # Only admins can access the admin panel
-#        return render_template("adminPanel.html", user=current_user)
- #   else:
-  #      return redirect(url_for("main.home"))  # Redirect to home if not an admin
 
 # Configure logging KB
 logging.basicConfig(level=logging.INFO) #Can be deleted later, just for testing
