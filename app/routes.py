@@ -45,7 +45,14 @@ from flask_login import (
 )
 
 from .models import db, User, Project
-from .forms import RegistrationForm, LoginForm, CreateProjectForm, EditAccountTypeForm, DeleteUserForm, DeleteProjectForm  # Import the form
+from .forms import (
+    RegistrationForm,
+    LoginForm,
+    CreateProjectForm,
+    EditAccountTypeForm,
+    DeleteUserForm,
+    DeleteProjectForm,
+)  # Import the form
 import json  # Import json module
 import logging  # Import logging module
 from datetime import datetime, timedelta  # Import datetime and timedelta
@@ -71,6 +78,7 @@ EOL_TIME_PRIVILAGED = 300
 # End of life time for a unprivilaged project
 EOL_TIME_UNPRIVILAGED = 10
 
+
 # Function to get all projects for a user, using projecs.json from user to establish nice filter to projects table ids-Dominic Minnich
 def get_user_projects(user_id):
     user = User.query.get(user_id)
@@ -80,31 +88,51 @@ def get_user_projects(user_id):
     try:
         project_ids = [project["project_id"] for project in json.loads(user.projects)]
         projects = Project.query.filter(Project.id.in_(project_ids)).all()
-        project_data = [{"id": project.id, "link": project.link, "tasks": project.tasks, "collaborators": project.collaborators} for project in projects]
+        project_data = [
+            {
+                "id": project.id,
+                "link": project.link,
+                "tasks": project.tasks,
+                "collaborators": project.collaborators,
+            }
+            for project in projects
+        ]
         return jsonify(project_data), 200
     except Exception as e:
         return jsonify({"error": str(e)}), 500
-    
-#Function to get shared project for a user, using shared_projects.json from user to establish nice filter to projects table ids-Dominic Minnich
+
+
+# Function to get shared project for a user, using shared_projects.json from user to establish nice filter to projects table ids-Dominic Minnich
 def get_shared_projects(user_id):
     user = User.query.get(user_id)
     if not user or not user.shared_projects:
         return jsonify({"error": "User not found or no shared projects available"}), 404
 
     try:
-        project_ids = [project["project_id"] for project in json.loads(user.shared_projects)]
+        project_ids = [
+            project["project_id"] for project in json.loads(user.shared_projects)
+        ]
         projects = Project.query.filter(Project.id.in_(project_ids)).all()
-        project_data = [{"id": project.id, "link": project.link, "tasks": project.tasks, "collaborators": project.collaborators} for project in projects]
+        project_data = [
+            {
+                "id": project.id,
+                "link": project.link,
+                "tasks": project.tasks,
+                "collaborators": project.collaborators,
+            }
+            for project in projects
+        ]
         return jsonify(project_data), 200
     except Exception as e:
         return jsonify({"error": str(e)}), 500
-    
+
+
 def get_project_by_id(project_id):
     # Needs adjusting...
     return {
-        'id': project_id,
-        'title': 'Sample Project',
-        'description': 'This is a sample project description.'
+        "id": project_id,
+        "title": "Sample Project",
+        "description": "This is a sample project description.",
     }
 
 
@@ -238,14 +266,15 @@ def settings():
     return render_template("settings.html", user=current_user)
 
 
-
-@main.route('/editProject')
+@main.route("/editProject")
 def editProject():
-    project_id = request.args.get('id')
+    project_id = request.args.get("id")
     if project_id:
         # Fetch project details using project_id
-        project = get_project_by_id(project_id)  # Replace with your actual data fetching logic
-        return render_template('editProject.html', project=project)
+        project = get_project_by_id(
+            project_id
+        )  # Replace with your actual data fetching logic
+        return render_template("editProject.html", project=project)
     else:
         return "Project ID not provided", 400
 
@@ -254,6 +283,7 @@ def editProject():
 # @login_required
 # def ViewProjects():
 # return render_template("ViewProjects.html", user=current_user)
+
 
 @main.route("/viewProjects")
 @login_required
@@ -267,13 +297,6 @@ def viewProjects():
     projects = Project.query.filter(Project.id.in_(project_ids)).all()
     return render_template("viewProjects.html", projects=projects)
 
-@main.route("/adminPanel")
-@login_required
-def adminPanel():
-    if current_user.role == "admin":  # Only admins can access the admin panel
-        return render_template("adminPanel.html", user=current_user)
-    else:
-        return redirect(url_for("main.home"))  # Redirect to home if not an admin
 
 # Configure logging KB
 logging.basicConfig(level=logging.INFO)  # Can be deleted later, just for testing
@@ -327,6 +350,7 @@ def createProject():
                 )  # Log validation errors
     return render_template("CreateProject.html", form=form)
 
+
 @main.route("/adminPanel", methods=["GET", "POST"])
 @login_required
 def adminPanel():
@@ -341,7 +365,9 @@ def adminPanel():
     # Process Edit Account Type form
     if edit_account_form.validate_on_submit() and edit_account_form.submit.data:
         username = edit_account_form.username.data
-        role = edit_account_form.role.data.lower() # This ensures that the role is lowercase.
+        role = (
+            edit_account_form.role.data.lower()
+        )  # This ensures that the role is lowercase.
         user = User.query.filter_by(username=username).first()
         if user:
             user.role = role
@@ -377,10 +403,8 @@ def adminPanel():
         user=current_user,
         edit_account_form=edit_account_form,
         delete_user_form=delete_user_form,
-        delete_project_form=delete_project_form
+        delete_project_form=delete_project_form,
     )
-
-
 
 
 # /viewReviewSpecific
@@ -388,4 +412,3 @@ def adminPanel():
 @login_required
 def viewReviewSpecific():
     return render_template("viewReviewSpecific.html", user=current_user)
-
