@@ -36,6 +36,7 @@ class User(db.Model, UserMixin):  # Inherit from UserMixin to add necessary prop
     calibrated = db.Column(db.Boolean, default=False, nullable=False)
     picture = db.Column(db.String(200))  # Store path or URL to the picture
     projects = db.Column(db.JSON, nullable=True)  # Store JSON of project IDs
+    shared_projects = db.Column(db.JSON, nullable=True)  # Store JSON of project IDs
     config = db.Column(db.JSON, nullable=True)  # Store JSON of user settings
 
     def set_password(self, password):

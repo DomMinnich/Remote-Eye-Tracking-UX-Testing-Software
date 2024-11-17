@@ -249,7 +249,7 @@ const teamMembers = [
     name: "Logan Smith",
     description: "Full Stack Developer",
     imageUrl: "static/pic.png",
-    linkUrl: "https://example.com/logan",
+    linkUrl: "https://github.com/lssmith80",
   },
 ];
 

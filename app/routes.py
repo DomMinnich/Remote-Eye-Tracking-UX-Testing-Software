@@ -7,6 +7,10 @@
 #    Blueprint                      | ~Line 22-30   -Dominic Minnich
 #    LoginManager Instance          | ~Line 35-38   -Dominic Minnich
 #    ValueSet                       | ~Line 35-38   -Dominic Minnich
+#   get_user_projects                | ~Line 35-38   -Dominic Minnich
+#   get_project_by_id                | ~Line 35-38   -Dominic Minnich
+#   get_shared_projects              | ~Line 35-38   -Dominic Minnich
+
 #               ROUTES A->Z
 #    /                      | ~Line 35-38   -Dominic Minnich
 #    /clear-login-sucess    | ~Line 35-38   -Dominic Minnich
@@ -17,9 +21,9 @@
 #    /profile               | ~Line 96-100   -Kyle Benich
 #    /settings              | ~Line 102-106   -Kyle Benich
 #    /viewProjects          | ~Line 108-111   -Sulaiman Hussain
+#    /adminPanel            | ~Line 246-298   -Sulaiman Hussain
 #    /aboutUs               | ~Line 35-38   -Dominic Minnich
 #    /createProject         | ~Line 194-212   -Kyle Benich
-
 
 # Imports
 from flask import (
@@ -41,7 +45,14 @@ from flask_login import (
 )
 
 from .models import db, User, Project
-from .forms import RegistrationForm, LoginForm, CreateProjectForm  # Import the form
+from .forms import (
+    RegistrationForm,
+    LoginForm,
+    CreateProjectForm,
+    EditAccountTypeForm,
+    DeleteUserForm,
+    DeleteProjectForm,
+)  # Import the form
 import json  # Import json module
 import logging  # Import logging module
 from datetime import datetime, timedelta  # Import datetime and timedelta
@@ -68,14 +79,74 @@ EOL_TIME_PRIVILAGED = 300
 EOL_TIME_UNPRIVILAGED = 10
 
 
+# Function to get all projects for a user, using projecs.json from user to establish nice filter to projects table ids-Dominic Minnich
+def get_user_projects(user_id):
+    user = User.query.get(user_id)
+    if not user or not user.projects:
+        return jsonify({"error": "User not found or no projects available"}), 404
+
+    try:
+        project_ids = [project["project_id"] for project in json.loads(user.projects)]
+        projects = Project.query.filter(Project.id.in_(project_ids)).all()
+        project_data = [
+            {
+                "id": project.id,
+                "link": project.link,
+                "tasks": project.tasks,
+                "collaborators": project.collaborators,
+            }
+            for project in projects
+        ]
+        return jsonify(project_data), 200
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
+
+# Function to get shared project for a user, using shared_projects.json from user to establish nice filter to projects table ids-Dominic Minnich
+def get_shared_projects(user_id):
+    user = User.query.get(user_id)
+    if not user or not user.shared_projects:
+        return jsonify({"error": "User not found or no shared projects available"}), 404
+
+    try:
+        project_ids = [
+            project["project_id"] for project in json.loads(user.shared_projects)
+        ]
+        projects = Project.query.filter(Project.id.in_(project_ids)).all()
+        project_data = [
+            {
+                "id": project.id,
+                "link": project.link,
+                "tasks": project.tasks,
+                "collaborators": project.collaborators,
+            }
+            for project in projects
+        ]
+        return jsonify(project_data), 200
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
+
+def get_project_by_id(project_id):
+    # Needs adjusting...
+    return {
+        "id": project_id,
+        "title": "Sample Project",
+        "description": "This is a sample project description.",
+    }
+
+
 # Routes
 # /
 @main.route("/")
 @login_required
 def home():
-    projects = (
-        current_user.projects or []
-    )  # Get the user's projects or an empty list if None
+    user_projects_response = get_user_projects(current_user.id)
+    if user_projects_response[1] == 200:
+        projects = user_projects_response[0].json
+    else:
+        projects = []
+
     return render_template(
         "home.html",
         user=current_user,
@@ -195,10 +266,18 @@ def settings():
     return render_template("settings.html", user=current_user)
 
 
-@main.route("/EditProject")
-@login_required
-def EditProject():
-    return render_template("EditProject.html, user=current_user")
+@main.route("/editProject")
+def editProject():
+    project_id = request.args.get("id")
+    if project_id:
+        # Fetch project details using project_id
+        project = get_project_by_id(
+            project_id
+        )  # Replace with your actual data fetching logic
+        return render_template("editProject.html", project=project)
+    else:
+        return "Project ID not provided", 400
+
 
 # @main.route("/ViewProjects")
 # @login_required
@@ -209,25 +288,14 @@ def EditProject():
 @main.route("/viewProjects")
 @login_required
 def viewProjects():
-    projects_list = (
-        current_user.projects
-    )  # Access the projects list (e.g., from a JSON attribute)
-
-    if projects_list is None:
+    if current_user.projects:
+        projects_list = json.loads(current_user.projects)
+    else:
         projects_list = []
 
     project_ids = [project["project_id"] for project in projects_list]
     projects = Project.query.filter(Project.id.in_(project_ids)).all()
-    return render_template("ViewProjects.html", user=current_user, projects=projects)
-
-
-@main.route("/adminPanel")
-@login_required
-def adminPanel():
-    if current_user.role == "admin":  # Only admins can access the admin panel
-        return render_template("adminPanel.html", user=current_user)
-    else:
-        return redirect(url_for("main.home"))  # Redirect to home if not an admin
+    return render_template("viewProjects.html", projects=projects)
 
 
 # Configure logging KB
@@ -298,6 +366,62 @@ def createProject():
                     f"Validation error in {field}: {error}"
                 )  # Log validation errors
     return render_template("CreateProject.html", form=form, user=current_user)
+
+
+@main.route("/adminPanel", methods=["GET", "POST"])
+@login_required
+def adminPanel():
+    if current_user.role != "admin":
+        return redirect(url_for("main.home"))  # Only admins can access
+
+    # Instantiate forms
+    edit_account_form = EditAccountTypeForm()
+    delete_user_form = DeleteUserForm()
+    delete_project_form = DeleteProjectForm()
+
+    # Process Edit Account Type form
+    if edit_account_form.validate_on_submit() and edit_account_form.submit.data:
+        username = edit_account_form.username.data
+        role = (
+            edit_account_form.role.data.lower()
+        )  # This ensures that the role is lowercase.
+        user = User.query.filter_by(username=username).first()
+        if user:
+            user.role = role
+            db.session.commit()
+            flash(f"User {username}'s role updated to {role}.", "success")
+        else:
+            flash("User not found.", "danger")
+
+    # Process Delete User form
+    elif delete_user_form.validate_on_submit() and delete_user_form.submit.data:
+        username = delete_user_form.username.data
+        user = User.query.filter_by(username=username).first()
+        if user:
+            db.session.delete(user)
+            db.session.commit()
+            flash(f"User {username} deleted successfully.", "success")
+        else:
+            flash("User not found.", "danger")
+
+    # Process Delete Project form
+    elif delete_project_form.validate_on_submit() and delete_project_form.submit.data:
+        project_id = delete_project_form.project_id.data
+        project = Project.query.filter_by(id=project_id).first()
+        if project:
+            db.session.delete(project)
+            db.session.commit()
+            flash(f"Project with ID {project_id} deleted successfully.", "success")
+        else:
+            flash("Project not found.", "danger")
+
+    return render_template(
+        "adminPanel.html",
+        user=current_user,
+        edit_account_form=edit_account_form,
+        delete_user_form=delete_user_form,
+        delete_project_form=delete_project_form,
+    )
 
 
 # /viewReviewSpecific
