@@ -63,7 +63,8 @@
 
   // Function to stop WebGazer and camera
   function stopWebGazer() {
-    webgazer.end(); // End WebGazer
+      webgazer.end(); // End WebGazer
+      console.log("Stopping WebGazer...");
 
     // Stop all media tracks (camera)
     if (webcamStream) {
@@ -78,7 +79,8 @@
 
     // Show alert and reload the page after ending the session
     alert("Eye Tracker stopped and data saved.");
-    location.reload(); // Reload the page
+    console.log("Redirecting to home page...");
+    window.location.href = "/"; // Redirect to home page
   }
 
   // Function to update the style of elements
@@ -151,6 +153,7 @@
     });
 
   document.getElementById("end-session").addEventListener("click", function () {
+    console.log("End session button clicked.");
     stopWebGazer();
   });
 </script>
