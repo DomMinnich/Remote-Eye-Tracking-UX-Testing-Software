@@ -47,7 +47,13 @@ class User(db.Model, UserMixin):  # Inherit from UserMixin to add necessary prop
     
 #Kyle Benich
 class Project(db.Model):
-    id = db.Column(db.Integer, primary_key=True) # Primary key, unique identifier for each project (This is what a user has in their "projects" list)
+    id = db.Column(
+        db.String(36),
+        primary_key=True,
+        default=lambda: str(uuid.uuid4()),
+        unique=True,
+        nullable=False,
+    )
     link = db.Column(db.String(255), unique=True, nullable=False) # Unique link to Figma
     created_at = db.Column(db.DateTime, nullable=False, default=datetime.utcnow) # Time of creation, used for EoL
     creator = db.Column(db.Integer, nullable=False) # User ID of creator
@@ -57,3 +63,19 @@ class Project(db.Model):
     eol_time = db.Column(db.DateTime, nullable=False) # End of life time
     collaborators = db.Column(db.JSON, nullable=False) # JSON object of collaborators (Example in Disc)
     numPauses = db.Column(db.Integer, nullable=False) # Number of times the project has been paused (Maximum of.. 3? 2?)
+
+    @staticmethod
+    def generate_unique_id():
+        while True:
+            new_id = str(uuid.uuid4())
+            if not User.query.get(new_id) and not Project.query.get(new_id):
+                return new_id
+
+    @staticmethod
+    def find_user_id_by_email(email):
+        user = User.query.filter_by(email=email).first()
+        return user.id if user else None
+
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
+        self.id = self.generate_unique_id()

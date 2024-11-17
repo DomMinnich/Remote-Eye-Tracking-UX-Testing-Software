@@ -23,17 +23,28 @@
         <span class="form-error">[{{ error }}]</span>
       {% endfor %}
     </div>
+    {% if user.role == 'admin' or user.role == 'project_manager' %}
     <div class="form-group">
       {{ form.collaborators.label }}<br>
       <div id="collaborators-container">
-        {{ form.collaborators(rows=1, oninput="autoResize(this)") }}<br>
+        <div class="input-wrapper">
+          {{ form.collaborators(rows=1, oninput="autoResize(this)") }}
+          <select name="collaborator_role" class="form-control custom-select">
+            <option value="co-owner">Co-owner</option>
+            <option value="editor">Editor</option>
+            <option value="viewer">Viewer</option>
+          </select>
+        </div>
       </div>
       <button type="button" class="add-collaborator-btn">+</button>
       {% for error in form.collaborators.errors %}
         <span class="form-error">[{{ error }}]</span>
       {% endfor %}
     </div>
+    {% endif %}
     <div class="form-group">
+      <input type="hidden" name="tasks" value="[]">
+      <input type="hidden" name="collaborators" value="[]">
       <input type="submit" value="Create Project" class="btn-submit">
     </div>
   </form>
@@ -70,6 +81,14 @@
     input.rows = 1;
     input.cols = 32;
     input.oninput = function() { autoResize(this); };
+    const select = document.createElement('select');
+    select.name = 'collaborator_role';
+    select.className = 'form-control custom-select';
+    select.innerHTML = `
+      <option value="co-owner">Co-owner</option>
+      <option value="editor">Editor</option>
+      <option value="viewer">Viewer</option>
+    `;
     const removeBtn = document.createElement('button');
     removeBtn.type = 'button';
     removeBtn.className = 'remove-btn';
@@ -78,6 +97,7 @@
       container.removeChild(inputWrapper);
     });
     inputWrapper.appendChild(input);
+    inputWrapper.appendChild(select);
     inputWrapper.appendChild(removeBtn);
     container.appendChild(inputWrapper);
   });
@@ -111,7 +131,12 @@
     document.querySelector('textarea[name="tasks"]').value = JSON.stringify(tasks);
 
     const collaboratorsContainer = document.getElementById('collaborators-container');
-    const collaborators = Array.from(collaboratorsContainer.querySelectorAll('textarea')).map(textarea => textarea.value);
+    const collaborators = Array.from(collaboratorsContainer.querySelectorAll('.input-wrapper')).map(wrapper => {
+      return {
+        email: wrapper.querySelector('textarea').value,
+        role: wrapper.querySelector('select').value
+      };
+    });
     document.querySelector('textarea[name="collaborators"]').value = JSON.stringify(collaborators);
 
     return true;
