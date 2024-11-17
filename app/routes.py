@@ -307,16 +307,23 @@ logging.basicConfig(level=logging.INFO)  # Can be deleted later, just for testin
 def createProject():
     form = CreateProjectForm()
     if form.validate_on_submit():
-        default_eol_time = datetime.utcnow() + timedelta(
-            weeks=1
-        )  # Set default end of life time to 1 week from now
-        default_max_submissions = 100  # Set default max submissions
+        # Check if the link already exists
+        existing_project = Project.query.filter_by(link=form.link.data).first()
+        if existing_project:
+            flash("A project with this link already exists. Please use a different link.", "danger")
+            return render_template("createProject.html", form=form, user=current_user)
 
-        # Handle tasks and collaborators as JSON arrays
-        tasks = json.loads(form.tasks.data)
-        collaborators_data = json.loads(form.collaborators.data)
+        default_eol_time = datetime.utcnow() + timedelta(weeks=1)
+        default_max_submissions = 100
+
+        try:
+            tasks = json.loads(form.tasks.data)
+            collaborators_data = json.loads(form.collaborators.data)
+        except json.JSONDecodeError:
+            flash("Invalid JSON format in tasks or collaborators.", "danger")
+            return render_template("createProject.html", form=form, user=current_user)
+
         collaborators = []
-
         for collaborator in collaborators_data:
             email = collaborator.get("email")
             role = collaborator.get("role")
@@ -325,47 +332,54 @@ def createProject():
                 collaborators.append({"email": email, "id": user_id, "role": role})
             else:
                 flash(f"Collaborator with email {email} not found.", "danger")
-                return render_template("CreateProject.html", form=form, user=current_user)
+                return render_template("createProject.html", form=form, user=current_user)
 
         new_project = Project(
-            id=Project.generate_unique_id(),  # Ensure unique ID
+            id=Project.generate_unique_id(),
             link=form.link.data,
             creator=current_user.id,
             priviledged=True,
-            tasks=tasks,  # Use tasks JSON
-            max_submissions=default_max_submissions,  # Use default max submissions
-            eol_time=default_eol_time,  # Use default end of life time
-            collaborators=collaborators,  # Use collaborators JSON
+            tasks=tasks,
+            max_submissions=default_max_submissions,
+            eol_time=default_eol_time,
+            collaborators=collaborators,
             numPauses=0,
         )
         db.session.add(new_project)
         db.session.commit()
 
-        # KB 
-        # Update user's projects JSON. 
+        # Update user's projects JSON
         if current_user.projects is None:
-            current_user.projects = []
-        current_user.projects.append({"project_id": new_project.id, "role": "creator"})
+            current_user.projects = json.dumps([{"project_id": new_project.id, "role": "creator"}])
+        elif isinstance(current_user.projects, list):
+            user_projects = current_user.projects
+            user_projects.append({"project_id": new_project.id, "role": "creator"})
+            current_user.projects = json.dumps(user_projects)
+        else:
+            user_projects = json.loads(current_user.projects)
+            user_projects.append({"project_id": new_project.id, "role": "creator"})
+            current_user.projects = json.dumps(user_projects)
         db.session.commit()
 
-        # Update each collaborator's projects JSON
+        # Update each collaborator's shared_projects JSON
         for collaborator in collaborators:
             user = User.query.get(collaborator["id"])
-            if user.projects is None:
-                user.projects = []
-            user.projects.append({"project_id": new_project.id, "role": collaborator["role"]})
+            if user.shared_projects is None:
+                shared_projects = []
+            else:
+                shared_projects = json.loads(user.shared_projects)
+            shared_projects.append({"project_id": new_project.id, "role": collaborator["role"]})
+            user.shared_projects = json.dumps(shared_projects)
             db.session.commit()
 
         flash("Project created successfully!", "success")
         return redirect(url_for("main.viewProjects"))
     else:
-        logging.warning("Form validation failed")  # Log when the form validation fails
+        logging.warning("Form validation failed")
         for field, errors in form.errors.items():
             for error in errors:
-                logging.warning(
-                    f"Validation error in {field}: {error}"
-                )  # Log validation errors
-    return render_template("CreateProject.html", form=form, user=current_user)
+                logging.warning(f"Validation error in {field}: {error}")
+    return render_template("createProject.html", form=form, user=current_user)
 
 
 @main.route("/adminPanel", methods=["GET", "POST"])
