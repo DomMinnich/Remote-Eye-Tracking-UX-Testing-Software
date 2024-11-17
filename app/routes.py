@@ -246,16 +246,18 @@ def createProject():
 
         # Handle tasks and collaborators as JSON arrays
         tasks = json.loads(form.tasks.data)
-        collaborators_emails = json.loads(form.collaborators.data)
+        collaborators_data = json.loads(form.collaborators.data)
         collaborators = []
 
-        for email in collaborators_emails:
+        for collaborator in collaborators_data:
+            email = collaborator.get("email")
+            role = collaborator.get("role")
             user_id = Project.find_user_id_by_email(email)
             if user_id:
-                collaborators.append(user_id)
+                collaborators.append({"email": email, "id": user_id, "role": role})
             else:
                 flash(f"Collaborator with email {email} not found.", "danger")
-                return render_template("CreateProject.html", form=form)
+                return render_template("CreateProject.html", form=form, user=current_user)
 
         new_project = Project(
             id=Project.generate_unique_id(),  # Ensure unique ID
@@ -275,8 +277,16 @@ def createProject():
         # Update user's projects JSON. 
         if current_user.projects is None:
             current_user.projects = []
-        current_user.projects.append(new_project.id)
+        current_user.projects.append({"project_id": new_project.id, "role": "creator"})
         db.session.commit()
+
+        # Update each collaborator's projects JSON
+        for collaborator in collaborators:
+            user = User.query.get(collaborator["id"])
+            if user.projects is None:
+                user.projects = []
+            user.projects.append({"project_id": new_project.id, "role": collaborator["role"]})
+            db.session.commit()
 
         flash("Project created successfully!", "success")
         return redirect(url_for("main.viewProjects"))
@@ -287,7 +297,7 @@ def createProject():
                 logging.warning(
                     f"Validation error in {field}: {error}"
                 )  # Log validation errors
-    return render_template("CreateProject.html", form=form)
+    return render_template("CreateProject.html", form=form, user=current_user)
 
 
 # /viewReviewSpecific

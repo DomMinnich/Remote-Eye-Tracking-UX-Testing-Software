@@ -1055,6 +1055,25 @@ For ex for login title I did login-title instead of title
   background-color: #555;
 }
 
+.create-project-container .form-group .custom-select {
+  background-color: #333; /* Gray background */
+  color: #0073d1; /* Blue text */
+  font-family: "Gruppo", sans-serif; /* Matching font */
+  border: none;
+  border-bottom: 2px solid #0062d1;
+  border-radius: 4px;
+  padding: 10px;
+  margin-left: 10px; /* Add space between input and select */
+  -webkit-appearance: none; /* Remove default arrow in Chrome/Safari */
+  -moz-appearance: none; /* Remove default arrow in Firefox */
+  appearance: none; /* Remove default arrow in other browsers */
+}
+
+.create-project-container .form-group .custom-select:focus {
+  outline: none;
+  border-bottom: 2px solid #00d1b2;
+}
+
 /* VRS viewReviewSpecific   A->Z */
 
 .vrs-arrow {
