@@ -56,6 +56,9 @@ from .forms import (
 import json  # Import json module
 import logging  # Import logging module
 from datetime import datetime, timedelta  # Import datetime and timedelta
+import os
+import uuid
+from werkzeug.utils import secure_filename
 
 # Blueprint
 main = Blueprint("main", __name__)
@@ -278,13 +281,6 @@ def editProject():
     else:
         return "Project ID not provided", 400
 
-
-# @main.route("/ViewProjects")
-# @login_required
-# def ViewProjects():
-# return render_template("ViewProjects.html", user=current_user)
-
-
 @main.route("/viewProjects")
 @login_required
 def viewProjects():
@@ -412,3 +408,44 @@ def adminPanel():
 @login_required
 def viewReviewSpecific():
     return render_template("viewReviewSpecific.html", user=current_user)
+
+@main.route("/review/<int:project_id>")
+# @login_required     # anyone can submit a review
+def project(project_id):
+    project = Project.query.get_or_404(project_id)
+    return render_template('review.html', project=project)
+
+# /upload
+# Define the upload folder
+UPLOAD_FOLDER = os.path.join('static', 'data', 'Projects')
+
+# Ensure the upload folder exists
+os.makedirs(UPLOAD_FOLDER, exist_ok=True)
+
+@main.route('/upload', methods=['POST'])
+def upload_video():
+    if 'video' not in request.files:
+        return jsonify({"error": "No video file provided"}), 400
+
+    video = request.files['video']
+    if video.filename == '':
+        return jsonify({"error": "No selected file"}), 400
+
+    project_id = request.form.get('project_id')
+    session_id = str(uuid.uuid4())
+    video_id = str(uuid.uuid4())
+
+    # Create the directory structure
+    project_folder = os.path.join(UPLOAD_FOLDER, secure_filename(project_id))
+    session_folder = os.path.join(project_folder, secure_filename(session_id))
+    video_folder = os.path.join(session_folder, 'Video')
+    raw_folder = os.path.join(session_folder, 'Raw')
+
+    os.makedirs(video_folder, exist_ok=True)
+    os.makedirs(raw_folder, exist_ok=True)
+
+    # Save the video file
+    video_path = os.path.join(video_folder, f"{video_id}.webm")
+    video.save(video_path)
+
+    return jsonify({"message": "Video uploaded successfully", "video_path": video_path}), 200

@@ -1,0 +1,214 @@
+{% extends "base.html" %} 
+{% block title %}Project{% endblock %} 
+{% block content %}
+
+<style>
+  /* Add your styles here */
+</style>
+
+<h2>Project: {{ project.name }}</h2>
+<p><strong>ID:</strong> {{ project.id }}</p>
+<iframe
+  src="{{ project.link }}"
+  width="100%"
+  height="600"
+  frameborder="0"
+  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+  allowfullscreen
+></iframe>
+
+<!-- Eye Tracking Elements -->
+<div id="videoContainer"></div>
+
+<a href="#" class="btn" id="start-session">Start Session</a>
+<a href="#" class="btn" id="end-session">End Session</a>
+
+<!-- Include webgazer.js script -->
+<script src="{{ url_for('static', filename='webgazer.js') }}"></script>
+
+<script>
+  let webcamStream;
+
+  // Function to start WebGazer
+  function startWebGazer() {
+    webgazer
+      .setRegression("ridge")
+      .setGazeListener(function (data, clock) {
+        if (data) {
+          console.log(data); // Log gaze data
+        }
+      })
+      .begin()
+      .showVideo(true) // Show video feed for WebGazer
+      .showPredictionPoints(true); // Show gaze prediction points
+
+    // Request access to the webcam and store the stream
+    navigator.mediaDevices
+      .getUserMedia({ video: true })
+      .then(function (stream) {
+        webcamStream = stream;
+
+        // Set the WebGazer video feed to use this stream
+        const video = document.getElementById("webgazerVideoFeed");
+        if (video) {
+          video.srcObject = webcamStream;
+        }
+      })
+      .catch(function (error) {
+        console.error("Error accessing the webcam: ", error);
+      });
+
+    updateWebGazerElements();
+  }
+
+  // Function to stop WebGazer and camera
+  function stopWebGazer() {
+    webgazer.end(); // End WebGazer
+
+    // Stop all media tracks (camera)
+    if (webcamStream) {
+      const tracks = webcamStream.getTracks();
+      tracks.forEach((track) => track.stop()); // Stop each track of the camera
+      webcamStream = null; // Clear the stream reference
+    }
+
+    // Hide WebGazer video elements
+    webgazer.showVideo(false);
+    webgazer.showPredictionPoints(false);
+
+    // Show alert and reload the page after ending the session
+    alert("Eye Tracker stopped and data saved.");
+    location.reload(); // Reload the page
+  }
+
+  // Function to update the style of elements
+  function updateWebGazerElements() {
+    const gazeDot = document.getElementById("webgazerGazeDot");
+    if (gazeDot) {
+      gazeDot.style.opacity = "1";
+      gazeDot.style.backgroundColor = "blue";
+    }
+
+    const videoElement = document.getElementById("webgazerVideoFeed");
+    if (videoElement) {
+      videoElement.style.width = "300px";
+      videoElement.style.height = "200px";
+      videoElement.style.position = "fixed";
+      videoElement.style.right = "10px";
+      videoElement.style.bottom = "10px";
+    }
+
+    const faceOverlay = document.getElementById("webgazerFaceOverlay");
+    if (faceOverlay) {
+      faceOverlay.style.width = "300px";
+      faceOverlay.style.height = "200px";
+      faceOverlay.style.position = "fixed";
+      faceOverlay.style.right = "10px";
+      faceOverlay.style.bottom = "10px";
+      faceOverlay.style.pointerEvents = "none";
+      faceOverlay.style.zIndex = "1000";
+    }
+
+    const faceFeedbackBox = document.getElementById("webgazerFaceFeedbackBox");
+    if (faceFeedbackBox && videoElement) {
+      const videoRect = videoElement.getBoundingClientRect();
+      const feedbackWidth = faceFeedbackBox.offsetWidth;
+      const feedbackHeight = faceFeedbackBox.offsetHeight;
+
+      faceFeedbackBox.style.position = "fixed";
+      faceFeedbackBox.style.left = `${
+        videoRect.left + (videoRect.width - feedbackWidth) / 2
+      }px`;
+      faceFeedbackBox.style.top = `${
+        videoRect.top + (videoRect.height - feedbackHeight) / 2
+      }px`;
+      faceFeedbackBox.style.pointerEvents = "none";
+      faceFeedbackBox.style.zIndex = "1001";
+    }
+  }
+
+  // Set up MutationObserver to watch for changes to the feedback box
+  const observer = new MutationObserver((mutations) => {
+    mutations.forEach((mutation) => {
+      if (mutation.target.id === "webgazerFaceFeedbackBox") {
+        updateWebGazerElements();
+      }
+    });
+  });
+
+  observer.observe(document.body, {
+    childList: true,
+    subtree: true,
+    attributes: true,
+  });
+
+  // Event listeners for session buttons
+  document
+    .getElementById("start-session")
+    .addEventListener("click", function () {
+      startWebGazer();
+      alert("Eye Tracker started.");
+    });
+
+  document.getElementById("end-session").addEventListener("click", function () {
+    stopWebGazer();
+  });
+</script>
+
+<script>
+  // RECORD SCREEN :)
+
+  const startBtn = document.getElementById("start-session");
+  const stopBtn = document.getElementById("end-session");
+  let mediaRecorder;
+  let recordedChunks = [];
+
+  // Start recording
+  startBtn.onclick = async () => {
+    try {
+      // Request to capture the entire screen
+      const stream = await navigator.mediaDevices.getDisplayMedia({
+        video: {
+          cursor: "always", // Always show the cursor in the recording
+        },
+        audio: false, // Set to true if audio capture is needed
+      });
+
+      mediaRecorder = new MediaRecorder(stream, { mimeType: "video/webm" });
+
+      mediaRecorder.ondataavailable = (event) => {
+        if (event.data.size > 0) {
+          recordedChunks.push(event.data);
+        }
+      };
+
+      mediaRecorder.onstop = () => {
+        const blob = new Blob(recordedChunks, { type: "video/webm" });
+        const formData = new FormData();
+        formData.append("video", blob, "recorded_video.webm"); // Still using .webm for uploading
+        formData.append("project_id", "{{ project.id }}"); // Add project_id to form data
+
+        fetch("/upload", {
+          method: "POST",
+          body: formData,
+        })
+          .then((response) => response.json())
+          .then((data) => console.log(data))
+          .catch((error) => console.error("Error uploading video:", error));
+      };
+
+      mediaRecorder.start();
+    } catch (error) {
+      console.error("Error accessing display media.", error);
+    }
+  };
+
+  // Stop recording
+  stopBtn.onclick = () => {
+    if (mediaRecorder && mediaRecorder.state !== "inactive") {
+      mediaRecorder.stop();
+    }
+  };
+</script>
+
+{% endblock %}
