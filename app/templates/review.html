@@ -196,7 +196,12 @@
           body: formData,
         })
           .then((response) => response.json())
-          .then((data) => console.log(data))
+          .then((data) => {
+            console.log(data);
+            alert("Eye Tracker stopped and data saved.");
+            console.log("Redirecting to home page...");
+            window.location.href = "/"; // Redirect to home page
+          })
           .catch((error) => console.error("Error uploading video:", error));
       };
 
