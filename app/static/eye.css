@@ -205,7 +205,6 @@
   transition: filter 0.3s;
 }
 
-
 .eye-container:hover {
   cursor: none;
   filter: none;
