@@ -9,7 +9,15 @@
 #    Create Project             | ~Line 54-60   -Kyle Benich
 
 from wtforms import PasswordField
-from wtforms import StringField, SelectField, SubmitField, PasswordField, BooleanField, IntegerField, DateTimeField
+from wtforms import (
+    StringField,
+    SelectField,
+    SubmitField,
+    PasswordField,
+    BooleanField,
+    IntegerField,
+    DateTimeField,
+)
 from wtforms import TextAreaField  # Add this import
 from wtforms.validators import DataRequired, Length, EqualTo, Email, URL
 from .models import User
@@ -54,25 +62,32 @@ class LoginForm(FlaskForm):
 
 # CreateProjectForm class, inherits from FlaskForm
 class CreateProjectForm(FlaskForm):
-    link = StringField('Project Link', validators=[DataRequired(), URL()])
-    tasks = TextAreaField('Tasks', validators=[DataRequired()])
-    collaborators = TextAreaField('Collaborators', validators=[DataRequired()])
-    submit = SubmitField('Create Project')
+    link = StringField("Project Link", validators=[DataRequired(), URL()])
+    tasks = TextAreaField("Tasks", validators=[DataRequired()])
+    collaborators = TextAreaField("Collaborators", validators=[DataRequired()])
+    submit = SubmitField("Create Project")
+
 
 # Form to edit the account type of a user
 class EditAccountTypeForm(FlaskForm):
     username = StringField("Username", validators=[DataRequired()])
     role = SelectField(
-        "Role", 
-        choices=[("Student", "Student"), ("Project Manager", "Project Manager"), ("Admin", "Admin")],
-        validators=[DataRequired()]
+        "Role",
+        choices=[
+            ("Student", "Student"),
+            ("Project Manager", "Project Manager"),
+            ("Admin", "Admin"),
+        ],
+        validators=[DataRequired()],
     )
     submit = SubmitField("Confirm")
+
 
 # Form to delete a user
 class DeleteUserForm(FlaskForm):
     username = StringField("Username", validators=[DataRequired()])
     submit = SubmitField("Delete User")
+
 
 # Form to delete a project
 class DeleteProjectForm(FlaskForm):

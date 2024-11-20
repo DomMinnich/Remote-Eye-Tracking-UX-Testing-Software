@@ -44,8 +44,9 @@ class User(db.Model, UserMixin):  # Inherit from UserMixin to add necessary prop
 
     def check_password(self, password):
         return check_password_hash(self.password_hash, password)
-    
-#Kyle Benich
+
+
+# Kyle Benich
 class Project(db.Model):
     id = db.Column(
         db.String(36),
@@ -54,15 +55,25 @@ class Project(db.Model):
         unique=True,
         nullable=False,
     )
-    link = db.Column(db.String(255), unique=True, nullable=False) # Unique link to Figma
-    created_at = db.Column(db.DateTime, nullable=False, default=datetime.utcnow) # Time of creation, used for EoL
-    creator = db.Column(db.Integer, nullable=False) # User ID of creator
-    priviledged = db.Column(db.Boolean, nullable=False) # This will not change, and allows the collaberator field to be used. This allows for demotion of a owner to not affect the project
-    tasks = db.Column(db.JSON, nullable=False) # JSON object of tasks (Example in Disc)
-    max_submissions = db.Column(db.Integer, nullable=False) # Max number of submissions
-    eol_time = db.Column(db.DateTime, nullable=False) # End of life time
-    collaborators = db.Column(db.JSON, nullable=False) # JSON object of collaborators (Example in Disc)
-    numPauses = db.Column(db.Integer, nullable=False) # Number of times the project has been paused (Maximum of.. 3? 2?)
+    link = db.Column(
+        db.String(255), unique=True, nullable=False
+    )  # Unique link to Figma
+    created_at = db.Column(
+        db.DateTime, nullable=False, default=datetime.utcnow
+    )  # Time of creation, used for EoL
+    creator = db.Column(db.Integer, nullable=False)  # User ID of creator
+    priviledged = db.Column(
+        db.Boolean, nullable=False
+    )  # This will not change, and allows the collaberator field to be used. This allows for demotion of a owner to not affect the project
+    tasks = db.Column(db.JSON, nullable=False)  # JSON object of tasks (Example in Disc)
+    max_submissions = db.Column(db.Integer, nullable=False)  # Max number of submissions
+    eol_time = db.Column(db.DateTime, nullable=False)  # End of life time
+    collaborators = db.Column(
+        db.JSON, nullable=False
+    )  # JSON object of collaborators (Example in Disc)
+    numPauses = db.Column(
+        db.Integer, nullable=False
+    )  # Number of times the project has been paused (Maximum of.. 3? 2?)
 
     @staticmethod
     def generate_unique_id():

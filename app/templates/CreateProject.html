@@ -1,31 +1,35 @@
-{% extends 'base.html' %}
-
-{% block content %}
+{% extends 'base.html' %} {% block content %}
 <div class="create-project-container">
   <h2>Create New Project</h2>
-  <form method="POST" action="{{ url_for('main.createProject') }}" onsubmit="return prepareForm()">
+  <form
+    method="POST"
+    action="{{ url_for('main.createProject') }}"
+    onsubmit="return prepareForm()"
+  >
     {{ form.hidden_tag() }}
     <div class="form-group">
-      {{ form.link.label }}<br>
-      {{ form.link(size=32) }}<br>
-      <span id="link-error" class="form-error" style="display: none;">[Invalid link. Only Figma domain links are allowed.]</span>
+      {{ form.link.label }}<br />
+      {{ form.link(size=32) }}<br />
+      <span id="link-error" class="form-error" style="display: none"
+        >[Invalid link. Only Figma domain links are allowed.]</span
+      >
       {% for error in form.link.errors %}
-        <span class="form-error">[{{ error }}]</span>
+      <span class="form-error">[{{ error }}]</span>
       {% endfor %}
     </div>
     <div class="form-group">
-      {{ form.tasks.label }}<br>
+      {{ form.tasks.label }}<br />
       <div id="tasks-container">
-        {{ form.tasks(rows=1, oninput="autoResize(this)") }}<br>
+        {{ form.tasks(rows=1, oninput="autoResize(this)") }}<br />
       </div>
       <button type="button" class="add-task-btn">+</button>
       {% for error in form.tasks.errors %}
-        <span class="form-error">[{{ error }}]</span>
+      <span class="form-error">[{{ error }}]</span>
       {% endfor %}
     </div>
     {% if user.role == 'admin' or user.role == 'project_manager' %}
     <div class="form-group">
-      {{ form.collaborators.label }}<br>
+      {{ form.collaborators.label }}<br />
       <div id="collaborators-container">
         <div class="input-wrapper">
           {{ form.collaborators(rows=1, oninput="autoResize(this)") }}
@@ -38,87 +42,95 @@
       </div>
       <button type="button" class="add-collaborator-btn">+</button>
       {% for error in form.collaborators.errors %}
-        <span class="form-error">[{{ error }}]</span>
+      <span class="form-error">[{{ error }}]</span>
       {% endfor %}
     </div>
     {% endif %}
     <div class="form-group">
-      <input type="hidden" name="tasks" value="[]">
-      <input type="hidden" name="collaborators" value="[]">
-      <input type="submit" value="Create Project" class="btn-submit">
+      <input type="hidden" name="tasks" value="[]" />
+      <input type="hidden" name="collaborators" value="[]" />
+      <input type="submit" value="Create Project" class="btn-submit" />
     </div>
   </form>
 </div>
 
 <script>
-  document.querySelector('.add-task-btn').addEventListener('click', function() {
-    const container = document.getElementById('tasks-container');
-    const inputWrapper = document.createElement('div');
-    inputWrapper.className = 'input-wrapper';
-    const input = document.createElement('textarea');
-    input.name = 'tasks';
-    input.rows = 1;
-    input.cols = 32;
-    input.oninput = function() { autoResize(this); };
-    const removeBtn = document.createElement('button');
-    removeBtn.type = 'button';
-    removeBtn.className = 'remove-btn';
-    removeBtn.innerHTML = 'x';
-    removeBtn.addEventListener('click', function() {
-      container.removeChild(inputWrapper);
+  document
+    .querySelector(".add-task-btn")
+    .addEventListener("click", function () {
+      const container = document.getElementById("tasks-container");
+      const inputWrapper = document.createElement("div");
+      inputWrapper.className = "input-wrapper";
+      const input = document.createElement("textarea");
+      input.name = "tasks";
+      input.rows = 1;
+      input.cols = 32;
+      input.oninput = function () {
+        autoResize(this);
+      };
+      const removeBtn = document.createElement("button");
+      removeBtn.type = "button";
+      removeBtn.className = "remove-btn";
+      removeBtn.innerHTML = "x";
+      removeBtn.addEventListener("click", function () {
+        container.removeChild(inputWrapper);
+      });
+      inputWrapper.appendChild(input);
+      inputWrapper.appendChild(removeBtn);
+      container.appendChild(inputWrapper);
     });
-    inputWrapper.appendChild(input);
-    inputWrapper.appendChild(removeBtn);
-    container.appendChild(inputWrapper);
-  });
 
-  document.querySelector('.add-collaborator-btn').addEventListener('click', function() {
-    const container = document.getElementById('collaborators-container');
-    const inputWrapper = document.createElement('div');
-    inputWrapper.className = 'input-wrapper';
-    const input = document.createElement('textarea');
-    input.name = 'collaborators';
-    input.rows = 1;
-    input.cols = 32;
-    input.oninput = function() { autoResize(this); };
-    const select = document.createElement('select');
-    select.name = 'collaborator_role';
-    select.className = 'form-control custom-select';
-    select.innerHTML = `
+  document
+    .querySelector(".add-collaborator-btn")
+    .addEventListener("click", function () {
+      const container = document.getElementById("collaborators-container");
+      const inputWrapper = document.createElement("div");
+      inputWrapper.className = "input-wrapper";
+      const input = document.createElement("textarea");
+      input.name = "collaborators";
+      input.rows = 1;
+      input.cols = 32;
+      input.oninput = function () {
+        autoResize(this);
+      };
+      const select = document.createElement("select");
+      select.name = "collaborator_role";
+      select.className = "form-control custom-select";
+      select.innerHTML = `
       <option value="co-owner">Co-owner</option>
       <option value="editor">Editor</option>
       <option value="viewer">Viewer</option>
     `;
-    const removeBtn = document.createElement('button');
-    removeBtn.type = 'button';
-    removeBtn.className = 'remove-btn';
-    removeBtn.innerHTML = 'x';
-    removeBtn.addEventListener('click', function() {
-      container.removeChild(inputWrapper);
+      const removeBtn = document.createElement("button");
+      removeBtn.type = "button";
+      removeBtn.className = "remove-btn";
+      removeBtn.innerHTML = "x";
+      removeBtn.addEventListener("click", function () {
+        container.removeChild(inputWrapper);
+      });
+      inputWrapper.appendChild(input);
+      inputWrapper.appendChild(select);
+      inputWrapper.appendChild(removeBtn);
+      container.appendChild(inputWrapper);
     });
-    inputWrapper.appendChild(input);
-    inputWrapper.appendChild(select);
-    inputWrapper.appendChild(removeBtn);
-    container.appendChild(inputWrapper);
-  });
 
   function validateForm() {
     const linkInput = document.querySelector('input[name="link"]');
-    const linkError = document.getElementById('link-error');
+    const linkError = document.getElementById("link-error");
     const figmaPattern = /^https:\/\/www\.figma\.com\/(file|design)\/.+$/;
 
     if (!figmaPattern.test(linkInput.value)) {
-      linkError.style.display = 'block';
+      linkError.style.display = "block";
       return false;
     }
 
-    linkError.style.display = 'none';
+    linkError.style.display = "none";
     return true;
   }
 
   function autoResize(textarea) {
-    textarea.style.height = 'auto';
-    textarea.style.height = textarea.scrollHeight + 'px';
+    textarea.style.height = "auto";
+    textarea.style.height = textarea.scrollHeight + "px";
   }
 
   function prepareForm() {
@@ -126,18 +138,26 @@
       return false;
     }
 
-    const tasksContainer = document.getElementById('tasks-container');
-    const tasks = Array.from(tasksContainer.querySelectorAll('textarea')).map(textarea => textarea.value);
-    document.querySelector('textarea[name="tasks"]').value = JSON.stringify(tasks);
+    const tasksContainer = document.getElementById("tasks-container");
+    const tasks = Array.from(tasksContainer.querySelectorAll("textarea")).map(
+      (textarea) => textarea.value
+    );
+    document.querySelector('textarea[name="tasks"]').value =
+      JSON.stringify(tasks);
 
-    const collaboratorsContainer = document.getElementById('collaborators-container');
-    const collaborators = Array.from(collaboratorsContainer.querySelectorAll('.input-wrapper')).map(wrapper => {
+    const collaboratorsContainer = document.getElementById(
+      "collaborators-container"
+    );
+    const collaborators = Array.from(
+      collaboratorsContainer.querySelectorAll(".input-wrapper")
+    ).map((wrapper) => {
       return {
-        email: wrapper.querySelector('textarea').value,
-        role: wrapper.querySelector('select').value
+        email: wrapper.querySelector("textarea").value,
+        role: wrapper.querySelector("select").value,
       };
     });
-    document.querySelector('textarea[name="collaborators"]').value = JSON.stringify(collaborators);
+    document.querySelector('textarea[name="collaborators"]').value =
+      JSON.stringify(collaborators);
 
     return true;
   }

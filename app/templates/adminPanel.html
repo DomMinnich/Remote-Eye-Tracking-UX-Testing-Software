@@ -1,93 +1,88 @@
-{% extends 'base.html' %}
-
-{% block content %}
+{% extends 'base.html' %} {% block content %}
 <style>
   body {
     background-color: black;
   }
 
   .admin-panel {
-      margin: 20px;
-      padding: 15px;
-      border: 1px solid #ccc;
-      border-radius: 5px;
-      max-width: 400px;
-      margin-left: auto;
-      margin-right: auto;
+    margin: 20px;
+    padding: 15px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    max-width: 400px;
+    margin-left: auto;
+    margin-right: auto;
   }
 
   section {
-      margin-bottom: 20px;
-      text-align: center;
+    margin-bottom: 20px;
+    text-align: center;
   }
 
   label {
-      display: block;
-      margin-bottom: 5px;
-      color: white; /* Text color for visibility against black background */
+    display: block;
+    margin-bottom: 5px;
+    color: white; /* Text color for visibility against black background */
   }
 
-  input, select, button {
-      margin-bottom: 10px;
-      padding: 8px;
-      width: 90%;
-      margin-left: auto;
-      margin-right: auto;
+  input,
+  select,
+  button {
+    margin-bottom: 10px;
+    padding: 8px;
+    width: 90%;
+    margin-left: auto;
+    margin-right: auto;
   }
 
   button {
-      cursor: pointer;
+    cursor: pointer;
   }
 </style>
 
 <div class="admin-panel">
-    <!-- Edit Account Type Section -->
-    <section class="edit-account">
-        <h3>Edit Account Type</h3>
-        <form method="post" action="{{ url_for('main.adminPanel') }}">
-            {{ edit_account_form.hidden_tag() }}
-            <label for="username">{{ edit_account_form.username.label }}</label>
-            {{ edit_account_form.username() }}
-            
-            <label for="role">{{ edit_account_form.role.label }}</label>
-            {{ edit_account_form.role() }}
-            
-            {{ edit_account_form.submit(class="btn btn-primary") }}
-            {% for error in edit_account_form.username.errors %}
-              <p style="color: red;">{{ error }}</p>
-            {% endfor %}
-        </form>
-    </section>
+  <!-- Edit Account Type Section -->
+  <section class="edit-account">
+    <h3>Edit Account Type</h3>
+    <form method="post" action="{{ url_for('main.adminPanel') }}">
+      {{ edit_account_form.hidden_tag() }}
+      <label for="username">{{ edit_account_form.username.label }}</label>
+      {{ edit_account_form.username() }}
 
-    <!-- Delete User Section -->
-    <section class="delete-user">
-        <h3>Delete User</h3>
-        <form method="post" action="{{ url_for('main.adminPanel') }}">
-            {{ delete_user_form.hidden_tag() }}
-            <label for="username">{{ delete_user_form.username.label }}</label>
-            {{ delete_user_form.username() }}
-            
-            {{ delete_user_form.submit(class="btn btn-danger") }}
-            {% for error in delete_user_form.username.errors %}
-              <p style="color: red;">{{ error }}</p>
-            {% endfor %}
-        </form>
-    </section>
+      <label for="role">{{ edit_account_form.role.label }}</label>
+      {{ edit_account_form.role() }} {{ edit_account_form.submit(class="btn
+      btn-primary") }} {% for error in edit_account_form.username.errors %}
+      <p style="color: red">{{ error }}</p>
+      {% endfor %}
+    </form>
+  </section>
 
-    <!-- Delete Project Section -->
-    <section class="delete-project">
-        <h3>Delete Project</h3>
-        <form method="post" action="{{ url_for('main.adminPanel') }}">
-            {{ delete_project_form.hidden_tag() }}
-            <label for="project_id">{{ delete_project_form.project_id.label }}</label>
-            {{ delete_project_form.project_id() }}
-            
-            {{ delete_project_form.submit(class="btn btn-danger") }}
-            {% for error in delete_project_form.project_id.errors %}
-              <p style="color: red;">{{ error }}</p>
-            {% endfor %}
-        </form>
-    </section>
+  <!-- Delete User Section -->
+  <section class="delete-user">
+    <h3>Delete User</h3>
+    <form method="post" action="{{ url_for('main.adminPanel') }}">
+      {{ delete_user_form.hidden_tag() }}
+      <label for="username">{{ delete_user_form.username.label }}</label>
+      {{ delete_user_form.username() }} {{ delete_user_form.submit(class="btn
+      btn-danger") }} {% for error in delete_user_form.username.errors %}
+      <p style="color: red">{{ error }}</p>
+      {% endfor %}
+    </form>
+  </section>
+
+  <!-- Delete Project Section -->
+  <section class="delete-project">
+    <h3>Delete Project</h3>
+    <form method="post" action="{{ url_for('main.adminPanel') }}">
+      {{ delete_project_form.hidden_tag() }}
+      <label for="project_id">{{ delete_project_form.project_id.label }}</label>
+      {{ delete_project_form.project_id() }} {{
+      delete_project_form.submit(class="btn btn-danger") }} {% for error in
+      delete_project_form.project_id.errors %}
+      <p style="color: red">{{ error }}</p>
+      {% endfor %}
+    </form>
+  </section>
 </div>
 
 {% endblock %}
