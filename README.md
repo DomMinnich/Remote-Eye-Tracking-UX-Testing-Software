@@ -28,8 +28,9 @@ The goal of this project is to develop a software tool that allows for remote UX
 
 ## Vision Explanation -Dominic Minnich (Team Leader)
 For much better zoom quality go here🔎:
-[Vision_Explanation_Nov11.pdf](https://github.com/user-attachments/files/17707583/Vision_Explanation_Nov11.pdf)
-![Vision_Explanation_Nov11](https://github.com/user-attachments/assets/15982e16-542b-4d9f-b6fa-f2b28e26a83f)
+[Vision_Explanation_Nov20.pdf](https://github.com/user-attachments/files/17833629/Vision_Explanation_Nov20.pdf)
+![Vision_Explanation _Nov20](https://github.com/user-attachments/assets/fe02e7a7-1d78-4e58-b5a7-604948fa8290)
+
 
 ### Key Features
 
