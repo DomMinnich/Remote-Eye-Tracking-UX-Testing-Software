@@ -451,11 +451,10 @@ def adminPanel():
 def viewReviewSpecific():
     return render_template("viewReviewSpecific.html", user=current_user)
 
-
-@main.route("/review/<int:project_id>")
+@main.route("/review/<uuid:project_id>")
 # @login_required     # anyone can submit a review
 def project(project_id):
-    project = Project.query.get_or_404(project_id)
+    project = Project.query.get_or_404(str(project_id))
     return render_template("review.html", project=project)
 
 
