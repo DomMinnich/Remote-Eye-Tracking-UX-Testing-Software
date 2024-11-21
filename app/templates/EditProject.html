@@ -1,5 +1,12 @@
 {% extends 'base.html' %} {% block content %}
 <style>
+  body {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: #121212;
+    overflow: hidden;
+  }
   h2 {
     color: #fff;
     text-align: center;
@@ -8,8 +15,61 @@
     color: #fff;
     text-align: center;
   }
+  .project-img {
+    width: 100%;
+    height: 300px;
+    object-fit: cover;
+    border-radius: 8px;
+  }
+  .button {
+    margin-bottom: 20px; /* Space between button and carousel */
+    padding: 10px 15px;
+    font-size: 16px;
+    background-color: #007bff;
+    color: #fff;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+  }
+  .save-button {
+    margin-bottom: 20px; /* Space between button and carousel */
+    padding: 10px 15px;
+    font-size: 16px;
+    background-color: #fffb00;
+    color: #000000;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+  }
+  .delete-button {
+    margin-bottom: 20px; /* Space between button and carousel */
+    padding: 10px 15px;
+    font-size: 16px;
+    background-color: #ff0000;
+    color: #000000;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+  }
 </style>
 <h2>Edit Project</h2>
+<img
+src="https://via.placeholder.com/400"
+alt="Project {{ project.id }}"
+class="project-img"
+/>
+<button class="button">
+  Change Pic
+</button>
 <p>Project ID: {{ project.id }}</p>
+<p>Description: {{ project.Description }}</p>
+<p>Tasks: {{ project.task }}</p>
+<p>Collaborator: {{ project.collaborator }}</p>
+<button class="delete-button">
+  Delete
+</button>
+<button class="save-button">
+  Save
+</button>
 
 {% endblock %}
