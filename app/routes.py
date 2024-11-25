@@ -25,6 +25,7 @@
 #    /aboutUs               | ~Line 35-38   -Dominic Minnich
 #    /editProject           | ~Line 35-38   -Dominic Minnich
 #    /createProject         | ~Line 194-212   -Kyle Benich
+#    /change_password       | ~Line 35-38   -Dominic Minnich
 
 # Imports
 from flask import (
@@ -536,9 +537,24 @@ def update_settings():
     flash("Settings updated successfully!", "success")
     return redirect(url_for("main.settings"))
 
+
+# change password route - Dominic Minnich
 @main.route("/change_password", methods=["POST"])
 @login_required
 def change_password():
-    # Logic to handle password change
-    flash("Password change functionality is not implemented yet.", "info")
+    old_password = request.form.get("old_password")
+    new_password = request.form.get("new_password")
+    confirm_new_password = request.form.get("confirm_new_password")
+
+    if not current_user.check_password(old_password):
+        flash("Old password is incorrect. Please try again.", "danger")
+        return redirect(url_for("main.settings"))
+
+    if new_password != confirm_new_password:
+        flash("New passwords do not match. Please ensure both passwords are identical.", "danger")
+        return redirect(url_for("main.settings"))
+
+    current_user.set_password(new_password)
+    db.session.commit()
+    flash("Password changed successfully!", "success")
     return redirect(url_for("main.settings"))

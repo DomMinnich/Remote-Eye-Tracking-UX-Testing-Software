@@ -1,19 +1,37 @@
 <!-- Kyle Benich -->
 <!-- profile.html -->
 
-{% extends 'base.html' %}
-
-{% block content %}
+{% extends 'base.html' %} {% block content %}
 <div class="profile-page">
   <h2 class="profile-title">Profile</h2>
   <div class="profile-details">
-    <form method="POST" action="{{ url_for('main.upload_profile_picture') }}" enctype="multipart/form-data">
+    <form
+      method="POST"
+      action="{{ url_for('main.upload_profile_picture') }}"
+      enctype="multipart/form-data"
+    >
       <div class="profile-picture">
-        <img src="{{ url_for('static', filename='uploads/userProfiles/' + (user.picture if user.picture else 'default.jpg')) }}" alt="Profile Picture" class="profile-img">
-        <input type="file" name="profile_picture" accept="image/jpeg" class="upload-input">
+        <img
+          src="{{ url_for('static', filename='uploads/userProfiles/' + (user.picture if user.picture else 'default.jpg')) }}"
+          alt="Profile Picture"
+          class="profile-img"
+        />
+        <label for="profile_picture" class="custom-file-label">
+          <span id="file-name">Choose Profile Picture</span>
+          <button type="button" id="browse-button" class="btn btn-secondary">Browse</button>
+        </label>
+        <input
+          type="file"
+          id="profile_picture"
+          name="profile_picture"
+          accept="image/jpeg"
+          class="upload-input"
+          style="display: none;"
+        />
         <button type="submit" class="btn btn-primary">Upload Picture</button>
       </div>
     </form>
+
     <p><strong>Username:</strong> {{ user.username }}</p>
     <p><strong>Email:</strong> {{ user.email }}</p>
     <p><strong>First Name:</strong> {{ user.first_name }}</p>
@@ -22,4 +40,15 @@
     <p><strong>Date joined:</strong> {{ user.date_created }}</p>
   </div>
 </div>
+<script>
+  document.getElementById('profile_picture').addEventListener('change', function (event) {
+    const fileName = event.target.files[0]?.name || "Choose Profile Picture";
+    document.getElementById('file-name').textContent = fileName;
+  });
+
+  document.getElementById('browse-button').addEventListener('click', function () {
+    document.getElementById('profile_picture').click();
+  });
+</script>
+
 {% endblock %}
