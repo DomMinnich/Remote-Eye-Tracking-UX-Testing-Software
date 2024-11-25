@@ -10,3 +10,10 @@ uploads/videos/*
 # Ignore instance subfolders 
 instance/*
 
+# Ignore static_data subfolders
+static_data/*
+!static_data/state.txt
+
+# Ignore any non-default JPG files in userProfiles
+uploads/userProfiles/*.jpg
+!uploads/userProfiles/default.jpg

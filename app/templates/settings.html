@@ -1,11 +1,64 @@
 <!-- Kyle Benich -->
 <!-- settings.html -->
 
-{% extends 'base.html' %} {% block content %}
+{% extends 'base.html' %}
+
+{% block content %}
 <div class="settings-page">
   <h2 class="settings-title">Settings</h2>
-  <div class="settings-details">
-    <!-- Add your settings form or details here -->
-  </div>
+  <div class="settings-container">
+    <form method="POST" action="{{ url_for('main.update_settings') }}" class="settings-form">
+      <div class="form-group">
+        <label for="email">Email:</label>
+        <input type="email" id="email" name="email" value="{{ user.email }}" required>
+      </div>
+      <div class="form-group">
+        <label for="username">Username:</label>
+        <input type="text" id="username" name="username" value="{{ user.username }}" required>
+      </div>
+      <div class="form-group">
+        <label for="first_name">First Name:</label>
+        <input type="text" id="first_name" name="first_name" value="{{ user.first_name }}" required>
+      </div>
+      <div class="form-group">
+        <label for="last_name">Last Name:</label>
+        <input type="text" id="last_name" name="last_name" value="{{ user.last_name }}" required>
+      </div>
+      <div class="form-group checkbox-group">
+        <input type="checkbox" id="email_opt_in" name="email_opt_in" {% if user.email_opt_in %}checked{% endif %}>
+        <label for="email_opt_in">Opt-in to email notifications</label>
+      </div>
+      <button type="submit" class="btn btn-primary">Save Changes</button>
+    </form>
+
+    <!-- Dominic Minnich -->
+<div class="password-section">
+  <h3>Change Password</h3>
+  {% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+      <div class="flash-messages">
+        {% for category, message in messages %}
+          <div class="alert alert-{{ category }}" style="color: rgb(217, 255, 0);">{{ message }}</div>
+        {% endfor %}
+      </div>
+    {% endif %}
+  {% endwith %}
+  <form method="POST" action="{{ url_for('main.change_password') }}">
+    <div class="form-group">
+      <label for="old_password">Old Password:</label>
+      <input type="password" id="old_password" name="old_password" required>
+    </div>
+    <div class="form-group">
+      <label for="new_password">New Password:</label>
+      <input type="password" id="new_password" name="new_password" required>
+    </div>
+    <div class="form-group">
+      <label for="confirm_new_password">Confirm New Password:</label>
+      <input type="password" id="confirm_new_password" name="confirm_new_password" required>
+    </div>
+    <button type="submit" class="btn btn-secondary">Change Password</button>
+  </form>
+</div>
+</div>
 </div>
 {% endblock %}

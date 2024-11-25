@@ -14,8 +14,8 @@ For ex for login title I did login-title instead of title
  Home Page A-Z            | ~Line 402-630  -Dominic Minnich
  Login  A->Z              | ~Line 632-740  -Dominic Minnich
  Register A->Z            | ~Line 744-832  -Dominic Minnich
- Profile Page Styles      | ~Line 570-603  -Kyle Benich
- Settings Page Styles     | ~Line 605-635  -Kyle Benich
+ Profile Page Styles      | ~Line 570-603  -Kyle Benich / Dominic Minnich
+ Settings Page Styles     | ~Line 605-635  -Kyle Benich / Dominic Minnich
  create-project Styles    | ~Line 637-676  -Kyle Benich
  View Project Specific    | ~Line 1061-1284-Dominic Minnich
  */
@@ -878,64 +878,202 @@ For ex for login title I did login-title instead of title
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: center;
+  justify-content: flex-start;
   height: 100vh;
-  background-color: #07032c;
+  padding: 20px;
+  background-color: #1e1e2f;
+  color: #ffffff;
 }
 
 .profile-title {
-  font-size: 3rem;
+  font-size: 2.5rem;
   color: #0073d1;
-  margin-bottom: 2rem;
+  margin-bottom: 20px;
   text-align: center;
 }
 
 .profile-details {
-  background-color: #fff;
+  background-color: #282a36;
   padding: 20px;
-  border-radius: 5px;
-  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-  width: 50%;
-  text-align: left;
+  border-radius: 10px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+  width: 100%;
+  max-width: 600px;
 }
 
 .profile-details p {
   font-size: 1.2rem;
-  color: #555;
+  color: #f0f0f0;
   margin: 10px 0;
 }
 
+.profile-picture {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 15px;
+}
+
+.profile-img {
+  width: 150px;
+  height: 150px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 2px solid #0073d1;
+  margin-bottom: 10px;
+}
+
+.upload-input {
+  display: none; /* Hide the default file input */
+}
+
+.custom-file-label {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  background-color: #282a36;
+  color: #ffffff;
+  padding: 10px 20px;
+  border: 1px solid #444;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.custom-file-label:hover {
+  background-color: #444;
+}
+
+.custom-file-label button {
+  background-color: #0073d1;
+  color: #ffffff;
+  border: none;
+  padding: 5px 10px;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.custom-file-label button:hover {
+  background-color: #005bb5;
+}
+
+#file-name {
+  font-size: 1rem;
+  font-weight: 500;
+}
+
+.profile-details .btn {
+  background-color: #0073d1;
+  color: #ffffff;
+  border: none;
+  border-radius: 5px;
+  padding: 10px 20px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.profile-details .btn:hover {
+  background-color: #005bb5;
+}
+
 /* Settings Page Styles */
+/* Cleaner Settings Page Styles */
 .settings-page {
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: center;
-  height: 100vh;
-  background-color: #07032c;
+  padding: 20px;
+  background-color: #1e1e2f;
+  color: #ffffff;
 }
 
 .settings-title {
-  font-size: 3rem;
+  font-size: 2.5rem;
   color: #0073d1;
-  margin-bottom: 2rem;
+  margin-bottom: 20px;
+}
+
+.settings-container {
+  background-color: #282a36;
+  padding: 20px;
+  border-radius: 10px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+  width: 100%;
+  max-width: 500px;
+}
+
+.settings-form {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+}
+
+.form-group label {
+  margin-bottom: 5px;
+  font-size: 1.1rem;
+  color: #f0f0f0;
+}
+
+.form-group input {
+  background-color: #1e1e2f;
+  color: #f0f0f0;
+  border: 1px solid #444;
+  border-radius: 5px;
+  padding: 10px;
+  font-size: 1rem;
+}
+
+.checkbox-group {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.checkbox-group label {
+  font-size: 1rem;
+  color: #f0f0f0;
+}
+
+.btn {
+  background-color: #0073d1;
+  color: #ffffff;
+  border: none;
+  border-radius: 5px;
+  padding: 10px 20px;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.btn:hover {
+  background-color: #005bb5;
+}
+
+.password-section {
+  margin-top: 30px;
   text-align: center;
 }
 
-.settings-details {
-  background-color: #fff;
-  padding: 20px;
-  border-radius: 5px;
-  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-  width: 50%;
-  text-align: left;
+.password-section h3 {
+  font-size: 1.5rem;
+  color: #0073d1;
+  margin-bottom: 10px;
 }
 
-.settings-details p {
-  font-size: 1.2rem;
-  color: #555;
-  margin: 10px 0;
+.btn-secondary {
+  background-color: #6c757d;
 }
+
+.btn-secondary:hover {
+  background-color: #5a6268;
+}
+
 
 /* Create Project Page Styles */
 .create-project-container {

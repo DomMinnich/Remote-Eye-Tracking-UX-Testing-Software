@@ -66,8 +66,8 @@
       {% if current_user.role %}
       <div class="base-profile">
         <img
-          src="{{ current_user.picture or 'https://via.placeholder.com/40' }}"
-          alt="base-profile Picture"
+            src="{{ url_for('static', filename='uploads/userProfiles/' + (current_user.picture if current_user.picture else 'default.jpg')) }}"
+            alt="base-profile Picture"
         />
         <span class="base-profile-name"
           >{{ current_user.first_name }} {{ current_user.last_name }}</span
