@@ -905,6 +905,40 @@ For ex for login title I did login-title instead of title
   margin: 10px 0;
 }
 
+.profile-picture {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.profile-img {
+  width: 150px;
+  height: 150px;
+  border-radius: 50%;
+  object-fit: cover;
+  margin-bottom: 10px;
+}
+
+.upload-input {
+  margin-bottom: 10px;
+}
+
+.profile-details .btn {
+  padding: 10px 20px;
+  font-size: 1rem;
+  background-color: #0073d1;
+  color: #fff;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.profile-details .btn:hover {
+  background-color: #005bb5;
+}
+
 /* Settings Page Styles */
 .settings-page {
   display: flex;
@@ -931,10 +965,70 @@ For ex for login title I did login-title instead of title
   text-align: left;
 }
 
-.settings-details p {
+.settings-details .form-group {
+  margin-bottom: 1.5rem;
+}
+
+.settings-details label {
   font-size: 1.2rem;
-  color: #555;
-  margin: 10px 0;
+  color: #333;
+}
+
+.settings-details input {
+  width: 100%;
+  padding: 10px;
+  font-size: 1rem;
+  color: #333;
+  background-color: #f9f9f9;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  margin-top: 5px;
+}
+
+.settings-details button {
+  padding: 10px 20px;
+  font-size: 1rem;
+  background-color: #0073d1;
+  color: #fff;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.settings-details button:hover {
+  background-color: #005bb5;
+}
+
+.password-change {
+  margin-top: 20px;
+  background-color: #fff;
+  padding: 20px;
+  border-radius: 5px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  width: 50%;
+  text-align: center;
+}
+
+.password-change h3 {
+  font-size: 1.5rem;
+  color: #0073d1;
+  margin-bottom: 1rem;
+}
+
+.password-change .btn-secondary {
+  padding: 10px 20px;
+  font-size: 1rem;
+  background-color: #6c757d;
+  color: #fff;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.password-change .btn-secondary:hover {
+  background-color: #5a6268;
 }
 
 /* Create Project Page Styles */

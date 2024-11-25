@@ -5,7 +5,35 @@
 <div class="settings-page">
   <h2 class="settings-title">Settings</h2>
   <div class="settings-details">
-    <!-- Add your settings form or details here -->
+    <form method="POST" action="{{ url_for('main.update_settings') }}">
+      <div class="form-group">
+        <label for="email">Email:</label>
+        <input type="email" id="email" name="email" value="{{ user.email }}" class="form-control" required>
+      </div>
+      <div class="form-group">
+        <label for="username">Username:</label>
+        <input type="text" id="username" name="username" value="{{ user.username }}" class="form-control" required>
+      </div>
+      <div class="form-group">
+        <label for="first_name">First Name:</label>
+        <input type="text" id="first_name" name="first_name" value="{{ user.first_name }}" class="form-control" required>
+      </div>
+      <div class="form-group">
+        <label for="last_name">Last Name:</label>
+        <input type="text" id="last_name" name="last_name" value="{{ user.last_name }}" class="form-control" required>
+      </div>
+      <div class="form-group form-check">
+        <input type="checkbox" class="form-check-input" id="email_opt_in" name="email_opt_in" {% if user.email_opt_in %}checked{% endif %}>
+        <label class="form-check-label" for="email_opt_in">Opt-in to email notifications</label>
+      </div>
+      <button type="submit" class="btn btn-primary">Update Settings</button>
+    </form>
+  </div>
+  <div class="password-change">
+    <h3>Change Password</h3>
+    <form method="POST" action="{{ url_for('main.change_password') }}">
+      <button type="submit" class="btn btn-secondary">Send email</button>
+    </form>
   </div>
 </div>
 {% endblock %}

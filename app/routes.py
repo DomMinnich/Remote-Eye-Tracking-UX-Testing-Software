@@ -29,6 +29,7 @@
 # Imports
 from flask import (
     Blueprint,
+    current_app,
     render_template,
     redirect,
     session,
@@ -460,7 +461,7 @@ def project(project_id):
 
 # /upload
 # Define the upload folder
-UPLOAD_FOLDER = os.path.join("static", "data", "Projects")
+UPLOAD_FOLDER = os.path.join("static_data", "data", "Projects")
 
 # Ensure the upload folder exists
 os.makedirs(UPLOAD_FOLDER, exist_ok=True)
@@ -496,3 +497,48 @@ def upload_video():
         jsonify({"message": "Video uploaded successfully", "video_path": video_path}),
         200,
     )
+
+@main.route("/upload_profile_picture", methods=["POST"])
+@login_required
+def upload_profile_picture():
+    if "profile_picture" not in request.files:
+        flash("No file part", "danger")
+        return redirect(url_for("main.profile"))
+
+    file = request.files["profile_picture"]
+    if file.filename == "":
+        flash("No selected file", "danger")
+        return redirect(url_for("main.profile"))
+
+    if file and file.filename.endswith(".jpg"):
+        filename = secure_filename(f"{current_user.id}.jpg")
+        upload_folder = os.path.join(current_app.root_path, "static", "uploads", "userProfiles")
+        os.makedirs(upload_folder, exist_ok=True)  # Ensure the directory exists
+        file.save(os.path.join(upload_folder, filename))
+        current_user.picture = filename
+        db.session.commit()
+        flash("Profile picture updated successfully!", "success")
+    else:
+        flash("Invalid file format. Only JPG is allowed.", "danger")
+
+    return redirect(url_for("main.profile"))
+
+# settings update route - Kyle Benich
+@main.route("/update_settings", methods=["POST"])
+@login_required
+def update_settings():
+    current_user.email = request.form.get("email")
+    current_user.username = request.form.get("username")
+    current_user.first_name = request.form.get("first_name")
+    current_user.last_name = request.form.get("last_name")
+    current_user.email_opt_in = 'email_opt_in' in request.form
+    db.session.commit()
+    flash("Settings updated successfully!", "success")
+    return redirect(url_for("main.settings"))
+
+@main.route("/change_password", methods=["POST"])
+@login_required
+def change_password():
+    # Logic to handle password change
+    flash("Password change functionality is not implemented yet.", "info")
+    return redirect(url_for("main.settings"))
