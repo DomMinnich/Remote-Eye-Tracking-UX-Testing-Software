@@ -12,6 +12,7 @@ instance/*
 
 # Ignore static_data subfolders
 static_data/*
+!static_data/state.txt
 
 # Ignore any non-default JPG files in userProfiles
 uploads/userProfiles/*.jpg
