@@ -1,0 +1,73 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="calibration-page">
+  <h2 class="calibration-title">Calibration</h2>
+  <div class="calibration-instructions">
+    <p>Follow the instructions to calibrate your eye movements.</p>
+  </div>
+  <div id="webgazerVideoContainer" style="position: relative;">
+    <video id="webgazerVideoFeed" style="position: absolute; top: 0; left: 0;" autoplay muted></video>
+    <canvas id="webgazerVideoCanvas" style="position: absolute; top: 0; left: 0;"></canvas>
+  </div>
+  <div class="calibration-controls">
+    <button id="startCalibration" class="btn btn-primary">Start Calibration</button>
+    <button id="finishCalibration" class="btn btn-secondary" style="display: none;">Finish Calibration</button>
+  </div>
+  <div class="redirect-button" style="display: none;">
+    <button id="redirectButton" class="btn btn-primary">Go Back</button>
+  </div>
+</div>
+
+<!-- Modal -->
+<div id="tosModal" class="modal">
+  <div class="modal-content">
+    <span class="close">&times;</span>
+    <h2>Terms of Service</h2>
+    <p>Legal jargon TOS here</p>
+    <button id="acceptTOS" class="btn btn-primary">Accept</button>
+  </div>
+</div>
+
+<script src="https://webgazer.cs.brown.edu/webgazer.js"></script>
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    const startCalibrationButton = document.getElementById('startCalibration');
+    const finishCalibrationButton = document.getElementById('finishCalibration');
+    const redirectButton = document.getElementById('redirectButton');
+    const previousPage = document.referrer;
+
+    const tosModal = document.getElementById('tosModal');
+    const acceptTOSButton = document.getElementById('acceptTOS');
+    const closeModal = document.querySelector('.close');
+
+    // Show the modal on page load
+    tosModal.style.display = 'block';
+
+    // Close the modal when the user clicks the close button or the accept button
+    closeModal.addEventListener('click', function() {
+      tosModal.style.display = 'none';
+    });
+
+    acceptTOSButton.addEventListener('click', function() {
+      tosModal.style.display = 'none';
+    });
+
+    startCalibrationButton.addEventListener('click', function() {
+      webgazer.begin();
+      startCalibrationButton.style.display = 'none';
+      finishCalibrationButton.style.display = 'block';
+    });
+
+    finishCalibrationButton.addEventListener('click', function() {
+      webgazer.end();
+      finishCalibrationButton.style.display = 'none';
+      redirectButton.parentElement.style.display = 'block';
+    });
+
+    redirectButton.addEventListener('click', function() {
+      window.location.href = previousPage;
+    });
+  });
+</script>
+{% endblock %}  

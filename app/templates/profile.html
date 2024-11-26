@@ -39,6 +39,17 @@
     <p><strong>Role:</strong> {{ user.role }}</p>
     <p><strong>Date joined:</strong> {{ user.date_created }}</p>
   </div>
+  <div class="recalibrate-box">
+    <h3 class="recalibrate-title" style="text-shadow: 1px 1px 2px black;">Calibration Status</h3>
+    <div class="calibration-status" style="color: white;">
+      <input type="checkbox" id="calibration-status" disabled {% if user.calibrated %}checked{% endif %}>
+      <label for="calibration-status">Calibrated</label>
+    </div>
+    <p style="color: white;">Click the button below to recalibrate your eye movements.</p>
+    <div class="recalibrate-button-container">
+      <button class="btn btn-primary" onclick="window.location.href='{{ url_for('main.calibration') }}'">Recalibrate</button>
+    </div>
+  </div>
 </div>
 <script>
   document.getElementById('profile_picture').addEventListener('change', function (event) {
