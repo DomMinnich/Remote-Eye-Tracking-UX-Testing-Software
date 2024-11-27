@@ -1492,6 +1492,30 @@ For ex for login title I did login-title instead of title
   text-align: center;
 }
 
+.webgazer-video-container {
+  position: relative;
+}
+
+.webgazer-video-feed,
+.webgazer-video-canvas {
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+
+.calibration-text-box {
+  position: relative;
+  top: 10px;
+  left: 50%;
+  transform: translateX(-50%);
+  background-color: rgba(0, 0, 0, 0.5);
+  color: white;
+  padding: 10px;
+  border-radius: 5px;
+  width: 300px;
+  text-align: center;
+}
+
 .calibration-controls {
   margin-top: 2rem;
 }
@@ -1519,6 +1543,47 @@ For ex for login title I did login-title instead of title
   margin-left: 5px;
   color: rgb(255, 255, 255);
 }
+
+.calibration-status input[type="checkbox"] {
+  appearance: none;
+  width: 20px;
+  height: 20px;
+  border: 2px solid #0073d1;
+  border-radius: 3px;
+  position: relative;
+  cursor: not-allowed;
+}
+
+.calibration-status input[type="checkbox"]:checked::before {
+  content: '✔';
+  color: #00f0ff; /* Neon blue color */
+  font-size: 16px;
+  position: absolute;
+  top: -2px;
+  left: 2px;
+}
+
+/* Calibration Point Styles */
+.calibration-point {
+  width: 20px;
+  height: 20px;
+  background-color: red;
+  border-radius: 50%;
+  position: absolute;
+  display: none;
+  cursor: pointer;
+  z-index: 1000;
+}
+
+#pt1 { top: 10%; left: 10%; }
+#pt2 { top: 10%; left: 50%; }
+#pt3 { top: 10%; left: 90%; }
+#pt4 { top: 50%; left: 10%; }
+#pt5 { top: 50%; left: 50%; }
+#pt6 { top: 50%; left: 90%; }
+#pt7 { top: 90%; left: 10%; }
+#pt8 { top: 90%; left: 50%; }
+#pt9 { top: 90%; left: 90%; }
 
 /* Modal Styles */
 .modal {

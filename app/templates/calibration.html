@@ -1,22 +1,40 @@
+<!-- Kyle Benich, following example from https://github.com/brownhci/WebGazer/blob/master/www/calibration.html-->
+
 {% extends 'base.html' %}
 
 {% block content %}
 <div class="calibration-page">
   <h2 class="calibration-title">Calibration</h2>
   <div class="calibration-instructions">
-    <p>Follow the instructions to calibrate your eye movements.</p>
+    <p id="calibrationInstructions">Follow the instructions to calibrate your eye movements.</p>
   </div>
-  <div id="webgazerVideoContainer" style="position: relative;">
-    <video id="webgazerVideoFeed" style="position: absolute; top: 0; left: 0;" autoplay muted></video>
-    <canvas id="webgazerVideoCanvas" style="position: absolute; top: 0; left: 0;"></canvas>
+  <div id="webgazerVideoContainer" class="webgazer-video-container">
+    <video id="webgazerVideoFeed" class="webgazer-video-feed" autoplay muted></video>
+    <canvas id="webgazerVideoCanvas" class="webgazer-video-canvas"></canvas>
+    <div id="calibrationTextBox" class="calibration-text-box">
+      Keep your face within the green box and click the 9 red dots that appear.
+    </div>
   </div>
-  <div class="calibration-controls">
-    <button id="startCalibration" class="btn btn-primary">Start Calibration</button>
+  <div class="calibration-controls" style="position: relative; z-index: 1001;">
+    <button id="startCalibration" class="btn btn-primary" style="display: none;">Start Calibration</button>
     <button id="finishCalibration" class="btn btn-secondary" style="display: none;">Finish Calibration</button>
   </div>
-  <div class="redirect-button" style="display: none;">
+  <div class="redirect-button" style="display: none; position: relative; z-index: 1002;">
     <button id="redirectButton" class="btn btn-primary">Go Back</button>
   </div>
+</div>
+
+<!-- Calibration Points -->
+<div id="calibrationDiv">
+  <div class="calibration-point" id="pt1"></div>
+  <div class="calibration-point" id="pt2"></div>
+  <div class="calibration-point" id="pt3"></div>
+  <div class="calibration-point" id="pt4"></div>
+  <div class="calibration-point" id="pt5"></div>
+  <div class="calibration-point" id="pt6"></div>
+  <div class="calibration-point" id="pt7"></div>
+  <div class="calibration-point" id="pt8"></div>
+  <div class="calibration-point" id="pt9"></div>
 </div>
 
 <!-- Modal -->
@@ -40,34 +58,73 @@
     const tosModal = document.getElementById('tosModal');
     const acceptTOSButton = document.getElementById('acceptTOS');
     const closeModal = document.querySelector('.close');
+    const calibrationInstructions = document.getElementById('calibrationInstructions');
 
-    // Show the modal on page load
+    const calibrationPoints = document.querySelectorAll('.calibration-point');
+    let calibrationCount = 0;
+
+    // Show the TOS popup when the page loads
     tosModal.style.display = 'block';
 
-    // Close the modal when the user clicks the close button or the accept button
+    // Clear WebGazer data if coming from profile page
+    if (previousPage.includes('profile')) {
+      webgazer.clearData();
+    }
+
+    // Close the TOS popup when the "I agree" button is clicked
     closeModal.addEventListener('click', function() {
       tosModal.style.display = 'none';
     });
 
     acceptTOSButton.addEventListener('click', function() {
       tosModal.style.display = 'none';
+      calibrationInstructions.textContent = 'Please click "Start Calibration" to begin.';
+      startCalibrationButton.style.display = 'block';
     });
 
     startCalibrationButton.addEventListener('click', function() {
       webgazer.begin();
+      calibrationInstructions.textContent = 'Calibration in progress. Follow the instructions on the screen.';
       startCalibrationButton.style.display = 'none';
-      finishCalibrationButton.style.display = 'block';
+      showCalibrationPoint();
     });
 
     finishCalibrationButton.addEventListener('click', function() {
       webgazer.end();
+      calibrationInstructions.textContent = 'Calibration complete. You can now proceed.';
       finishCalibrationButton.style.display = 'none';
       redirectButton.parentElement.style.display = 'block';
+
+      // Store calibration data as cookies
+      webgazer.saveDataAcrossSessions(true);
+
+      // Send request to update user's calibrated field
+      fetch('/calibration_complete', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      }).then(response => response.json())
+        .then(data => console.log(data.message))
+        .catch(error => console.error('Error:', error));
     });
 
     redirectButton.addEventListener('click', function() {
       window.location.href = previousPage;
     });
+
+    function showCalibrationPoint() {
+      if (calibrationCount < calibrationPoints.length) {
+        calibrationPoints[calibrationCount].style.display = 'block';
+        calibrationPoints[calibrationCount].addEventListener('click', function() {
+          calibrationPoints[calibrationCount].style.display = 'none';
+          calibrationCount++;
+          showCalibrationPoint();
+        });
+      } else {
+        finishCalibrationButton.style.display = 'block';
+      }
+    }
   });
 </script>
-{% endblock %}  
+{% endblock %}

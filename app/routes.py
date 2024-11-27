@@ -563,3 +563,10 @@ def change_password():
 @login_required
 def calibration():
     return render_template("calibration.html")
+
+@main.route("/calibration_complete", methods=["POST"])
+@login_required
+def calibration_complete():
+    current_user.calibrated = True
+    db.session.commit()
+    return jsonify({"message": "Calibration complete"}), 200
