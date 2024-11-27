@@ -558,3 +558,15 @@ def change_password():
     db.session.commit()
     flash("Password changed successfully!", "success")
     return redirect(url_for("main.settings"))
+
+@main.route("/calibration")
+@login_required
+def calibration():
+    return render_template("calibration.html")
+
+@main.route("/calibration_complete", methods=["POST"])
+@login_required
+def calibration_complete():
+    current_user.calibrated = True
+    db.session.commit()
+    return jsonify({"message": "Calibration complete"}), 200

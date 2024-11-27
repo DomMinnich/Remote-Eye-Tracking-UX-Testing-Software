@@ -871,7 +871,29 @@ For ex for login title I did login-title instead of title
 /* ...   A->Z */
 
 /* Kyle Benich */
-/* style.css */
+
+
+/* Recalibrate Box Styles */
+.recalibrate-box {
+  background-color: #282a36; /* Match the main profile box color */
+  color: white; /* Change text color to white */
+  padding: 20px;
+  margin-top: 20px;
+  border-radius: 10px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+  text-align: center; /* Center the title and button */
+}
+
+.recalibrate-title {
+  margin-bottom: 10px;
+  color: rgb(33, 117, 243); /* Ensure title text is white */
+  text-shadow: -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000; /* Black outline */
+}
+
+.recalibrate-button-container {
+  display: flex;
+  justify-content: center;
+}
 
 /* Profile Page Styles */
 .profile-page {
@@ -1444,6 +1466,162 @@ For ex for login title I did login-title instead of title
   border-radius: 5px;
   cursor: pointer;
   outline: none;
+}
+
+/* Calibration Page Styles */
+.calibration-page {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100vh;
+  background-color: #07032c;
+}
+
+.calibration-title {
+  font-size: 3rem;
+  color: #0073d1;
+  margin-bottom: 2rem;
+  text-align: center;
+}
+
+.calibration-instructions {
+  font-size: 1.2rem;
+  color: #ffffff;
+  margin-bottom: 2rem;
+  text-align: center;
+}
+
+.webgazer-video-container {
+  position: relative;
+}
+
+.webgazer-video-feed,
+.webgazer-video-canvas {
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+
+.calibration-text-box {
+  position: relative;
+  top: 10px;
+  left: 50%;
+  transform: translateX(-50%);
+  background-color: rgba(0, 0, 0, 0.5);
+  color: white;
+  padding: 10px;
+  border-radius: 5px;
+  width: 300px;
+  text-align: center;
+}
+
+.calibration-controls {
+  margin-top: 2rem;
+}
+
+.calibration-controls .btn {
+  margin: 0 10px;
+}
+
+.redirect-button {
+  margin-top: 2rem;
+}
+
+.redirect-button .btn {
+  margin: 0 10px;
+}
+
+.calibration-status {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 10px;
+}
+
+.calibration-status label {
+  margin-left: 5px;
+  color: rgb(255, 255, 255);
+}
+
+.calibration-status input[type="checkbox"] {
+  appearance: none;
+  width: 20px;
+  height: 20px;
+  border: 2px solid #0073d1;
+  border-radius: 3px;
+  position: relative;
+  cursor: not-allowed;
+}
+
+.calibration-status input[type="checkbox"]:checked::before {
+  content: '✔';
+  color: #00f0ff; /* Neon blue color */
+  font-size: 16px;
+  position: absolute;
+  top: -2px;
+  left: 2px;
+}
+
+/* Calibration Point Styles */
+.calibration-point {
+  width: 20px;
+  height: 20px;
+  background-color: red;
+  border-radius: 50%;
+  position: absolute;
+  display: none;
+  cursor: pointer;
+  z-index: 1000;
+}
+
+#pt1 { top: 10%; left: 10%; }
+#pt2 { top: 10%; left: 50%; }
+#pt3 { top: 10%; left: 90%; }
+#pt4 { top: 50%; left: 10%; }
+#pt5 { top: 50%; left: 50%; }
+#pt6 { top: 50%; left: 90%; }
+#pt7 { top: 90%; left: 10%; }
+#pt8 { top: 90%; left: 50%; }
+#pt9 { top: 90%; left: 90%; }
+
+/* Modal Styles */
+.modal {
+  display: none; /* Hidden by default */
+  position: fixed; /* Stay in place */
+  z-index: 1000; /* Sit on top */
+  left: 0;
+  top: 0;
+  width: 100%; /* Full width */
+  height: 100%; /* Full height */
+  overflow: auto; /* Enable scroll if needed */
+  background-color: rgb(0, 0, 0); /* Fallback color */
+  background-color: rgba(0, 0, 0, 0.4); /* Black w/ opacity */
+}
+
+.modal-content {
+  background-color: #fefefe;
+  margin: 15% auto; /* 15% from the top and centered */
+  padding: 20px;
+  border: 1px solid #888;
+  width: 80%; /* Could be more or less, depending on screen size */
+  max-width: 600px;
+  border-radius: 10px;
+  text-align: center;
+}
+
+.close {
+  color: #aaa;
+  float: right;
+  font-size: 28px;
+  font-weight: bold;
+}
+
+.close:hover,
+.close:focus {
+  color: black;
+  text-decoration: none;
+  cursor: pointer;
 }
 
 /* ??? */
