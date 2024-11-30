@@ -570,3 +570,24 @@ def calibration_complete():
     current_user.calibrated = True
     db.session.commit()
     return jsonify({"message": "Calibration complete"}), 200
+
+@main.route("/viewReviewBroad")
+@login_required
+def viewReviewBroad():
+    # Fetch all projects and their reviews
+    projects = Project.query.all()
+
+    # Format data for the template
+    project_reviews = [
+        {
+            "id": project.id,
+            "title": project.title,
+            "description": project.description,
+            "visibility": project.priviledged,  # Assuming 'priviledged' indicates visibility
+            "time_left": max(0, (project.eol_time - datetime.utcnow()).total_seconds()),  # Calculate remaining time
+            "reviews": json.loads(project.reviews) if project.reviews else [],
+        }
+        for project in projects
+    ]
+
+    return render_template("viewReviewBroad.html", projects=project_reviews)
