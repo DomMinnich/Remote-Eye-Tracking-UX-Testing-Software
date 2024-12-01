@@ -576,28 +576,36 @@ def calibration_complete():
 def viewReviewBroad():
     project_id = request.args.get("projectId")
 
-    # Debugging: Print the received project_id
-    print(f"Received projectId: {project_id}")
+    # Ensure a project ID is provided
+    if not project_id:
+        return "Project ID is required", 400
 
-    projects = Project.query.all()
-    project_reviews = [
-        {
-            "id": project.id,
-            "title": project.title,
-            "description": project.description,
-            "visibility": project.priviledged,  # Assuming 'priviledged' indicates visibility
-            "time_left": max(0, (project.eol_time - datetime.utcnow()).total_seconds()),
-            "reviews": json.loads(project.reviews) if project.reviews else [],
-        }
-        for project in projects
-    ]
+    # Path to the project folder
+    project_folder = os.path.join(UPLOAD_FOLDER, secure_filename(project_id))
 
-    if project_id:
-        filtered_projects = [
-            project for project in project_reviews if project["id"] == project_id
-        ]
-        if not filtered_projects:
-            return "Project not found", 404  # Explicitly return 404
-        project_reviews = filtered_projects
+    # Check if the project folder exists
+    if not os.path.exists(project_folder):
+        return jsonify({"error": "No reviews available for this project."}), 404
 
-    return render_template("viewReviewBroad.html", projects=project_reviews)
+    # Initialize a list to hold video file paths
+    video_files = []
+
+    # Loop through sessions in the project folder
+    for session_folder in os.listdir(project_folder):
+        session_path = os.path.join(project_folder, session_folder, "Video")
+
+        # If the "Video" subfolder exists, collect video files
+        if os.path.exists(session_path):
+            for video in os.listdir(session_path):
+                video_files.append(os.path.join(session_path, video))
+
+    # If no videos were found
+    if not video_files:
+        return jsonify({"error": "No reviews available for this project."}), 404
+
+    # Pass video file paths to the template
+    return render_template(
+        "viewReviewBroad.html",
+        project_id=project_id,
+        videos=video_files,
+    )

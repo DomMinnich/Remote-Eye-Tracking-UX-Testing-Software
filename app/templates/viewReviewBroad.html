@@ -1,126 +1,45 @@
 {% extends "base.html" %}
 
 {% block content %}
-<div class="container">
-    <div class="header">
-        <h1>Project Reviews</h1>
+    <div style="text-align: center; margin: 20px;">
+        <h1>Project {{ project_id }}</h1>
+        <p>Reviews (#): {{ videos|length }}</p>
+        <div>
+            <label for="sort-options">Sort by:</label>
+            <select id="sort-options" onchange="sortReviews()">
+                <option value="length">Length</option>
+                <option value="date">Date</option>
+            </select>
+            <button onclick="sortReviews()">Sort</button>
+        </div>
     </div>
-    <div class="submissions">
-        <p>Reviews (# of Submissions): <span id="submissionCount">0</span></p>
-    </div>
-    <div class="controls">
-        <button class="sort" onclick="sortTiles()">Sort by Length/Date</button>
-    </div>
-    <div class="tiles" id="tileContainer">
-        <!-- Tiles dynamically generated here -->
-    </div>
-</div>
 
-<script>
-    // Retrieve project data from Flask
-    const projects = {{ projects | tojson }};
+    {% if videos %}
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px; padding: 20px;">
+            {% for video in videos %}
+                <div style="border: 1px solid #ccc; padding: 10px; border-radius: 5px; background-color: #f9f9f9; text-align: center;">
+                    <video width="280" height="200" controls>
+                        <source src="{{ url_for('static', filename=video.split('static/')[1]) }}" type="video/webm">
+                        Your browser does not support the video tag.
+                    </video>
+                    <p><strong>ID:</strong> {{ loop.index }}</p>
+                    <p><strong>Length:</strong> {{ video_length }}</p>
+                    <p><strong>Date:</strong> {{ video_date }}</p>
+                </div>
+            {% endfor %}
+        </div>
+    {% else %}
+        <p style="text-align: center;">No reviews available.</p>
+    {% endif %}
 
-    function loadTiles() {
-        const tileContainer = document.getElementById('tileContainer');
-        const submissionCount = document.getElementById('submissionCount');
-
-        let totalReviews = 0;
-        tileContainer.innerHTML = '';
-
-        projects.forEach((project) => {
-            // Count the number of reviews for the project
-            const reviewCount = project.reviews.length;
-            totalReviews += reviewCount;
-
-            // Create a tile for each project
-            const tile = document.createElement('div');
-            tile.className = 'tile';
-            tile.innerHTML = `
-                <h3>${project.title}</h3>
-                <p>ID: ${project.id}</p>
-                <p>Description: ${project.description}</p>
-                <p>Visibility: ${project.visibility ? "Private" : "Public"}</p>
-                <p>Time Left: ${Math.round(project.time_left / 3600)} hours</p>
-                <p>Number of Reviews: ${reviewCount}</p>
-            `;
-
-            tile.onclick = () => {
-                window.location.href = `/viewreviewspecific/${project.id}`;
-            };
-            tileContainer.appendChild(tile);
-        });
-
-        submissionCount.textContent = totalReviews;
-    }
-
-    function sortTiles() {
-        // Sort projects by the time left in descending order
-        projects.sort((a, b) => b.time_left - a.time_left);
-        loadTiles();
-    }
-
-    document.addEventListener('DOMContentLoaded', loadTiles);
-</script>
-
-<style>
-    body {
-        font-family: Arial, sans-serif;
-        background-color: #1e1e2f;
-        color: #ffffff;
-        margin: 0;
-        padding: 0;
-    }
-    .container {
-        padding: 20px;
-    }
-    .header {
-        text-align: center;
-        margin-bottom: 20px;
-    }
-    .header h1 {
-        font-size: 2.5rem;
-        margin: 0;
-    }
-    .submissions {
-        text-align: center;
-        margin-bottom: 20px;
-    }
-    .controls {
-        display: flex;
-        justify-content: space-between;
-        margin-bottom: 20px;
-    }
-    .tiles {
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-        gap: 20px;
-    }
-    .tile {
-        background-color: #333;
-        padding: 10px;
-        border-radius: 8px;
-        text-align: center;
-        cursor: pointer;
-        transition: transform 0.2s;
-    }
-    .tile:hover {
-        transform: scale(1.05);
-    }
-    .tile p {
-        margin: 5px 0;
-        font-size: 0.9rem;
-    }
-    .sort {
-        background-color: #444;
-        padding: 10px 20px;
-        border: none;
-        border-radius: 5px;
-        color: white;
-        cursor: pointer;
-    }
-    .sort:hover {
-        background-color: #555;
-    }
-</style>
+    <script>
+        function sortReviews() {
+            const sortBy = document.getElementById('sort-options').value;
+            // Implement sorting logic for videos based on "length" or "date".
+            console.log('Sorting by:', sortBy);
+        }
+    </script>
 {% endblock %}
+
+
 
