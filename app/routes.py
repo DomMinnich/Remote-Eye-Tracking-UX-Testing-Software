@@ -574,20 +574,30 @@ def calibration_complete():
 @main.route("/viewReviewBroad")
 @login_required
 def viewReviewBroad():
-    # Fetch all projects and their reviews
-    projects = Project.query.all()
+    project_id = request.args.get("projectId")
 
-    # Format data for the template
+    # Debugging: Print the received project_id
+    print(f"Received projectId: {project_id}")
+
+    projects = Project.query.all()
     project_reviews = [
         {
             "id": project.id,
             "title": project.title,
             "description": project.description,
             "visibility": project.priviledged,  # Assuming 'priviledged' indicates visibility
-            "time_left": max(0, (project.eol_time - datetime.utcnow()).total_seconds()),  # Calculate remaining time
+            "time_left": max(0, (project.eol_time - datetime.utcnow()).total_seconds()),
             "reviews": json.loads(project.reviews) if project.reviews else [],
         }
         for project in projects
     ]
+
+    if project_id:
+        filtered_projects = [
+            project for project in project_reviews if project["id"] == project_id
+        ]
+        if not filtered_projects:
+            return "Project not found", 404  # Explicitly return 404
+        project_reviews = filtered_projects
 
     return render_template("viewReviewBroad.html", projects=project_reviews)
