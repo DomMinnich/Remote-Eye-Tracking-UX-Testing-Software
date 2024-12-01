@@ -19,7 +19,7 @@
             {% for video in videos %}
                 <div style="border: 1px solid #ccc; padding: 10px; border-radius: 5px; background-color: #f9f9f9; text-align: center;">
                     <video width="280" height="200" controls>
-                        <source src="{{ url_for('static', filename=video.split('static/')[1]) }}" type="video/webm">
+                        <source src="{{ url_for('static', filename=video.split('static_data/Projects/')[1]) }}" type="video/webm">
                         Your browser does not support the video tag.
                     </video>
                     <p><strong>ID:</strong> {{ loop.index }}</p>
