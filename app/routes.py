@@ -587,7 +587,7 @@ def viewReviewBroad():
     if not os.path.exists(project_folder):
         return jsonify({"error": "No reviews available for this project."}), 404
 
-    # Initialize a list to hold video file paths
+    # Initialize a list to hold video file details
     video_files = []
 
     # Loop through sessions in the project folder
@@ -597,13 +597,18 @@ def viewReviewBroad():
         # If the "Video" subfolder exists, collect video files
         if os.path.exists(session_path):
             for video in os.listdir(session_path):
-                video_files.append(os.path.join(session_path, video))
+                video_path = os.path.join(session_path, video)
+                relative_video_path = os.path.relpath(video_path, "static_data")
+                video_files.append({
+                    "path": f"/static_data/{relative_video_path}",  # Path for the video source
+                    "id": len(video_files) + 1  # Assign a sequential ID
+                })
 
     # If no videos were found
     if not video_files:
         return jsonify({"error": "No reviews available for this project."}), 404
 
-    # Pass video file paths to the template
+    # Pass video data to the template
     return render_template(
         "viewReviewBroad.html",
         project_id=project_id,
