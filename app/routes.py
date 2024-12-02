@@ -462,7 +462,7 @@ def project(project_id):
 
 # /upload
 # Define the upload folder
-UPLOAD_FOLDER = os.path.join("static_data", "data", "Projects")
+UPLOAD_FOLDER = os.path.join("app", "static", "static_data", "data", "Projects")
 
 # Ensure the upload folder exists
 os.makedirs(UPLOAD_FOLDER, exist_ok=True)
@@ -570,3 +570,44 @@ def calibration_complete():
     current_user.calibrated = True
     db.session.commit()
     return jsonify({"message": "Calibration complete"}), 200
+
+import os
+import glob
+from flask import render_template, request, jsonify
+from werkzeug.utils import secure_filename
+
+@main.route("/viewReviewBroad")
+@login_required
+def viewReviewBroad():
+    project_id = request.args.get("projectId")
+
+    # Ensure a project ID is provided
+    if not project_id:
+        return "Project ID is required", 400
+
+    # Path to the project folder
+    project_folder = os.path.join(UPLOAD_FOLDER, secure_filename(project_id))
+
+    # Check if the project folder exists
+    if not os.path.exists(project_folder):
+        return jsonify({"error": "No reviews available for this project."}), 404
+
+    # Collect all .webm files from the session folders
+    video_files = glob.glob(os.path.join(project_folder, '**', 'Video', '*.webm'), recursive=True)
+    amended_video_files_urls = [os.path.relpath(file, UPLOAD_FOLDER).replace('\\', '/').replace('static/', '') for file in video_files]
+    # Add static_data/data/Projects/ to the front of every file path in the list
+    amended_video_files_urls = [os.path.join('static_data/data/Projects/', file) for file in amended_video_files_urls]
+
+    # Debugging: Print the collected video file paths
+    print("Collected video file paths:", amended_video_files_urls)
+
+    return render_template(
+        "viewReviewBroad.html",
+        project_id=project_id,
+        videos=amended_video_files_urls
+    )
+    
+    
+    
+    
+    
