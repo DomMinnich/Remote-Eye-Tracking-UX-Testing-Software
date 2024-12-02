@@ -462,7 +462,7 @@ def project(project_id):
 
 # /upload
 # Define the upload folder
-UPLOAD_FOLDER = os.path.join("static_data", "data", "Projects")
+UPLOAD_FOLDER = os.path.join("app", "static", "static_data", "data", "Projects")
 
 # Ensure the upload folder exists
 os.makedirs(UPLOAD_FOLDER, exist_ok=True)
@@ -574,8 +574,6 @@ def calibration_complete():
 import os
 import glob
 from flask import render_template, request, jsonify
-
-UPLOAD_FOLDER = os.path.join("static_data", "data", "Projects")
 
 @main.route("/viewReviewBroad")
 @login_required
