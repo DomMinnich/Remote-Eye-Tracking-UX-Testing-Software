@@ -571,6 +571,12 @@ def calibration_complete():
     db.session.commit()
     return jsonify({"message": "Calibration complete"}), 200
 
+import os
+import glob
+from flask import render_template, request, jsonify
+
+UPLOAD_FOLDER = os.path.join("static_data", "data", "Projects")
+
 @main.route("/viewReviewBroad")
 @login_required
 def viewReviewBroad():
@@ -590,23 +596,17 @@ def viewReviewBroad():
     # Initialize a list to hold video file details
     video_files = []
 
-    # Loop through sessions in the project folder
-    for session_folder in os.listdir(project_folder):
-        session_path = os.path.join(project_folder, session_folder, "Video")
-
-        # If the "Video" subfolder exists, collect video files
-        if os.path.exists(session_path):
-            for video in os.listdir(session_path):
-                video_path = os.path.join(session_path, video)
-                relative_video_path = os.path.relpath(video_path, "static_data")
-                video_files.append({
-                    "path": f"/static_data/{relative_video_path}",  # Path for the video source
-                    "id": len(video_files) + 1  # Assign a sequential ID
-                })
-
-    # If no videos were found
-    if not video_files:
-        return jsonify({"error": "No reviews available for this project."}), 404
+    # From within project folder loop through subfolders
+    for subfolder in os.listdir(project_folder):
+        subfolder_path = os.path.join(project_folder, subfolder)
+        if os.path.isdir(subfolder_path):
+            video_folder = os.path.join(subfolder_path, "Video")
+            if os.path.exists(video_folder):
+                for video_file in glob.glob(os.path.join(video_folder, "*.webm")):
+                    video_files.append({
+                        "session_id": subfolder,
+                        "video_path": video_file
+                    })
 
     # Pass video data to the template
     return render_template(

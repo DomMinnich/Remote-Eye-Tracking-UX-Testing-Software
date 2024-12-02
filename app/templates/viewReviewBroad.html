@@ -19,10 +19,10 @@
             {% for video in videos %}
                 <div style="border: 1px solid #ccc; padding: 10px; border-radius: 5px; background-color: #f9f9f9; text-align: center;">
                     <video width="280" height="200" controls>
-                        <source src="{{ video.path }}" type="video/webm">
+                        <source src="{{ video.video_path }}" type="video/webm">
                         Your browser does not support the video tag.
                     </video>
-                    <p><strong>ID:</strong> {{ video.id }}</p>
+                    <p><strong>Session ID:</strong> {{ video.session_id }}</p>
                 </div>
             {% endfor %}
         </div>
@@ -38,6 +38,3 @@
         }
     </script>
 {% endblock %}
-
-
-
