@@ -447,11 +447,11 @@ def adminPanel():
     )
 
 
-# /viewReviewSpecific
 @main.route("/viewReviewSpecific")
 @login_required
 def viewReviewSpecific():
-    return render_template("viewReviewSpecific.html", user=current_user)
+    video_url = request.args.get("video_url")
+    return render_template("viewReviewSpecific.html", user=current_user, video_url=video_url)
 
 @main.route("/review/<uuid:project_id>")
 # @login_required     # anyone can submit a review

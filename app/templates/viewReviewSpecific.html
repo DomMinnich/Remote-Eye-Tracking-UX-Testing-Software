@@ -29,7 +29,7 @@
 <div class="vrs-video-container">
   <video
     id="vrs-video"
-    src="static/video.mp4"
+    src="{{ url_for('static', filename=video_url) }}"
     poster="static/Playbutton.png"
     preload="metadata"
   ></video>
