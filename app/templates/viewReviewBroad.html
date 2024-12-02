@@ -1,40 +1,55 @@
-{% extends "base.html" %}
+{% extends "base.html" %} {% block content %}
+<div style="text-align: center; margin: 20px">
+  <h1>Project {{ project_id }}</h1>
+  <p>Reviews (#): {{ videos|length }}</p>
+  <div>
+    <label for="sort-options">Sort by:</label>
+    <select id="sort-options" onchange="sortReviews()">
+      <option value="length">Length</option>
+      <option value="date">Date</option>
+    </select>
+    <button onclick="sortReviews()">Sort</button>
+  </div>
+</div>
 
-{% block content %}
-    <div style="text-align: center; margin: 20px;">
-        <h1>Project {{ project_id }}</h1>
-        <p>Reviews (#): {{ videos|length }}</p>
-        <div>
-            <label for="sort-options">Sort by:</label>
-            <select id="sort-options" onchange="sortReviews()">
-                <option value="length">Length</option>
-                <option value="date">Date</option>
-            </select>
-            <button onclick="sortReviews()">Sort</button>
-        </div>
-    </div>
-
-    {% if videos %}
-        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px; padding: 20px;">
-            {% for video in videos %}
-                <div style="border: 1px solid #ccc; padding: 10px; border-radius: 5px; background-color: #f9f9f9; text-align: center;">
-                    <video width="280" height="200" controls>
-                        <source src="{{ video.video_path }}" type="video/webm">
-                        Your browser does not support the video tag.
-                    </video>
-                    <p><strong>Session ID:</strong> {{ video.session_id }}</p>
-                </div>
-            {% endfor %}
-        </div>
-    {% else %}
-        <p style="text-align: center;">No reviews available.</p>
-    {% endif %}
-
-    <script>
-        function sortReviews() {
-            const sortBy = document.getElementById('sort-options').value;
-            // Implement sorting logic for videos based on "length" or "date".
-            console.log('Sorting by:', sortBy);
-        }
-    </script>
+{% if videos %}
+<div
+  style="
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 20px;
+    padding: 20px;
+  "
+>
+{% for video in videos %}
+  <div
+    style="
+      border: 1px solid #ccc;
+      padding: 10px;
+      border-radius: 5px;
+      background-color: #f9f9f9;
+      text-align: center;
+    "
+  >
+    <video controls autoplay name="media" width="280" height="200">
+      <source
+        src="{{ url_for('static', filename=video) }}"
+        type="video/webm"
+      />
+      Your browser does not support the video tag.
+    </video>
+    <p><strong>Session ID:</strong> {{ video }}</p>
+  </div>
+{% endfor %}
+</div>
+{% else %}
+<p style="text-align: center">No reviews available.</p>
+{% endif %}
+<script>
+  function sortReviews() {
+    const sortBy = document.getElementById("sort-options").value;
+    // Implement sorting logic for videos based on "length" or "date".
+    console.log("Sorting by:", sortBy);
+  }
+</script>
 {% endblock %}

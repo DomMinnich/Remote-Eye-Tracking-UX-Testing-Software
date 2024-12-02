@@ -574,6 +574,7 @@ def calibration_complete():
 import os
 import glob
 from flask import render_template, request, jsonify
+from werkzeug.utils import secure_filename
 
 @main.route("/viewReviewBroad")
 @login_required
@@ -591,24 +592,22 @@ def viewReviewBroad():
     if not os.path.exists(project_folder):
         return jsonify({"error": "No reviews available for this project."}), 404
 
-    # Initialize a list to hold video file details
-    video_files = []
+    # Collect all .webm files from the session folders
+    video_files = glob.glob(os.path.join(project_folder, '**', 'Video', '*.webm'), recursive=True)
+    amended_video_files_urls = [os.path.relpath(file, UPLOAD_FOLDER).replace('\\', '/').replace('static/', '') for file in video_files]
+    # Add static_data/data/Projects/ to the front of every file path in the list
+    amended_video_files_urls = [os.path.join('static_data/data/Projects/', file) for file in amended_video_files_urls]
 
-    # From within project folder loop through subfolders
-    for subfolder in os.listdir(project_folder):
-        subfolder_path = os.path.join(project_folder, subfolder)
-        if os.path.isdir(subfolder_path):
-            video_folder = os.path.join(subfolder_path, "Video")
-            if os.path.exists(video_folder):
-                for video_file in glob.glob(os.path.join(video_folder, "*.webm")):
-                    video_files.append({
-                        "session_id": subfolder,
-                        "video_path": video_file
-                    })
+    # Debugging: Print the collected video file paths
+    print("Collected video file paths:", amended_video_files_urls)
 
-    # Pass video data to the template
     return render_template(
         "viewReviewBroad.html",
         project_id=project_id,
-        videos=video_files,
+        videos=amended_video_files_urls
     )
+    
+    
+    
+    
+    
