@@ -280,7 +280,7 @@ def editProject():
     project_id = request.args.get("id")
     if project_id:
         project = get_project_by_id(project_id)
-        return render_template("editProject.html", project=project)
+        return render_template("editProject.html", project=project, user=current_user)
     else:
         return "Project ID not provided", 400
 

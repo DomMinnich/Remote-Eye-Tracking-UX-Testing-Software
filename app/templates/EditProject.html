@@ -97,14 +97,6 @@
   Change Pic
 </button>
 <p>Project ID: {{ project.id }}</p>
-<p id="description-text">Description: {{ project.Description }}</p>
-<button class="button" id="edit-description">Edit</button>
-
-<div id="edit-container" style="display: none;">
-  <textarea id="description-edit" class="editable-textarea">{{ project.Description }}</textarea>
-  <button class="save-button" id="save-description">Save</button>
-  <button class="button" id="cancel-edit">Cancel</button>
-</div>
 
 <style>
   .editable-textarea {
@@ -119,12 +111,7 @@
 </style>
 
 <script>
-  const editButton = document.getElementById('edit-description');
-  const saveButton = document.getElementById('save-description');
-  const cancelButton = document.getElementById('cancel-edit');
-  const descriptionText = document.getElementById('description-text');
-  const editContainer = document.getElementById('edit-container');
-  const descriptionEdit = document.getElementById('description-edit');
+
 
   // Open edit mode
   editButton.addEventListener('click', () => {
@@ -133,29 +120,7 @@
     descriptionText.style.display = 'none';
   });
 
-  saveButton.addEventListener('click', () => {
-    const updatedDescription = descriptionEdit.value;
-    descriptionText.innerHTML = `Description: ${updatedDescription}`;
-    
-    // Hide the edit container and show the original UI
-    editContainer.style.display = 'none';
-    editButton.style.display = 'inline-block';
-    descriptionText.style.display = 'block';
-
-    alert(`Description saved: ${updatedDescription}`);
-    // Add backend update logic here
-  });
-
-
-  // Cancel the edit operation
-  cancelButton.addEventListener('click', () => {
-    editContainer.style.display = 'none';
-    editButton.style.display = 'inline-block';
-    descriptionText.style.display = 'block';
-    descriptionEdit.value = descriptionText.textContent; // Reset to original value
-  });
 </script>
-
 
 <p>Tasks: {{ project.task }}</p>
 <div id="tasks-container">
@@ -231,7 +196,9 @@
   });
 </script>
 
+{% if user.role == 'admin' or user.role == 'project_manager' %}
 <p>Collaborator: {{ project.collaborator }}</p>
+{% endif %}
 <button class="delete-button" id="delete-button">
   Delete
 </button>
