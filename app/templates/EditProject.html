@@ -1,11 +1,12 @@
-{% extends 'base.html' %} {% block content %}
+{% extends 'base.html' %}
+{% block content %}
 <style>
   body {
     display: flex;
     justify-content: center;
     align-items: center;
     background-color: #121212;
-    overflow: hidden;
+    overflow: auto;
   }
   h2 {
     color: #fff;
@@ -51,25 +52,221 @@
     border-radius: 5px;
     cursor: pointer;
   }
+  .modal {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.7);
+    justify-content: center;
+    align-items: center;
+  }
+  .modal-content {
+    background: #000000;
+    padding: 20px;
+    border-radius: 8px;
+    text-align: center;
+  }
+  .modal-button {
+    padding: 10px 15px;
+    font-size: 16px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    margin: 0 5px;
+  }
+  .modal-yes {
+    background-color: #ff0000;
+    color: #fff;
+  }
+  .modal-no {
+    background-color: #808080;
+    color: #fff;
+  }
 </style>
+
 <h2>Edit Project</h2>
 <img
-src="https://via.placeholder.com/400"
-alt="Project {{ project.id }}"
-class="project-img"
+  src="https://via.placeholder.com/400"
+  alt="Project {{ project.id }}"
+  class="project-img"
 />
 <button class="button">
   Change Pic
 </button>
 <p>Project ID: {{ project.id }}</p>
-<p>Description: {{ project.Description }}</p>
+<p id="description-text">Description: {{ project.Description }}</p>
+<button class="button" id="edit-description">Edit</button>
+
+<div id="edit-container" style="display: none;">
+  <textarea id="description-edit" class="editable-textarea">{{ project.Description }}</textarea>
+  <button class="save-button" id="save-description">Save</button>
+  <button class="button" id="cancel-edit">Cancel</button>
+</div>
+
+<style>
+  .editable-textarea {
+    width: 100%;
+    height: 80px;
+    padding: 10px;
+    border-radius: 5px;
+    border: 1px solid #ccc;
+    font-size: 14px;
+    margin-top: 10px;
+  }
+</style>
+
+<script>
+  const editButton = document.getElementById('edit-description');
+  const saveButton = document.getElementById('save-description');
+  const cancelButton = document.getElementById('cancel-edit');
+  const descriptionText = document.getElementById('description-text');
+  const editContainer = document.getElementById('edit-container');
+  const descriptionEdit = document.getElementById('description-edit');
+
+  // Open edit mode
+  editButton.addEventListener('click', () => {
+    editContainer.style.display = 'block';
+    editButton.style.display = 'none';
+    descriptionText.style.display = 'none';
+  });
+
+  saveButton.addEventListener('click', () => {
+    const updatedDescription = descriptionEdit.value;
+    descriptionText.innerHTML = `Description: ${updatedDescription}`;
+    
+    // Hide the edit container and show the original UI
+    editContainer.style.display = 'none';
+    editButton.style.display = 'inline-block';
+    descriptionText.style.display = 'block';
+
+    alert(`Description saved: ${updatedDescription}`);
+    // Add backend update logic here
+  });
+
+
+  // Cancel the edit operation
+  cancelButton.addEventListener('click', () => {
+    editContainer.style.display = 'none';
+    editButton.style.display = 'inline-block';
+    descriptionText.style.display = 'block';
+    descriptionEdit.value = descriptionText.textContent; // Reset to original value
+  });
+</script>
+
+
 <p>Tasks: {{ project.task }}</p>
+<div id="tasks-container">
+  <ul id="tasks-list">
+    {% for task in project.task %}
+    <li>
+      <span>{{ task }}</span>
+      <button class="delete-task-button">X</button>
+    </li>
+    {% endfor %}
+  </ul>
+</div>
+
+<button id="add-task-button" class="button">Add Task</button>
+
+<style>
+  #tasks-list {
+    list-style-type: none;
+    padding: 0;
+  }
+  #tasks-list li {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 5px 10px;
+    background-color: #1e1e1e;
+    border-radius: 4px;
+    margin-bottom: 5px;
+    color: white;
+  }
+  .delete-task-button {
+    background-color: red;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    padding: 5px;
+  }
+  .delete-task-button:hover {
+    background-color: darkred;
+  }
+  #add-task-button {
+    margin-top: 10px;
+    display: block;
+  }
+</style>
+
+<script>
+  const tasksList = document.getElementById('tasks-list');
+  const addTaskButton = document.getElementById('add-task-button');
+
+  // Delete a task
+  tasksList.addEventListener('click', (event) => {
+    if (event.target.classList.contains('delete-task-button')) {
+      const taskItem = event.target.parentElement;
+      tasksList.removeChild(taskItem);
+      alert('Task deleted!');
+      // Add logic to update the backend here
+    }
+  });
+
+  // Add a new task
+  addTaskButton.addEventListener('click', () => {
+    const newTask = prompt('Enter the new task:');
+    if (newTask) {
+      const newTaskItem = document.createElement('li');
+      newTaskItem.innerHTML = `<span>${newTask}</span>
+                               <button class="delete-task-button">X</button>`;
+      tasksList.appendChild(newTaskItem);
+      alert('Task added!');
+      // Add logic to update the backend here
+    }
+  });
+</script>
+
 <p>Collaborator: {{ project.collaborator }}</p>
-<button class="delete-button">
+<button class="delete-button" id="delete-button">
   Delete
 </button>
 <button class="save-button">
   Save
 </button>
+
+<div class="modal" id="confirm-modal">
+  <div class="modal-content">
+    <p>Are you sure you want to delete this project?</p>
+    <button class="modal-button modal-yes" id="modal-yes">Yes</button>
+    <button class="modal-button modal-no" id="modal-no">No</button>
+  </div>
+</div>
+
+<script>
+  const deleteButton = document.getElementById('delete-button');
+  const modal = document.getElementById('confirm-modal');
+  const modalYes = document.getElementById('modal-yes');
+  const modalNo = document.getElementById('modal-no');
+
+  deleteButton.addEventListener('click', () => {
+    modal.style.display = 'flex';
+  });
+
+  modalNo.addEventListener('click', () => {
+    modal.style.display = 'none';
+  });
+
+  modalYes.addEventListener('click', () => {
+    modal.style.display = 'none';
+    alert('Project deleted!');
+    // Add your delete logic here
+    window.location.href = '/viewProjects';
+  });
+</script>
 
 {% endblock %}
