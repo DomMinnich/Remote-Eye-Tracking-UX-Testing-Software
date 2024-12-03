@@ -2,7 +2,6 @@
 content %}
 
 <style>
-
   h2 {
     color: #ffffff;
     text-align: center;
@@ -30,13 +29,12 @@ content %}
   .btn:hover {
     background-color: #0056b3;
   }
-
 </style>
 
 <h2>Project: {{ project.name }}</h2>
 <p><strong>ID:</strong> {{ project.id }}</p>
 <iframe
-  src="{{ project.link }}"
+  src="{{ proxied_link }}"
   width="100%"
   height="600"
   frameborder="0"
