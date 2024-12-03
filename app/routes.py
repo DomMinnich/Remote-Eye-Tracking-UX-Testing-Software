@@ -463,7 +463,6 @@ def project(project_id):
     proxied_link = project.link.replace("www.figma.com", "embed.figma.com") + "&embed-host=share"
     return render_template("review.html", project=project, proxied_link=proxied_link)
 
-
 @main.route("/proxy/")
 def proxy():
     # Get the target URL from the query parameter
