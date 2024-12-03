@@ -1,7 +1,8 @@
 {% extends "base.html" %} {% block content %}
-<div style="text-align: center; margin: 20px">
-  <h1>Project {{ project_id }}</h1>
-  <p>Reviews (#): {{ videos|length }}</p>
+<div style="text-align: center; margin: 20px; color: #ffffff">
+  <h1>Project ID# {{ project_id }}</h1>
+  <p>Reviews: {{ videos|length }}</p>
+  <!-- 
   <div>
     <label for="sort-options">Sort by:</label>
     <select id="sort-options" onchange="sortReviews()">
@@ -10,6 +11,7 @@
     </select>
     <button onclick="sortReviews()">Sort</button>
   </div>
+  -->
 </div>
 
 {% if videos %}
@@ -21,26 +23,61 @@
     padding: 20px;
   "
 >
-{% for video in videos %}
+  {% for video in videos %}
   <div
     style="
-      border: 1px solid #ccc;
-      padding: 10px;
-      border-radius: 5px;
-      background-color: #f9f9f9;
+      position: relative;
+      border: 3px solid #6a5acd;
+      padding: 20px;
+      border-radius: 10px;
+      background-color: #ffffff00;
       text-align: center;
+      box-shadow: 0 4px 8px rgb(0, 0, 0);
+      transition: transform 0.2s, box-shadow 0.2s;
+      color: #ffffff;
     "
+    onmouseover="this.style.transform='scale(1.05)'; this.style.boxShadow='0 8px 16px rgba(0, 0, 0, 0.2)';"
+    onmouseout="this.style.transform='scale(1)'; this.style.boxShadow='0 4px 8px rgba(0, 0, 0, 0.1)';"
   >
-    <video controls autoplay name="media" width="280" height="200">
-      <source
-        src="{{ url_for('static', filename=video) }}"
-        type="video/webm"
-      />
-      Your browser does not support the video tag.
-    </video>
-    <p><strong>Session ID:</strong> {{ video }}</p>
+    <a
+      href="{{ url_for('main.viewReviewSpecific', video_url=video) }}"
+      style="text-decoration: none; color: inherit"
+    >
+      <div style="position: relative; display: inline-block">
+        <video
+          autoplay
+          name="media"
+          width="280"
+          height="200"
+          style="border-radius: 5px; filter: blur(2px)"
+        >
+          <source
+            src="{{ url_for('static', filename=video) }}"
+            type="video/webm"
+          />
+          Your browser does not support the video tag.
+        </video>
+        <img
+          src="{{ url_for('static', filename='Playbutton-removebg.png') }}"
+          alt="Play Button"
+          style="
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 300px;
+            height: 200px;
+            border: 0.1px solid #695acd3f;
+          "
+        />
+      </div>
+      <p style="margin-top: 10px; font-size: 16px">
+           <!--  <strong>Session ID:</strong> {{ video }} -->
+        Submission #{{ loop.index }}
+      </p>
+    </a>
   </div>
-{% endfor %}
+  {% endfor %}
 </div>
 {% else %}
 <p style="text-align: center">No reviews available.</p>

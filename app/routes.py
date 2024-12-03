@@ -62,6 +62,8 @@ from datetime import datetime, timedelta  # Import datetime and timedelta
 import os
 import uuid
 from werkzeug.utils import secure_filename
+import requests
+from flask import Response, request
 
 # Blueprint
 main = Blueprint("main", __name__)
@@ -447,17 +449,47 @@ def adminPanel():
     )
 
 
-# /viewReviewSpecific
 @main.route("/viewReviewSpecific")
 @login_required
 def viewReviewSpecific():
-    return render_template("viewReviewSpecific.html", user=current_user)
+    video_url = request.args.get("video_url")
+    return render_template("viewReviewSpecific.html", user=current_user, video_url=video_url)
 
 @main.route("/review/<uuid:project_id>")
 # @login_required     # anyone can submit a review
 def project(project_id):
     project = Project.query.get_or_404(str(project_id))
-    return render_template("review.html", project=project)
+    # Generate the proxied link
+    proxied_link = project.link.replace("www.figma.com", "embed.figma.com") + "&embed-host=share"
+    return render_template("review.html", project=project, proxied_link=proxied_link)
+
+@main.route("/proxy/")
+def proxy():
+    # Get the target URL from the query parameter
+    target_url = request.args.get("url")
+    if not target_url:
+        return "No URL provided.", 400
+
+    # Validate that the URL is within allowed domains
+    allowed_domains = ["www.figma.com"]
+    if not any(target_url.startswith(f"https://{domain}") for domain in allowed_domains):
+        return "Unauthorized domain.", 403
+
+    # Fetch the content from the target URL
+    try:
+        response = requests.get(target_url, stream=True)
+    except requests.RequestException as e:
+        return f"Error fetching the URL: {e}", 500
+
+    # Remove restrictive headers
+    excluded_headers = ["content-security-policy", "x-frame-options"]
+    headers = {
+        name: value
+        for name, value in response.headers.items()
+        if name.lower() not in excluded_headers
+    }
+
+    return Response(response.content, response.status_code, headers)
 
 
 # /upload
@@ -573,8 +605,6 @@ def calibration_complete():
 
 import os
 import glob
-from flask import render_template, request, jsonify
-from werkzeug.utils import secure_filename
 
 @main.route("/viewReviewBroad")
 @login_required

@@ -34,6 +34,22 @@
     cursor: pointer;
   }
 
+  .review-link {
+    display: inline-block;
+    margin-top: 10px;
+    padding: 10px 15px;
+    font-size: 16px;
+    background-color: #28a745;
+    color: #fff;
+    text-decoration: none;
+    border-radius: 5px;
+    text-align: center;
+  }
+
+  .review-link:hover {
+    background-color: #218838;
+  }
+
   .project-carousel {
     display: flex;
     align-items: center;
@@ -173,9 +189,7 @@
     </div>
     <div class="detail-item">
       <span class="detail-title">Visibility:</span>
-      <span id="detail-visibility"
-        >{{ 'Public' if projects[0].visibility else 'Private' }}</span
-      >
+      <span id="detail-visibility">{{ 'Public' if projects[0].visibility else 'Private' }}</span>
     </div>
     <div class="detail-item">
       <span class="detail-title">Shareable time left:</span>
@@ -188,16 +202,15 @@
     <button class="edit-button" onclick="editProject('{{ projects[0].id }}')">
       Edit Project
     </button>
+    <a href="{{ url_for('main.project', project_id=projects[0].id) }}" class="review-link" id="review-link">
+      Go to Review
+    </a>
   </div>
   {% else %}
   <p id="unavailable">No Projects Available</p>
-  <img
-    id="duck"
-    src="{{ url_for('static', filename='duck.gif') }}"
-    alt="duck"
-  />
+  <img id="duck" src="{{ url_for('static', filename='duck.gif') }}" alt="duck" />
   {% endif %}
-</div>
+  </div>
 
 <script>
   function scrollCarousel(direction) {
@@ -235,11 +248,19 @@
         "onclick",
         `editProject('${currentProject.getAttribute("data-id")}')`
       );
+
+    // Update review link
+    document
+      .getElementById("review-link")
+      .setAttribute(
+        "href",
+        `/review/${currentProject.getAttribute("data-id")}`
+      );
   }
 
   function goToProject(projectId) {
     window.location.href = `/viewReviewBroad?projectId=${projectId}`;
-}
+  }
 
   function editProject(projectId) {
     window.location.href = `/editProject?id=${projectId}`;

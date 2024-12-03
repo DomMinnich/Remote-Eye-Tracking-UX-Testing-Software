@@ -23,13 +23,16 @@
 <a href="javascript:history.back()" class="vrs-back-button"
   >Back to Submissions</a
 >
+<p class="vrs-review_id">Project Submission</p>
+<!--
 <p class="vrs-review_id">ID:</p>
 <p class="vrs-review_date">Date:</p>
+-->
 <br />
 <div class="vrs-video-container">
   <video
     id="vrs-video"
-    src="static/video.mp4"
+    src="{{ url_for('static', filename=video_url) }}"
     poster="static/Playbutton.png"
     preload="metadata"
   ></video>
@@ -116,8 +119,10 @@
     </button>
   </div>
 </div>
-<p class="vrs-review_title">Title</p>
-<p class="vrs-review_tasks">Tasks</p>
+<!--
+  <p class="vrs-review_title">Title</p>
+  <p class="vrs-review_tasks">Tasks</p>
+-->
 <div class="vrs-lens" id="vrs-lens"></div>
 
 {% endblock %}
