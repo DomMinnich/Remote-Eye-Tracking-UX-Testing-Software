@@ -573,8 +573,6 @@ def calibration_complete():
 
 import os
 import glob
-from flask import render_template, request, jsonify
-from werkzeug.utils import secure_filename
 
 @main.route("/viewReviewBroad")
 @login_required
