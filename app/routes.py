@@ -637,7 +637,17 @@ def viewReviewBroad():
         videos=amended_video_files_urls
     )
     
-    
+@main.route("/viewSharedProjects")
+@login_required
+def viewSharedProjects():
+    if current_user.shared_projects:
+        shared_projects_list = json.loads(current_user.shared_projects)
+    else:
+        shared_projects_list = []
+
+    shared_project_ids = [project["project_id"] for project in shared_projects_list]
+    shared_projects = Project.query.filter(Project.id.in_(shared_project_ids)).all()
+    return render_template("viewSharedProjects.html", projects=shared_projects)
     
     
     
