@@ -13,21 +13,19 @@ def create_app():
     app.config.from_object("config.Config")
     db.init_app(app)
     login_manager.init_app(app)
-    login_manager.login_view = "main.login"  # Redirect unauthorized users to login page
+    # Redirect unauthorized users to login page
+    login_manager.login_view = "main.login"
 
     app.register_blueprint(main)
-    
 
     # For development error debugging purposes you can comment out the following blocks
-   #  @app.errorhandler(404)
-   # def page_not_found(e):
-   #     return render_template('404.html'), 404
+    @app.errorhandler(404)
+    def page_not_found(e):
+            return render_template('404.html'), 404
     
-   # @app.errorhandler(Exception)
-   # def handle_exception(e):
-    #    return render_template('error.html'), 500
-   
-    # End comment here for debugging purposes
+    @app.errorhandler(Exception)
+    def handle_exception(e):
+            return render_template('error.html'), 500
 
 
     with app.app_context():
