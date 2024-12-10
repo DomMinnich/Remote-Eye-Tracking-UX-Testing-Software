@@ -10,6 +10,4 @@ class Config:
     MAIL_PORT = 587
     MAIL_USE_TLS = True
     MAIL_USE_SSL = False
-    MAIL_USERNAME = 'logo555poe@gmail.com'
-    MAIL_PASSWORD = 'Changeitagain1'
     MAIL_DEFAULT_SENDER = 'noreply@yourapp.com'

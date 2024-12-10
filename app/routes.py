@@ -63,7 +63,6 @@ import os
 import uuid
 from werkzeug.utils import secure_filename
 from werkzeug.security import generate_password_hash
-import requests
 from flask import Response, request
 from itsdangerous import URLSafeTimedSerializer
 
