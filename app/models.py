@@ -11,12 +11,13 @@
 import uuid
 from datetime import datetime
 from flask_sqlalchemy import SQLAlchemy
+from flask_mail import Mail, Message
 from werkzeug.security import generate_password_hash, check_password_hash
 from flask_login import UserMixin  # Import UserMixin for built-in methods
 from datetime import datetime
 
 db = SQLAlchemy()
-
+mail = Mail()
 
 class User(db.Model, UserMixin):  # Inherit from UserMixin to add necessary properties
     id = db.Column(

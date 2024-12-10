@@ -830,6 +830,10 @@ For ex for login title I did login-title instead of title
   user-select: none;
 }
 
+.forgot-password-link {
+  margin-top: 10px; /* Adds space only below the Forgot Password item */
+}
+
 .register-page {
   display: flex;
   flex-direction: column;
