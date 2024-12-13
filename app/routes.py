@@ -47,7 +47,7 @@ from flask_login import (
     LoginManager,
 )
 
-from .models import db, User, Project
+from .models import db, User, Project, mail, Message
 from .forms import (
     RegistrationForm,
     LoginForm,
@@ -62,8 +62,9 @@ from datetime import datetime, timedelta  # Import datetime and timedelta
 import os
 import uuid
 from werkzeug.utils import secure_filename
-import requests
+from werkzeug.security import generate_password_hash
 from flask import Response, request
+from itsdangerous import URLSafeTimedSerializer
 
 # Blueprint
 main = Blueprint("main", __name__)
@@ -253,6 +254,70 @@ def register():
 
     return render_template("register.html", form=form)
 
+@main.route('/forgot-password', methods=['GET', 'POST'])
+def forgotPassword():
+    if request.method == 'POST':
+        email = request.form.get('email')
+        # Validate if email exists in your database
+        user = User.query.filter_by(email=email).first()
+        if user:
+            # Logic to send reset email
+            send_reset_email(user)  # Define this function to send a reset link
+            flash('A password reset link has been sent to your email.', 'success')
+            return redirect(url_for('main.login'))
+        else:
+            flash('Email not found. Please try again.', 'danger')
+            return redirect(url_for('main.forgotPassword'))
+    
+    return render_template('ForgotPassword.html')
+
+
+def send_reset_email(user):
+    try:
+        token = generate_reset_token(user)
+        reset_url = url_for('main.reset_password', token=token, _external=True)
+        msg = Message('Password Reset Request',
+                    sender='noreply@yourapp.com',
+                    recipients=[user.email])
+        msg.body = f'''To reset your password, visit the following link:
+    {reset_url}
+        
+    If you did not make this request, please ignore this email.
+    '''
+        mail.send(msg)
+    except Exception as e:
+        return f"Failed to send email: {str(e)}"
+
+def generate_reset_token(user):
+    serializer = URLSafeTimedSerializer('your_secret_key')
+    return serializer.dumps(user.email, salt='password-reset-salt')
+
+@main.route('/reset-password/<token>', methods=['GET', 'POST'])
+def reset_password(token):
+    user = verify_reset_token(token)
+    if not user:
+        flash('The reset link is invalid or has expired.', 'danger')
+        return redirect(url_for('main.forgot_password'))
+
+    if request.method == 'POST':
+        new_password = request.form.get('password')
+        user.password_hash = hash_password(new_password)
+        db.session.commit()
+        flash('Your password has been reset. You can now log in.', 'success')
+        return redirect(url_for('main.login'))
+
+    return render_template('reset_password.html', token=token)
+
+def hash_password(password):
+    return generate_password_hash(password)  # Uses PBKDF2 algorithm by default
+
+def verify_reset_token(token):
+    serializer = URLSafeTimedSerializer('your_secret_key')
+    try:
+        email = serializer.loads(token, salt='password-reset-salt', max_age=3600)  # 1-hour expiration
+    except Exception as e:
+        return None
+    return User.query.filter_by(email=email).first()
 
 # User_loader
 @login_manager.user_loader
