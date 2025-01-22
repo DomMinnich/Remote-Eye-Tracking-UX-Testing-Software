@@ -18,9 +18,22 @@
       }
     </style>
   </head>
-  <body>
+  <body class="base-body">
     <main>
       {% block content %}{% endblock %}
+
+      
+<div class="base-video-background">
+
+</div>
+
+      <!-- Video Background -->
+<div class="video-background">
+  <video autoplay muted loop playsinline>
+    <source src="{{ url_for('static', filename='backgroundVideo2.mp4') }}" type="video/mp4" />
+    Your browser does not support the video tag.
+  </video>
+</div>
       <div class="base-dimming-overlay"></div>
       <!-- Corner Icon for Menu Toggle -->
       <div class="base-menu-toggle">
@@ -72,7 +85,7 @@
       {% if current_user.role %}
       <div class="base-profile">
         <img
-            src="{{ url_for('static', filename='uploads/userProfiles/' + (current_user.picture if current_user.picture else 'default.jpg')) }}"
+            src="{{ url_for('static', filename='uploads/userProfiles/' + (current_user.picture if current_user.picture else 'pic.png')) }}"
             alt="base-profile Picture"
         />
         <span class="base-profile-name"
