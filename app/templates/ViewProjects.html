@@ -1,151 +1,212 @@
 {% extends 'base.html' %} {% block content %}
-<style>
-  /* Reset */
-  * {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-  }
 
-  body {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    background-color: #121212;
+<style>
+  html{
     overflow: hidden;
   }
-
-  /* Carousel and container styles */
   .project-container {
+    position: relative;
     display: flex;
     flex-direction: column;
     align-items: center;
-    margin-top: 50px; /* Move carousel down */
-  }
-
-  .edit-button {
-    margin-bottom: 20px; /* Space between button and carousel */
-    padding: 10px 15px;
-    font-size: 16px;
-    background-color: #007bff;
-    color: #fff;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-  }
-
-  .review-link {
-    display: inline-block;
-    margin-top: 10px;
-    padding: 10px 15px;
-    font-size: 16px;
-    background-color: #28a745;
-    color: #fff;
-    text-decoration: none;
-    border-radius: 5px;
-    text-align: center;
-  }
-
-  .review-link:hover {
-    background-color: #218838;
+    justify-content: center;
+    margin: 50px auto 80px auto;
+    width: 90%;
+    max-width: 1200px;
+    min-height: 100vh;
   }
 
   .project-carousel {
+    position: relative;
     display: flex;
     align-items: center;
-    position: relative;
-    overflow: hidden;
+    justify-content: center;
     width: 100%;
-    max-width: 600px;
-    margin: auto;
-    padding: 20px;
+    margin-bottom: 30px;
   }
 
   .carousel-wrapper {
     overflow: hidden;
-    width: 100%;
+    width: 80%;
+    max-width: 900px;
+    position: relative;
   }
 
   .carousel-track {
     display: flex;
-    transition: transform 0.5s ease;
+    transition: transform 0.6s cubic-bezier(0.25, 1, 0.5, 1);
+    transform-style: preserve-3d;
+    perspective: 1000px;
+  }
+  .carousel-track[data-index] {
+    transform: translateX(calc(-100% * var(--index)));
   }
 
+  /* Each project card */
   .project-card {
-    flex: 0 0 100%;
+    flex: 0 0 auto;
+    width: 280px;
+    margin: 0 10px;
+    background: rgba(255, 255, 255, 0.08);
+    backdrop-filter: blur(8px);
+    border-radius: 12px;
+    overflow: hidden;
     text-align: center;
-    width: 100%;
+    cursor: pointer;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
+    transform: scale(0.9);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    position: relative;
+  }
+  .project-card:hover {
+    transform: scale(0.91) translateY(-8px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.6);
   }
 
   .project-img {
     width: 100%;
-    height: 300px;
+    height: 160px;
     object-fit: cover;
-    border-radius: 8px;
+    display: block;
   }
 
   .project-title {
-    margin-top: 10px;
-    font-size: 18px;
+    font-size: 1.2rem;
+    margin: 16px 0;
     color: #fff;
+    text-shadow: 1px 1px 1px #000;
   }
 
   .carousel-control {
-    background-color: rgba(0, 0, 0, 0.5);
-    color: white;
+    background-color: rgba(0, 0, 0, 0.4);
     border: none;
-    cursor: pointer;
-    font-size: 24px;
-    padding: 10px;
-    position: absolute;
-    top: 50%;
-    transform: translateY(-50%);
-    z-index: 1;
-  }
-
-  .prev {
-    left: 10px;
-  }
-
-  .next {
-    right: 10px;
-  }
-
-  /* Styling for project details */
-  .project-details {
-    margin-top: 20px;
-    padding: 15px;
-    background-color: #1e1e1e;
     color: #fff;
-    border-radius: 5px;
-    width: 100%;
-    max-width: 600px;
+    font-size: 2rem;
+    cursor: pointer;
+    padding: 0 16px;
+    margin: 0 10px;
+    transition: background-color 0.3s ease;
+    border-radius: 50%;
+    width: 48px;
+    height: 48px;
+    text-align: center;
+    line-height: 48px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .carousel-control:hover {
+    background-color: rgba(0, 0, 0, 0.6);
+  }
+  .prev {
+    position: absolute;
+    left: 0;
+    z-index: 2;
+  }
+  .next {
+    position: absolute;
+    right: 0;
+    z-index: 2;
+  }
+
+  .project-details {
+    background: rgba(255, 255, 255, 0.07);
+    backdrop-filter: blur(8px);
+    padding: 20px;
+    border-radius: 12px;
+    width: 80%;
+    max-width: 900px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
+    margin-top: 20px;
   }
 
   .detail-item {
+    display: flex;
     margin-bottom: 10px;
   }
-
   .detail-title {
-    font-weight: bold;
+    font-weight: 600;
+    margin-right: 8px;
+    color: #ffd700;
+  }
+  #detail-id,
+  #detail-title,
+  #detail-description,
+  #detail-visibility,
+  #detail-eol_time,
+  #detail-reviews {
+    color: #fff;
+  }
+
+  .edit-button {
+    background-color: #4169e1;
+    color: #fff;
+    border: none;
+    border-radius: 8px;
+    padding: 10px 16px;
+    margin-right: 10px;
+    cursor: pointer;
+    font-weight: 600;
+    transition: background-color 0.3s ease;
+    text-decoration: none;
+  }
+  .edit-button:hover {
+    background-color: #27408b;
+  }
+
+  /* Review link */
+  .review-link {
     display: inline-block;
-    width: 150px; /* Ensures alignment */
+    color: #00c1ff;
+    text-decoration: none;
+    font-weight: 600;
+    margin-top: 10px;
   }
 
-  /* styling for project unavailable */
   #unavailable {
-    font-size: 30px;
-    color: white;
+    color: #fff;
+    margin-top: 20px;
+    text-align: center;
   }
-</style>
+  #duck {
+    display: block;
+    margin: 20px auto;
+    max-width: 200px;
+    opacity: 0.8;
+  }
 
+  /* Responsive adjustments */
+  @media (max-width: 768px) {
+    .carousel-wrapper {
+      width: 90%;
+    }
+    .project-card {
+      width: 220px;
+    }
+    .project-img {
+      height: 140px;
+    }
+    .project-details {
+      width: 90%;
+    }
+  }
+
+  .title{
+    color: #fff;
+    text-align: center;
+    margin-top: 20px;
+  }
+
+</style>
 <div class="project-container">
+  <h2 class="title">My Projects</h2>
   <div class="project-carousel">
     <button class="carousel-control prev" onclick="scrollCarousel(-1)">
       &#10094;
     </button>
+
     <div class="carousel-wrapper">
-      <div class="carousel-track" id="carousel-track">
+      <div class="carousel-track" id="carousel-track" data-index="0">
         {% for project in projects %}
         <div
           class="project-card"
@@ -167,12 +228,12 @@
         {% endfor %}
       </div>
     </div>
+
     <button class="carousel-control next" onclick="scrollCarousel(1)">
       &#10095;
     </button>
   </div>
 
-  <!-- Project details -->
   {% if projects %}
   <div class="project-details" id="project-details">
     <div class="detail-item">
@@ -189,7 +250,9 @@
     </div>
     <div class="detail-item">
       <span class="detail-title">Visibility:</span>
-      <span id="detail-visibility">{{ 'Public' if projects[0].visibility else 'Private' }}</span>
+      <span id="detail-visibility"
+        >{{ 'Public' if projects[0].visibility else 'Private' }}</span
+      >
     </div>
     <div class="detail-item">
       <span class="detail-title">Shareable time left:</span>
@@ -199,34 +262,49 @@
       <span class="detail-title">Reviews:</span>
       <span id="detail-reviews">{{ projects[0].reviews }}</span>
     </div>
-    <button class="edit-button" onclick="editProject('{{ projects[0].id }}')">
-      Edit Project
-    </button>
-    <a href="{{ url_for('main.project', project_id=projects[0].id) }}" class="review-link" id="review-link">
+
+    <a
+      class="edit-button"
+      href="{{ url_for('main.editProject', project_id=projects[0].id) }}"
+      >Edit Project</a
+    >
+
+    <a
+      href="{{ url_for('main.project', project_id=projects[0].id) }}"
+      class="review-link"
+      id="review-link"
+    >
       Go to Review
     </a>
   </div>
   {% else %}
   <p id="unavailable">No Projects Available</p>
-  <img id="duck" src="{{ url_for('static', filename='duck.gif') }}" alt="duck" />
+  <img
+    id="duck"
+    src="{{ url_for('static', filename='duck.gif') }}"
+    alt="duck"
+  />
   {% endif %}
-  </div>
+</div>
 
 <script>
   function scrollCarousel(direction) {
     const track = document.getElementById("carousel-track");
     const items = track.querySelectorAll(".project-card");
-    const itemWidth = track.offsetWidth;
+    const itemCount = items.length;
+    if (!itemCount) return;
+
+    const itemWidth = items[0].offsetWidth + 20;
 
     let currentIndex = parseInt(track.getAttribute("data-index")) || 0;
     currentIndex += direction;
-    if (currentIndex < 0) currentIndex = items.length - 1;
-    if (currentIndex > items.length - 1) currentIndex = 0;
+
+    if (currentIndex < 0) currentIndex = itemCount - 1;
+    if (currentIndex > itemCount - 1) currentIndex = 0;
 
     track.style.transform = `translateX(-${currentIndex * itemWidth}px)`;
     track.setAttribute("data-index", currentIndex);
 
-    // Update project details
     const currentProject = items[currentIndex];
     document.getElementById("detail-id").innerText =
       currentProject.getAttribute("data-id");
@@ -241,7 +319,6 @@
     document.getElementById("detail-reviews").innerText =
       currentProject.getAttribute("data-reviews");
 
-    // Update edit button
     document
       .querySelector(".edit-button")
       .setAttribute(
@@ -249,7 +326,6 @@
         `editProject('${currentProject.getAttribute("data-id")}')`
       );
 
-    // Update review link
     document
       .getElementById("review-link")
       .setAttribute(

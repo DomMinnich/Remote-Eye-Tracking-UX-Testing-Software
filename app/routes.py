@@ -138,12 +138,12 @@ def get_shared_projects(user_id):
 
 # get_project_by_id function - Dominic Minnich
 def get_project_by_id(project_id):
-    # Needs adjusting...
-    return {
-        "id": project_id,
-        "title": "title...",
-        "description": "Desctiption...",
-    }
+    """
+    Retrieve the specified project from the database by its ID.
+    Return None if not found.
+    """
+    project = Project.query.filter_by(id=project_id).first()
+    return project
 
 
 # Routes
@@ -341,15 +341,60 @@ def settings():
 
 
 # /editProject
-@main.route("/editProject")
+@main.route("/editProject/<string:project_id>", methods=["GET", "POST"])
 @login_required
-def editProject():
-    project_id = request.args.get("id")
-    if project_id:
-        project = get_project_by_id(project_id)
-        return render_template("editProject.html", project=project)
-    else:
-        return "Project ID not provided", 400
+def editProject(project_id):
+    project = get_project_by_id(project_id)
+    if not project:
+        return "Project not found", 404
+
+    # Ensure only the creator or an admin can edit
+    if project.creator != current_user.id and current_user.role != "admin":
+        flash("You do not have permission to edit this project.", "danger")
+        return redirect(url_for("main.viewProjects"))
+
+    if request.method == "POST":
+        new_link = request.form.get("link", "")
+
+        tasks_json = request.form.get("tasks_hidden", "[]")
+        collab_json = request.form.get("collaborators_hidden", "[]")
+
+        try:
+            new_tasks = json.loads(tasks_json)
+            new_collabs = json.loads(collab_json)
+        except json.JSONDecodeError:
+            flash("Invalid tasks or collaborator data.", "danger")
+            return redirect(url_for("main.editProject", project_id=project_id))
+
+        # Update fields
+        project.link = new_link
+        project.tasks = new_tasks
+        project.collaborators = new_collabs
+
+        db.session.commit()
+        flash("Project updated successfully!", "success")
+        return redirect(url_for("main.viewProjects"))
+
+    # If GET, just render the template with current project data
+    return render_template("editProject.html", project=project)
+
+
+@main.route("/deleteProject/<string:project_id>", methods=["POST"])
+@login_required
+def delete_project(project_id):
+    project = Project.query.get(project_id)
+    if not project:
+        return "Project not found", 404
+
+    # Ensure user is the creator or an admin
+    if project.creator != current_user.id and current_user.role != "admin":
+        flash("You do not have permission to delete this project.", "danger")
+        return redirect(url_for("main.viewProjects"))
+
+    db.session.delete(project)
+    db.session.commit()
+    flash("Project deleted successfully!", "success")
+    return redirect(url_for("main.viewProjects"))
 
 
 @main.route("/viewProjects")

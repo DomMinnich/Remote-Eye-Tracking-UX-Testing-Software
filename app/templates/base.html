@@ -1,6 +1,5 @@
 <!-- Dominic 2024 -->
 <!-- base.html -->
-
 <!DOCTYPE html>
 <html lang="en">
   <head>
@@ -15,27 +14,29 @@
       body {
         font-family: "Gruppo", sans-serif;
         background: #1e1e2f;
+        margin: 0;
+        padding: 0;
       }
     </style>
   </head>
   <body class="base-body">
     <main>
+      <!-- Main Content Block -->
       {% block content %}{% endblock %}
 
-      
-<div class="base-video-background">
-
-</div>
-
       <!-- Video Background -->
-<div class="video-background">
-  <video autoplay muted loop playsinline>
-    <source src="{{ url_for('static', filename='backgroundVideo2.mp4') }}" type="video/mp4" />
-    Your browser does not support the video tag.
-  </video>
-</div>
+      <div class="video-background">
+        <video autoplay muted loop playsinline>
+          <source
+            src="{{ url_for('static', filename='backgroundVideo2.mp4') }}"
+            type="video/mp4"
+          />
+          Your browser does not support the video tag.
+        </video>
+      </div>
+
       <div class="base-dimming-overlay"></div>
-      <!-- Corner Icon for Menu Toggle -->
+
       <div class="base-menu-toggle">
         <div class="base-bar"></div>
         <div class="base-bar"></div>
@@ -47,33 +48,30 @@
         <div class="base-close-btn">&times;</div>
         <ul class="base-menu-list">
           {% if current_user.is_authenticated %}
-          <li><a href="{{ url_for('main.home') }}">HOME</a></li>
+          <li><a href="{{ url_for('main.home') }}">🛖 HOME</a></li>
           <li>
-            <a href="#">PROJECTS <span class="base-expand-icon">+</span></a>
+            <a href="#">📃 PROJECTS <span class="base-expand-icon">+</span></a>
             <ul class="base-submenu">
               <li>
                 <a href="{{ url_for('main.viewProjects') }}">VIEW PROJECTS</a>
               </li>
               <li>
-                <a href="{{ url_for('main.viewSharedProjects') }}">VIEW SHARED PROJECTS</a>
+                <a href="{{ url_for('main.viewSharedProjects') }}"
+                  >VIEW SHARED PROJECTS</a
+                >
               </li>
               <li>
                 <a href="{{ url_for('main.createProject') }}">NEW PROJECT</a>
               </li>
-              <li>
-                <a href="{{ url_for('main.viewReviewBroad') }}">VIEW REVIEWS</a>
-              </li>
             </ul>
           </li>
-          <li><a href="{{ url_for('main.profile') }}">PROFILE</a></li>
-          <li><a href="{{ url_for('main.settings') }}">SETTINGS</a></li>
-          <!--  if user role is 'admin' -->
+          <li><a href="{{ url_for('main.profile') }}">😀 PROFILE</a></li>
+          <li><a href="{{ url_for('main.settings') }}">⚙️ SETTINGS</a></li>
           {% if current_user.role == 'admin' %}
-          <li><a href="{{ url_for('main.adminPanel')}}">ADMIN PANEL</a></li>
+          <li><a href="{{ url_for('main.adminPanel')}}">⚠️ ADMIN PANEL</a></li>
           {% endif %}
-
-          <li><a href="{{ url_for('main.aboutUs') }}">ABOUT US</a></li>
-          <li><a href="{{ url_for('main.logout') }}">LOGOUT</a></li>
+          <li><a href="{{ url_for('main.aboutUs') }}">🥷 ABOUT US</a></li>
+          <li><a href="{{ url_for('main.logout') }}">🪵 LOGOUT</a></li>
           {% else %}
           <li><a href="{{ url_for('main.aboutUs') }}">ABOUT US</a></li>
           <li><a href="{{ url_for('main.login') }}">LOGIN</a></li>
@@ -82,16 +80,19 @@
         </ul>
       </div>
 
+      <!-- User Profile icon & name in top-right (when logged in) -->
       {% if current_user.role %}
-      <div class="base-profile">
-        <img
+      <a href="{{ url_for('main.profile') }}">
+        <div class="base-profile">
+          <img
             src="{{ url_for('static', filename='uploads/userProfiles/' + (current_user.picture if current_user.picture else 'pic.png')) }}"
             alt="base-profile Picture"
-        />
-        <span class="base-profile-name"
-          >{{ current_user.first_name }} {{ current_user.last_name }}</span
-        >
-      </div>
+          />
+          <span class="base-profile-name">
+            {{ current_user.first_name }} {{ current_user.last_name }}
+          </span>
+        </div>
+      </a>
       {% endif %}
 
       <!-- Footer Section -->
@@ -102,6 +103,7 @@
         </p>
       </footer>
     </main>
+
     <script src="{{ url_for('static', filename='script.js') }}"></script>
   </body>
 </html>

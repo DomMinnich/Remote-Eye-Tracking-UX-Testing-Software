@@ -1,30 +1,283 @@
-<!-- Kyle Benich, following example from https://github.com/brownhci/WebGazer/blob/master/www/calibration.html-->
+{% extends 'base.html' %} {% block content %}
+<style>
+  .calibration-page {
+    max-width: 800px;
+    margin: 80px auto 100px auto;
+    padding: 20px;
+    background: rgba(255, 255, 255, 0.07);
+    backdrop-filter: blur(10px);
+    border-radius: 12px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+    color: #fff;
+    position: relative;
+    text-align: center;
+  }
 
-{% extends 'base.html' %}
+  .calibration-title {
+    font-size: 2rem;
+    margin-bottom: 16px;
+    text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.8);
+  }
 
-{% block content %}
+  .calibration-instructions {
+    margin-bottom: 20px;
+  }
+  .calibration-instructions p {
+    font-size: 1.1rem;
+    margin: 0;
+  }
+
+  .webgazer-video-container {
+    position: relative;
+    max-width: 720px;
+    margin: 0 auto 20px auto;
+    border: 2px solid #ccc;
+    border-radius: 12px;
+    overflow: hidden;
+    background-color: #000;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.4);
+  }
+
+  .webgazer-video-feed {
+    width: 100%;
+    height: auto;
+    display: block;
+    opacity: 0.8;
+  }
+
+  .webgazer-video-canvas {
+    position: absolute;
+    top: 0;
+    left: 0;
+  }
+
+  .calibration-text-box {
+    position: absolute;
+    bottom: 10px;
+    left: 50%;
+    transform: translateX(-50%);
+    background-color: rgba(0, 193, 255, 0.8);
+    padding: 6px 12px;
+    border-radius: 6px;
+    color: #000;
+    font-weight: 600;
+    box-shadow: 0 1px 5px rgba(0, 0, 0, 0.3);
+  }
+
+  .calibration-controls {
+    margin-bottom: 15px;
+  }
+
+  .btn {
+    cursor: pointer;
+    font-weight: 600;
+    border: none;
+    border-radius: 6px;
+    padding: 10px 16px;
+    transition: background-color 0.3s;
+    margin: 5px;
+  }
+  .btn.btn-primary {
+    background-color: #4169e1;
+    color: #fff;
+  }
+  .btn.btn-primary:hover {
+    background-color: #27408b;
+  }
+  .btn.btn-secondary {
+    background-color: #616161;
+    color: #fff;
+  }
+  .btn.btn-secondary:hover {
+    background-color: #444;
+  }
+
+  .redirect-button {
+    margin-top: 20px;
+  }
+
+  #calibrationDiv {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100vh;
+    z-index: 10000;
+    pointer-events: none;
+  }
+  .calibration-point {
+    position: absolute;
+    width: 25px;
+    height: 25px;
+    background-color: red;
+    border-radius: 50%;
+    display: none;
+    cursor: pointer;
+    z-index: 10001;
+    pointer-events: auto;
+  }
+  .calibration-point:hover {
+    box-shadow: 0 0 5px 3px rgba(255, 0, 0, 0.4);
+  }
+
+  #pt1 {
+    top: 10%;
+    left: 10%;
+  }
+  #pt2 {
+    top: 10%;
+    left: 50%;
+    transform: translateX(-50%);
+  }
+  #pt3 {
+    top: 10%;
+    right: 10%;
+  }
+  #pt4 {
+    top: 50%;
+    left: 10%;
+    transform: translateY(-50%);
+  }
+  #pt5 {
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+  }
+  #pt6 {
+    top: 50%;
+    right: 10%;
+    transform: translateY(-50%);
+  }
+  #pt7 {
+    bottom: 10%;
+    left: 10%;
+  }
+  #pt8 {
+    bottom: 10%;
+    left: 50%;
+    transform: translateX(-50%);
+  }
+  #pt9 {
+    bottom: 10%;
+    right: 10%;
+  }
+
+  .modal {
+    display: none;
+    position: fixed;
+    z-index: 10001;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    background-color: rgba(0, 0, 0, 0.6);
+  }
+  .modal-content {
+    background-color: #2e2e2e;
+    margin: 100px auto;
+    padding: 20px;
+    border-radius: 12px;
+    max-width: 600px;
+    color: #fff;
+    position: relative;
+    text-align: left;
+  }
+
+  .modal-content h2 {
+    margin-top: 0;
+    margin-bottom: 15px;
+    color: #ffd700;
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.8);
+  }
+
+  .modal-content p {
+    margin-bottom: 20px;
+    line-height: 1.5;
+  }
+
+  .close {
+    color: #fff;
+    float: right;
+    font-size: 28px;
+    font-weight: 700;
+    cursor: pointer;
+  }
+  .close:hover {
+    color: #ffaaaa;
+  }
+
+  .recalibrate-box {
+    background-color: #282a36;
+    color: #fff;
+    padding: 20px;
+    margin-top: 20px;
+    border-radius: 10px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+    text-align: center;
+  }
+  .recalibrate-title {
+    margin-bottom: 10px;
+    color: #2175f3;
+    text-shadow: -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000,
+      1px 1px 0 #000;
+  }
+  .recalibrate-button-container {
+    display: flex;
+    justify-content: center;
+  }
+
+  @media (max-width: 600px) {
+    .calibration-page {
+      margin: 60px 10px 100px 10px;
+      padding: 15px;
+    }
+    .calibration-title {
+      font-size: 1.6rem;
+    }
+  }
+</style>
+
 <div class="calibration-page">
   <h2 class="calibration-title">Calibration</h2>
+
   <div class="calibration-instructions">
-    <p id="calibrationInstructions">Follow the instructions to calibrate your eye movements.</p>
+    <p id="calibrationInstructions">
+      Follow the instructions to calibrate your eye movements.
+    </p>
   </div>
+
   <div id="webgazerVideoContainer" class="webgazer-video-container">
-    <video id="webgazerVideoFeed" class="webgazer-video-feed" autoplay muted></video>
+    <video
+      id="webgazerVideoFeed"
+      class="webgazer-video-feed"
+      autoplay
+      muted
+    ></video>
     <canvas id="webgazerVideoCanvas" class="webgazer-video-canvas"></canvas>
     <div id="calibrationTextBox" class="calibration-text-box">
       Keep your face within the green box and click the 9 red dots that appear.
     </div>
   </div>
-  <div class="calibration-controls" style="position: relative; z-index: 1001;">
-    <button id="startCalibration" class="btn btn-primary" style="display: none;">Start Calibration</button>
-    <button id="finishCalibration" class="btn btn-secondary" style="display: none;">Finish Calibration</button>
+
+  <div class="calibration-controls">
+    <button id="startCalibration" class="btn btn-primary" style="display: none">
+      Start Calibration
+    </button>
+    <button
+      id="finishCalibration"
+      class="btn btn-secondary"
+      style="display: none"
+    >
+      Finish Calibration
+    </button>
   </div>
-  <div class="redirect-button" style="display: none; position: relative; z-index: 1002;">
+
+  <div class="redirect-button" style="display: none">
     <button id="redirectButton" class="btn btn-primary">Go Back</button>
   </div>
 </div>
 
-<!-- Calibration Points -->
 <div id="calibrationDiv">
   <div class="calibration-point" id="pt1"></div>
   <div class="calibration-point" id="pt2"></div>
@@ -37,92 +290,100 @@
   <div class="calibration-point" id="pt9"></div>
 </div>
 
-<!-- Modal -->
 <div id="tosModal" class="modal">
   <div class="modal-content">
     <span class="close">&times;</span>
     <h2>Terms of Service</h2>
-    <p>Legal jargon TOS here</p>
+    <p>
+      This is where you put your legal disclaimers and instructions for your
+      users related to eye-tracking, data usage, etc.
+    </p>
     <button id="acceptTOS" class="btn btn-primary">Accept</button>
   </div>
 </div>
 
 <script src="https://webgazer.cs.brown.edu/webgazer.js"></script>
 <script>
-  document.addEventListener('DOMContentLoaded', function() {
-    const startCalibrationButton = document.getElementById('startCalibration');
-    const finishCalibrationButton = document.getElementById('finishCalibration');
-    const redirectButton = document.getElementById('redirectButton');
+  document.addEventListener("DOMContentLoaded", function () {
+    const startCalibrationButton = document.getElementById("startCalibration");
+    const finishCalibrationButton =
+      document.getElementById("finishCalibration");
+    const redirectButton = document.getElementById("redirectButton");
     const previousPage = document.referrer;
 
-    const tosModal = document.getElementById('tosModal');
-    const acceptTOSButton = document.getElementById('acceptTOS');
-    const closeModal = document.querySelector('.close');
-    const calibrationInstructions = document.getElementById('calibrationInstructions');
+    const tosModal = document.getElementById("tosModal");
+    const acceptTOSButton = document.getElementById("acceptTOS");
+    const closeModal = document.querySelector(".close");
+    const calibrationInstructions = document.getElementById(
+      "calibrationInstructions"
+    );
 
-    const calibrationPoints = document.querySelectorAll('.calibration-point');
+    const calibrationPoints = document.querySelectorAll(".calibration-point");
     let calibrationCount = 0;
 
-    // Show the TOS popup when the page loads
-    tosModal.style.display = 'block';
+    document.body.style.overflow = "hidden";
 
-    // Clear WebGazer data if coming from profile page
-    if (previousPage.includes('profile')) {
+    tosModal.style.display = "block";
+
+    if (previousPage.includes("profile")) {
       webgazer.clearData();
     }
 
-    // Close the TOS popup when the "I agree" button is clicked
-    closeModal.addEventListener('click', function() {
-      tosModal.style.display = 'none';
+    closeModal.addEventListener("click", function () {
+      tosModal.style.display = "none";
     });
 
-    acceptTOSButton.addEventListener('click', function() {
-      tosModal.style.display = 'none';
-      calibrationInstructions.textContent = 'Please click "Start Calibration" to begin.';
-      startCalibrationButton.style.display = 'block';
+    acceptTOSButton.addEventListener("click", function () {
+      tosModal.style.display = "none";
+      calibrationInstructions.textContent =
+        'Please click "Start Calibration" to begin.';
+      startCalibrationButton.style.display = "inline-block";
     });
 
-    startCalibrationButton.addEventListener('click', function() {
+    startCalibrationButton.addEventListener("click", function () {
       webgazer.begin();
-      calibrationInstructions.textContent = 'Calibration in progress. Follow the instructions on the screen.';
-      startCalibrationButton.style.display = 'none';
+      calibrationInstructions.textContent =
+        "Calibration in progress. Follow the instructions on the screen.";
+      startCalibrationButton.style.display = "none";
       showCalibrationPoint();
     });
 
-    finishCalibrationButton.addEventListener('click', function() {
+    finishCalibrationButton.addEventListener("click", function () {
       webgazer.end();
-      calibrationInstructions.textContent = 'Calibration complete. You can now proceed.';
-      finishCalibrationButton.style.display = 'none';
-      redirectButton.parentElement.style.display = 'block';
+      calibrationInstructions.textContent =
+        "Calibration complete. You can now proceed.";
+      finishCalibrationButton.style.display = "none";
+      redirectButton.parentElement.style.display = "block";
 
-      // Store calibration data as cookies
       webgazer.saveDataAcrossSessions(true);
 
-      // Send request to update user's calibrated field
-      fetch('/calibration_complete', {
-        method: 'POST',
+      fetch("/calibration_complete", {
+        method: "POST",
         headers: {
-          'Content-Type': 'application/json'
-        }
-      }).then(response => response.json())
-        .then(data => console.log(data.message))
-        .catch(error => console.error('Error:', error));
+          "Content-Type": "application/json",
+        },
+      })
+        .then((response) => response.json())
+        .then((data) => console.log(data.message))
+        .catch((error) => console.error("Error:", error));
     });
 
-    redirectButton.addEventListener('click', function() {
+    redirectButton.addEventListener("click", function () {
       window.location.href = previousPage;
     });
 
     function showCalibrationPoint() {
       if (calibrationCount < calibrationPoints.length) {
-        calibrationPoints[calibrationCount].style.display = 'block';
-        calibrationPoints[calibrationCount].addEventListener('click', function() {
-          calibrationPoints[calibrationCount].style.display = 'none';
+        const currentPoint = calibrationPoints[calibrationCount];
+        currentPoint.style.display = "block";
+        currentPoint.addEventListener("click", function handleClick() {
+          currentPoint.style.display = "none";
           calibrationCount++;
+          currentPoint.removeEventListener("click", handleClick);
           showCalibrationPoint();
         });
       } else {
-        finishCalibrationButton.style.display = 'block';
+        finishCalibrationButton.style.display = "inline-block";
       }
     }
   });
