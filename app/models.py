@@ -75,6 +75,7 @@ class Project(db.Model):
     numPauses = db.Column(
         db.Integer, nullable=False
     )  # Number of times the project has been paused (Maximum of.. 3? 2?)
+    benchmarked = db.Column(db.Boolean, default=False, nullable=False)  # Benchmark project (Sharability marker)
 
     @staticmethod
     def generate_unique_id():
