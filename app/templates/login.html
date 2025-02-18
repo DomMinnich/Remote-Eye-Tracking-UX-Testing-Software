@@ -20,6 +20,10 @@
     background-color: #121212;
     overflow: hidden;
   }
+
+  .video-background {
+    opacity: 0;
+  }
 </style>
 <div class="home-rain-container">
   <div class="home-raindrops"></div>
@@ -83,7 +87,7 @@
     <p class="register-link forgot-password-link">
       Forgot your Password?
       <a href="{{ url_for('main.forgotPassword') }}">Password</a>
-  </p>
+    </p>
   </form>
 </div>
 <script src="{{ url_for('static', filename='eye.js') }}"></script>

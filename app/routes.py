@@ -28,6 +28,7 @@
 #    /change_password       | ~Line 35-38   -Dominic Minnich
 
 # Imports
+import shutil
 from flask import (
     Blueprint,
     current_app,
@@ -138,12 +139,12 @@ def get_shared_projects(user_id):
 
 # get_project_by_id function - Dominic Minnich
 def get_project_by_id(project_id):
-    # Needs adjusting...
-    return {
-        "id": project_id,
-        "title": "title...",
-        "description": "Desctiption...",
-    }
+    """
+    Retrieve the specified project from the database by its ID.
+    Return None if not found.
+    """
+    project = Project.query.filter_by(id=project_id).first()
+    return project
 
 
 # Routes
@@ -254,70 +255,80 @@ def register():
 
     return render_template("register.html", form=form)
 
-@main.route('/forgot-password', methods=['GET', 'POST'])
+
+@main.route("/forgot-password", methods=["GET", "POST"])
 def forgotPassword():
-    if request.method == 'POST':
-        email = request.form.get('email')
+    if request.method == "POST":
+        email = request.form.get("email")
         # Validate if email exists in your database
         user = User.query.filter_by(email=email).first()
         if user:
             # Logic to send reset email
             send_reset_email(user)  # Define this function to send a reset link
-            flash('A password reset link has been sent to your email.', 'success')
-            return redirect(url_for('main.login'))
+            flash("A password reset link has been sent to your email.", "success")
+            return redirect(url_for("main.login"))
         else:
-            flash('Email not found. Please try again.', 'danger')
-            return redirect(url_for('main.forgotPassword'))
-    
-    return render_template('ForgotPassword.html')
+            flash("Email not found. Please try again.", "danger")
+            return redirect(url_for("main.forgotPassword"))
+
+    return render_template("ForgotPassword.html")
 
 
 def send_reset_email(user):
     try:
         token = generate_reset_token(user)
-        reset_url = url_for('main.reset_password', token=token, _external=True)
-        msg = Message('Password Reset Request',
-                    sender='noreply@yourapp.com',
-                    recipients=[user.email])
-        msg.body = f'''To reset your password, visit the following link:
+        reset_url = url_for("main.reset_password", token=token, _external=True)
+        msg = Message(
+            "Password Reset Request",
+            sender="noreply@yourapp.com",
+            recipients=[user.email],
+        )
+        msg.body = f"""To reset your password, visit the following link:
     {reset_url}
         
     If you did not make this request, please ignore this email.
-    '''
+    """
         mail.send(msg)
     except Exception as e:
         return f"Failed to send email: {str(e)}"
 
-def generate_reset_token(user):
-    serializer = URLSafeTimedSerializer('your_secret_key')
-    return serializer.dumps(user.email, salt='password-reset-salt')
 
-@main.route('/reset-password/<token>', methods=['GET', 'POST'])
+def generate_reset_token(user):
+    serializer = URLSafeTimedSerializer("your_secret_key")
+    return serializer.dumps(user.email, salt="password-reset-salt")
+
+
+@main.route("/reset-password/<token>", methods=["GET", "POST"])
 def reset_password(token):
     user = verify_reset_token(token)
     if not user:
-        flash('The reset link is invalid or has expired.', 'danger')
-        return redirect(url_for('main.forgot_password'))
+        flash("The reset link is invalid or has expired.", "danger")
+        return redirect(url_for("main.forgot_password"))
 
-    if request.method == 'POST':
-        new_password = request.form.get('password')
+    if request.method == "POST":
+        new_password = request.form.get("password")
         user.password_hash = hash_password(new_password)
         db.session.commit()
-        flash('Your password has been reset. You can now log in.', 'success')
-        return redirect(url_for('main.login'))
+        flash("Your password has been reset. You can now log in.", "success")
+        return redirect(url_for("main.login"))
 
-    return render_template('reset_password.html', token=token)
+    return render_template("reset_password.html", token=token)
+
 
 def hash_password(password):
     return generate_password_hash(password)  # Uses PBKDF2 algorithm by default
 
+
 def verify_reset_token(token):
-    serializer = URLSafeTimedSerializer('your_secret_key')
+    serializer = URLSafeTimedSerializer("your_secret_key")
     try:
-        email = serializer.loads(token, salt='password-reset-salt', max_age=3600)  # 1-hour expiration
+        email = serializer.loads(
+            token, salt="password-reset-salt", max_age=3600
+        )  # 1-hour expiration
     except Exception as e:
         return None
     return User.query.filter_by(email=email).first()
+
 
 # User_loader
 @login_manager.user_loader
@@ -341,15 +352,60 @@ def settings():
 
 
 # /editProject
-@main.route("/editProject")
+@main.route("/editProject/<string:project_id>", methods=["GET", "POST"])
 @login_required
-def editProject():
-    project_id = request.args.get("id")
-    if project_id:
-        project = get_project_by_id(project_id)
-        return render_template("editProject.html", project=project)
-    else:
-        return "Project ID not provided", 400
+def editProject(project_id):
+    project = get_project_by_id(project_id)
+    if not project:
+        return "Project not found", 404
+
+    # Ensure only the creator or an admin can edit
+    if project.creator != current_user.id and current_user.role != "admin":
+        flash("You do not have permission to edit this project.", "danger")
+        return redirect(url_for("main.viewProjects"))
+
+    if request.method == "POST":
+        new_link = request.form.get("link", "")
+
+        tasks_json = request.form.get("tasks_hidden", "[]")
+        collab_json = request.form.get("collaborators_hidden", "[]")
+
+        try:
+            new_tasks = json.loads(tasks_json)
+            new_collabs = json.loads(collab_json)
+        except json.JSONDecodeError:
+            flash("Invalid tasks or collaborator data.", "danger")
+            return redirect(url_for("main.editProject", project_id=project_id))
+
+        # Update fields
+        project.link = new_link
+        project.tasks = new_tasks
+        project.collaborators = new_collabs
+
+        db.session.commit()
+        flash("Project updated successfully!", "success")
+        return redirect(url_for("main.viewProjects"))
+
+    # If GET, just render the template with current project data
+    return render_template("editProject.html", project=project)
+
+
+@main.route("/deleteProject/<string:project_id>", methods=["POST"])
+@login_required
+def delete_project(project_id):
+    project = Project.query.get(project_id)
+    if not project:
+        return "Project not found", 404
+
+    # Ensure user is the creator or an admin
+    if project.creator != current_user.id and current_user.role != "admin":
+        flash("You do not have permission to delete this project.", "danger")
+        return redirect(url_for("main.viewProjects"))
+
+    db.session.delete(project)
+    db.session.commit()
+    flash("Project deleted successfully!", "success")
+    return redirect(url_for("main.viewProjects"))
 
 
 @main.route("/viewProjects")
@@ -518,15 +574,21 @@ def adminPanel():
 @login_required
 def viewReviewSpecific():
     video_url = request.args.get("video_url")
-    return render_template("viewReviewSpecific.html", user=current_user, video_url=video_url)
+    return render_template(
+        "viewReviewSpecific.html", user=current_user, video_url=video_url
+    )
+
 
 @main.route("/review/<uuid:project_id>")
 # @login_required     # anyone can submit a review
 def project(project_id):
     project = Project.query.get_or_404(str(project_id))
     # Generate the proxied link
-    proxied_link = project.link.replace("www.figma.com", "embed.figma.com") + "&embed-host=share"
+    proxied_link = (
+        project.link.replace("www.figma.com", "embed.figma.com") + "&embed-host=share"
+    )
     return render_template("review.html", project=project, proxied_link=proxied_link)
+
 
 @main.route("/proxy/")
 def proxy():
@@ -537,7 +599,9 @@ def proxy():
 
     # Validate that the URL is within allowed domains
     allowed_domains = ["www.figma.com"]
-    if not any(target_url.startswith(f"https://{domain}") for domain in allowed_domains):
+    if not any(
+        target_url.startswith(f"https://{domain}") for domain in allowed_domains
+    ):
         return "Unauthorized domain.", 403
 
     # Fetch the content from the target URL
@@ -556,6 +620,24 @@ def proxy():
 
     return Response(response.content, response.status_code, headers)
 
+# Route to delete a projects session submission folder called benchmark
+#also edits the project model field 'benchmarked' to False
+
+@main.route("/delete_benchmark/<uuid:project_id>", methods=["POST"])
+@login_required
+def delete_benchmark(project_id):
+    project = Project.query.get(str(project_id))  # Convert UUID to string
+    if project:
+        # Delete the benchmark folder
+        benchmark_folder = os.path.join(UPLOAD_FOLDER, secure_filename(str(project_id)), "benchmark")
+        if os.path.exists(benchmark_folder):
+            shutil.rmtree(benchmark_folder)
+        # Update the project model field 'benchmarked'
+        project.benchmarked = False
+        db.session.commit()
+        flash("Benchmark deleted successfully!", "success")
+    return redirect(url_for("main.viewProjects"))
+
 
 # /upload
 # Define the upload folder
@@ -569,32 +651,45 @@ os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 def upload_video():
     if "video" not in request.files:
         return jsonify({"error": "No video file provided"}), 400
-
     video = request.files["video"]
     if video.filename == "":
         return jsonify({"error": "No selected file"}), 400
 
     project_id = request.form.get("project_id")
-    session_id = str(uuid.uuid4())
-    video_id = str(uuid.uuid4())
+    # Determine if this is a benchmark upload
+    benchmark_flag = request.form.get("benchmark", "false").lower() == "true"
 
-    # Create the directory structure
+    # Generate a session ID
+    if benchmark_flag:
+        session_id = "benchmark"
+        video_id = "benchmark"
+    else:
+        session_id = str(uuid.uuid4())
+        video_id = str(uuid.uuid4())
+
+    # Create the directory structure for saving the video
     project_folder = os.path.join(UPLOAD_FOLDER, secure_filename(project_id))
     session_folder = os.path.join(project_folder, secure_filename(session_id))
     video_folder = os.path.join(session_folder, "Video")
     raw_folder = os.path.join(session_folder, "Raw")
-
     os.makedirs(video_folder, exist_ok=True)
     os.makedirs(raw_folder, exist_ok=True)
 
-    # Save the video file
     video_path = os.path.join(video_folder, f"{video_id}.webm")
     video.save(video_path)
+
+    # If benchmark mode, update the project model field 'benchmarked'
+    if benchmark_flag:
+        project = Project.query.get(project_id)
+        if project:
+            project.benchmarked = True
+            db.session.commit()
 
     return (
         jsonify({"message": "Video uploaded successfully", "video_path": video_path}),
         200,
     )
+
 
 @main.route("/upload_profile_picture", methods=["POST"])
 @login_required
@@ -610,7 +705,9 @@ def upload_profile_picture():
 
     if file and file.filename.endswith(".jpg"):
         filename = secure_filename(f"{current_user.id}.jpg")
-        upload_folder = os.path.join(current_app.root_path, "static", "uploads", "userProfiles")
+        upload_folder = os.path.join(
+            current_app.root_path, "static", "uploads", "userProfiles"
+        )
         os.makedirs(upload_folder, exist_ok=True)  # Ensure the directory exists
         file.save(os.path.join(upload_folder, filename))
         current_user.picture = filename
@@ -621,6 +718,7 @@ def upload_profile_picture():
 
     return redirect(url_for("main.profile"))
 
+
 # settings update route - Kyle Benich
 @main.route("/update_settings", methods=["POST"])
 @login_required
@@ -629,7 +727,7 @@ def update_settings():
     current_user.username = request.form.get("username")
     current_user.first_name = request.form.get("first_name")
     current_user.last_name = request.form.get("last_name")
-    current_user.email_opt_in = 'email_opt_in' in request.form
+    current_user.email_opt_in = "email_opt_in" in request.form
     db.session.commit()
     flash("Settings updated successfully!", "success")
     return redirect(url_for("main.settings"))
@@ -648,7 +746,10 @@ def change_password():
         return redirect(url_for("main.settings"))
 
     if new_password != confirm_new_password:
-        flash("New passwords do not match. Please ensure both passwords are identical.", "danger")
+        flash(
+            "New passwords do not match. Please ensure both passwords are identical.",
+            "danger",
+        )
         return redirect(url_for("main.settings"))
 
     current_user.set_password(new_password)
@@ -656,10 +757,12 @@ def change_password():
     flash("Password changed successfully!", "success")
     return redirect(url_for("main.settings"))
 
+
 @main.route("/calibration")
 @login_required
 def calibration():
     return render_template("calibration.html")
+
 
 @main.route("/calibration_complete", methods=["POST"])
 @login_required
@@ -668,8 +771,10 @@ def calibration_complete():
     db.session.commit()
     return jsonify({"message": "Calibration complete"}), 200
 
+
 import os
 import glob
+
 
 @main.route("/viewReviewBroad")
 @login_required
@@ -688,20 +793,27 @@ def viewReviewBroad():
         return jsonify({"error": "No reviews available for this project."}), 404
 
     # Collect all .webm files from the session folders
-    video_files = glob.glob(os.path.join(project_folder, '**', 'Video', '*.webm'), recursive=True)
-    amended_video_files_urls = [os.path.relpath(file, UPLOAD_FOLDER).replace('\\', '/').replace('static/', '') for file in video_files]
+    video_files = glob.glob(
+        os.path.join(project_folder, "**", "Video", "*.webm"), recursive=True
+    )
+    amended_video_files_urls = [
+        os.path.relpath(file, UPLOAD_FOLDER).replace("\\", "/").replace("static/", "")
+        for file in video_files
+    ]
     # Add static_data/data/Projects/ to the front of every file path in the list
-    amended_video_files_urls = [os.path.join('static_data/data/Projects/', file) for file in amended_video_files_urls]
+    amended_video_files_urls = [
+        os.path.join("static_data/data/Projects/", file)
+        for file in amended_video_files_urls
+    ]
 
     # Debugging: Print the collected video file paths
     print("Collected video file paths:", amended_video_files_urls)
 
     return render_template(
-        "viewReviewBroad.html",
-        project_id=project_id,
-        videos=amended_video_files_urls
+        "viewReviewBroad.html", project_id=project_id, videos=amended_video_files_urls
     )
-    
+
+
 @main.route("/viewSharedProjects")
 @login_required
 def viewSharedProjects():
@@ -713,6 +825,3 @@ def viewSharedProjects():
     shared_project_ids = [project["project_id"] for project in shared_projects_list]
     shared_projects = Project.query.filter(Project.id.in_(shared_project_ids)).all()
     return render_template("viewSharedProjects.html", projects=shared_projects)
-    
-    
-    

@@ -1,25 +1,5 @@
 /* Main Style 2024*/
 
-/*
-Do not use generic tags like div, span, etc.
-Be specific with the elements you want to style.
-This ensures that your css will only apply to your desired elements and not everyones.
-For ex for login title I did login-title instead of title
-*/
-
-/*
-      CONTENTS OF THIS FILE
- Fonts A->Z               | ~Line 20-32    -Dominic Minnich
- Base Styling A->Z        | ~Line 34-400   -Dominic Minnich
- Home Page A-Z            | ~Line 402-630  -Dominic Minnich
- Login  A->Z              | ~Line 632-740  -Dominic Minnich
- Register A->Z            | ~Line 744-832  -Dominic Minnich
- Profile Page Styles      | ~Line 570-603  -Kyle Benich / Dominic Minnich
- Settings Page Styles     | ~Line 605-635  -Kyle Benich / Dominic Minnich
- create-project Styles    | ~Line 637-676  -Kyle Benich
- View Project Specific    | ~Line 1061-1284-Dominic Minnich
- */
-
 /* Font Styling A->Z*/
 @font-face {
   font-family: "Gruppo";
@@ -39,13 +19,7 @@ For ex for login title I did login-title instead of title
 
 /* Footer Styling */
 .base-footer {
-  background: linear-gradient(
-    135deg,
-    #a10050d8,
-    #002657c7,
-    #530534c9,
-    #a34373c2
-  );
+  background: linear-gradient(135deg, #a10050d8, #002657c7, #530534c9, #a34373c2);
   background-size: 200% 200%;
   animation: base-gradientShift 10s ease infinite;
   color: #fff;
@@ -80,9 +54,9 @@ For ex for login title I did login-title instead of title
 /* Corner Menu Toggle Icon */
 .base-menu-toggle {
   cursor: pointer;
-  left: 20px;
   position: fixed;
   top: 20px;
+  left: 20px;
   z-index: 2001;
 }
 
@@ -90,33 +64,25 @@ For ex for login title I did login-title instead of title
 .base-dimming-overlay {
   position: fixed;
   top: 0;
-  right: -100%; /* Start off-screen to the left */
+  right: -100%;
   width: 100%;
   height: 100%;
   background: rgba(0, 0, 0, 0.5);
-  z-index: 999; /* Ensure it is above other elements */
-  display: block; /* Ensure it is always in the DOM */
-  background: linear-gradient(
-    135deg,
-    #6c0036d8,
-    #001838c7,
-    #31041fc9,
-    #622944c2
-  );
+  z-index: 999;
+  display: block;
+  background: linear-gradient(135deg, #6c0036d8, #001838c7, #31041fc9, #622944c2);
   background-size: 200% 200%;
   animation: base-gradientShift 10s ease infinite;
   opacity: 0;
-  transition: right 0.6s ease; /* Smooth transition for sliding in and out */
-  transition: opacity 0.6s ease;
+  transition: left 0.6s ease, opacity 0.6s ease;
 }
 
 .base-dimming-overlay.active {
-  right: 0; /* Move into view */
+  right: 0;
   opacity: 1;
 }
-
 .base-dimming-overlay.inactive {
-  right: -100%; /* Move out of view */
+  right: -100%;
   opacity: 0;
 }
 
@@ -125,21 +91,20 @@ For ex for login title I did login-title instead of title
   background-color: #fff;
   height: 3px;
   margin: 5px 0;
-  transition: all 0.4s ease; /* Smooth transition for bars */
+  transition: all 0.4s ease;
   width: 30px;
 }
 
 .base-menu-toggle.active .base-bar:nth-child(1) {
   transform: rotate(45deg) translate(5px, 5px);
 }
-
 .base-menu-toggle.active .base-bar:nth-child(2) {
   opacity: 0;
 }
-
 .base-menu-toggle.active .base-bar:nth-child(3) {
   transform: rotate(-45deg) translate(5px, -5px);
 }
+
 
 /* Expand Icon */
 .base-expand-icon {
@@ -239,6 +204,36 @@ For ex for login title I did login-title instead of title
   }
 }
 
+/* Video Background Fullscreen */
+.video-background {
+  background-color: rgb(0, 0, 0);
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: -1;
+}
+.video-background video {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  animation: color-rotation 14s infinite;
+}
+
+@keyframes color-rotation {
+  0% {
+    filter: hue-rotate(-15deg) saturate(100%) blur(40px) brightness(0.7) opacity(0.7);
+  }
+  50% {
+    filter: hue-rotate(-0deg) saturate(90%) blur(10px) brightness(0.9) opacity(0.8);
+  }
+  100% {
+    filter: hue-rotate(-15deg) saturate(100%) blur(40px) brightness(0.7) opacity(0.7);
+  }
+}
+
+
 /* Menu List */
 .base-menu-list {
   list-style: none;
@@ -247,12 +242,12 @@ For ex for login title I did login-title instead of title
 }
 
 .base-menu-list > li {
+  opacity: 0;
+  transform: translateX(-20px);
   animation: base-fadeInMenu 0.6s ease forwards;
   font-size: 18px;
-  opacity: 0;
   padding: 15px 20px;
   position: relative;
-  transform: translateX(-20px);
   transition: color 0.3s;
   overflow: hidden;
 }
@@ -261,24 +256,21 @@ For ex for login title I did login-title instead of title
 .base-menu-list > li:nth-child(1) {
   animation-delay: 0.1s;
 }
-
 .base-menu-list > li:nth-child(2) {
   animation-delay: 0.2s;
 }
-
 .base-menu-list > li:nth-child(3) {
   animation-delay: 0.3s;
 }
-
 .base-menu-list > li:nth-child(4) {
   animation-delay: 0.4s;
 }
-
 .base-menu-list > li:nth-child(5) {
   animation-delay: 0.5s;
 }
 
 /* Menu Item Border */
+/* Menu Item 3D border effect on hover */
 .base-menu-list > li::before {
   content: "";
   position: absolute;
@@ -297,7 +289,6 @@ For ex for login title I did login-title instead of title
   transition: opacity 0.5s;
   border: 2px solid #6788c5;
 }
-
 .base-menu-list > li:hover::before {
   opacity: 1;
 }
@@ -329,28 +320,23 @@ For ex for login title I did login-title instead of title
 
 /* Sidebar Menu */
 .base-sidebar-menu {
-  background: linear-gradient(
-    135deg,
-    #a10050ea,
-    #002657f2,
-    #530534eb,
-    #a34373f7
-  );
+  background: linear-gradient(135deg, #a10050ea, #002657f2, #530534eb, #a34373f7);
   background-size: 200% 200%;
   animation: base-gradientShift 10s ease infinite;
   box-shadow: 3px 0 15px rgba(0, 0, 0, 0.5);
   color: #fff;
   height: 100%;
-  left: -100%;
-  padding-top: 50px;
+  width: 300px;
   position: fixed;
   top: 0;
-  transition: left 0.6s cubic-bezier(0.25, 1, 0.5, 1); /* Smooth slide-in */
+  left: -100%;
+  padding-top: 50px;
+  transition: left 0.6s cubic-bezier(0.25, 1, 0.5, 1);
   user-select: none;
-  width: 300px;
   z-index: 2000;
 }
 
+/* Active (slide out) */
 .base-sidebar-menu.active {
   left: 0;
   border-right: 2px solid #fff;
@@ -374,164 +360,28 @@ For ex for login title I did login-title instead of title
 .base-submenu {
   display: none;
   list-style: none;
+  padding-left: 20px;
   max-height: 0;
   opacity: 0;
-  padding-left: 20px;
   transform: translateY(-10px);
   transition: max-height 0.7s ease, opacity 0.7s ease;
 }
-
 .base-submenu li {
   color: #bbbbbb;
   font-size: 16px;
   padding: 10px 0;
-  text-decoration: none;
 }
-
 .base-submenu li a {
   color: #fff;
   text-decoration: none;
   transition: color 0.3s;
 }
-
 .base-submenu li a:hover {
   color: #ffffff;
   text-decoration: underline;
-  text-underline-offset: 4px;
   text-decoration-color: #ffffff;
   text-decoration-thickness: 1px;
-}
-
-/* Home Page Styles */
-
-.home-card {
-  background: #282a36;
-  border-radius: 10px;
-  padding: 20px;
-  position: relative;
-  overflow: hidden;
-  box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.5);
-  transition: box-shadow 0.2s, outline 0.2s;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  color: #ffffff;
-  opacity: 0; /* Start invisible */
-  animation: home-bounceIn 1s ease-out forwards;
-  z-index: 1;
-}
-
-.home-card-container {
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 20px;
-  margin-top: 20px;
-}
-
-.home-card-large {
-  grid-column: span 2;
-  height: 300px;
-}
-
-.home-card-small {
-  height: 150px;
-}
-
-.home-card:hover {
-  box-shadow: 0px 0px 25px rgb(79, 15, 48);
-  outline: 2px solid #ffffff;
-}
-
-.home-card .home-card-button {
-  position: absolute;
-  top: 10px;
-  right: 10px;
-  background-color: #000000;
-  color: white;
-  border: none;
-  padding: 5px 10px;
-  border-radius: 5px;
-  cursor: pointer;
-  text-decoration: none;
-  background: linear-gradient(
-    135deg,
-    #cb0769d8,
-    #002657c7,
-    #530534c9,
-    #a34373c2
-  );
-  background-size: 200% 200%;
-  animation: base-gradientShift 10s ease infinite;
-  border: 1px solid #fff;
-  border-radius: 5px;
-}
-
-.home-card h2 {
-  font-size: 1.2em;
-  margin-bottom: 10px;
-}
-
-/* Clock and Date Styles */
-.home-clock-date {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  font-family: "Courier New", Courier, monospace;
-  font-size: 2rem;
-  color: #f0f0f0;
-  padding: 20px;
-  animation: home-fadeIn 4s ease-in-out;
-}
-
-.home-clock {
-  font-size: 3rem;
-  font-weight: bold;
-  margin: 10px 0;
-}
-
-.home-date {
-  font-size: 1.5rem;
-  opacity: 0.8;
-}
-
-@keyframes home-fadeIn {
-  from {
-    opacity: 0;
-  }
-  to {
-    opacity: 1;
-  }
-}
-
-.home-dashboard-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 10px 0;
-  animation: home-fadeIn 4s ease-in-out;
-}
-
-.home-dashboard-header h1 {
-  font-size: 1.5em;
-  font-weight: 700;
-  margin-top: 30px;
-}
-
-.home-main-content {
-  flex: 1;
-  padding: 20px;
-  overflow-y: auto;
-  position: relative;
-  z-index: 1;
-}
-
-.home-main-content::-webkit-scrollbar {
-  display: none;
-}
-
-.home-main-content {
-  -ms-overflow-style: none;
-  scrollbar-width: none;
+  text-underline-offset: 4px;
 }
 
 .base-profile {
@@ -560,110 +410,6 @@ For ex for login title I did login-title instead of title
   color: #ffffff;
 }
 
-.home-progress-bar {
-  width: 100%;
-  height: 20px;
-  background-color: #444;
-  border-radius: 5px;
-  overflow: hidden;
-  position: relative;
-}
-
-.home-progress-fill {
-  height: 100%;
-  background-color: #000000;
-  width: 50%; /* Example capacity: 5 out of 10 */
-  transition: width 0.3s ease;
-  background: linear-gradient(
-    135deg,
-    #a10050d8,
-    #002657c7,
-    #530534c9,
-    #a34373c2
-  );
-  background-size: 200% 200%;
-  animation: base-gradientShift 10s ease infinite;
-  border: 1px solid #fff;
-  border-radius: 5px;
-}
-
-.home-project-chart {
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-}
-
-.home-rain-container {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  overflow: hidden;
-  z-index: 0;
-  pointer-events: none;
-}
-
-.home-raindrop {
-  position: absolute;
-  bottom: 100%;
-  width: 2px;
-  height: 20px;
-  background: rgba(111, 124, 158, 0.772);
-  animation: home-fall linear infinite;
-  opacity: 0.6;
-}
-
-.home-splash {
-  position: absolute;
-  width: 10px;
-  height: 10px;
-  background: rgba(255, 255, 255, 0.4);
-  border-radius: 50%;
-  transform: scale(0);
-  opacity: 1;
-  animation: home-splashAnimation 0.4s ease-out forwards;
-}
-
-@keyframes home-bounceIn {
-  0% {
-    transform: translateY(-100vh);
-    opacity: 0;
-  }
-  60% {
-    transform: translateY(30px);
-    opacity: 1;
-  }
-  80% {
-    transform: translateY(-10px);
-  }
-  100% {
-    transform: translateY(0);
-    opacity: 1;
-  }
-}
-
-@keyframes home-fall {
-  0% {
-    transform: translateY(0);
-    opacity: 0.6;
-  }
-  100% {
-    transform: translateY(100vh);
-    opacity: 0;
-  }
-}
-
-@keyframes home-splashAnimation {
-  0% {
-    transform: scale(0);
-    opacity: 0.6;
-  }
-  100% {
-    transform: scale(1.5);
-    opacity: 0;
-  }
-}
 
 /* Login/Register A->Z */
 .login-alert {
@@ -872,10 +618,7 @@ For ex for login title I did login-title instead of title
   user-select: none;
 }
 
-/* ...   A->Z */
-
 /* Kyle Benich */
-
 
 /* Recalibrate Box Styles */
 .recalibrate-box {
@@ -899,344 +642,7 @@ For ex for login title I did login-title instead of title
   justify-content: center;
 }
 
-/* Profile Page Styles */
-.profile-page {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: flex-start;
-  height: 100vh;
-  padding: 20px;
-  background-color: #1e1e2f;
-  color: #ffffff;
-}
 
-.profile-title {
-  font-size: 2.5rem;
-  color: #0073d1;
-  margin-bottom: 20px;
-  text-align: center;
-}
-
-.profile-details {
-  background-color: #282a36;
-  padding: 20px;
-  border-radius: 10px;
-  box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
-  width: 100%;
-  max-width: 600px;
-}
-
-.profile-details p {
-  font-size: 1.2rem;
-  color: #f0f0f0;
-  margin: 10px 0;
-}
-
-.profile-picture {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 15px;
-}
-
-.profile-img {
-  width: 150px;
-  height: 150px;
-  border-radius: 50%;
-  object-fit: cover;
-  border: 2px solid #0073d1;
-  margin-bottom: 10px;
-}
-
-.upload-input {
-  display: none; /* Hide the default file input */
-}
-
-.custom-file-label {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 10px;
-  background-color: #282a36;
-  color: #ffffff;
-  padding: 10px 20px;
-  border: 1px solid #444;
-  border-radius: 5px;
-  cursor: pointer;
-  transition: background-color 0.3s;
-}
-
-.custom-file-label:hover {
-  background-color: #444;
-}
-
-.custom-file-label button {
-  background-color: #0073d1;
-  color: #ffffff;
-  border: none;
-  padding: 5px 10px;
-  border-radius: 5px;
-  cursor: pointer;
-}
-
-.custom-file-label button:hover {
-  background-color: #005bb5;
-}
-
-#file-name {
-  font-size: 1rem;
-  font-weight: 500;
-}
-
-.profile-details .btn {
-  background-color: #0073d1;
-  color: #ffffff;
-  border: none;
-  border-radius: 5px;
-  padding: 10px 20px;
-  cursor: pointer;
-  transition: background-color 0.3s;
-}
-
-.profile-details .btn:hover {
-  background-color: #005bb5;
-}
-
-/* Settings Page Styles */
-/* Cleaner Settings Page Styles */
-.settings-page {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  padding: 20px;
-  background-color: #1e1e2f;
-  color: #ffffff;
-}
-
-.settings-title {
-  font-size: 2.5rem;
-  color: #0073d1;
-  margin-bottom: 20px;
-}
-
-.settings-container {
-  background-color: #282a36;
-  padding: 20px;
-  border-radius: 10px;
-  box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
-  width: 100%;
-  max-width: 500px;
-}
-
-.settings-form {
-  display: flex;
-  flex-direction: column;
-  gap: 15px;
-}
-
-.form-group {
-  display: flex;
-  flex-direction: column;
-}
-
-.form-group label {
-  margin-bottom: 5px;
-  font-size: 1.1rem;
-  color: #f0f0f0;
-}
-
-.form-group input {
-  background-color: #1e1e2f;
-  color: #f0f0f0;
-  border: 1px solid #444;
-  border-radius: 5px;
-  padding: 10px;
-  font-size: 1rem;
-}
-
-.checkbox-group {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-}
-
-.checkbox-group label {
-  font-size: 1rem;
-  color: #f0f0f0;
-}
-
-.btn {
-  background-color: #0073d1;
-  color: #ffffff;
-  border: none;
-  border-radius: 5px;
-  padding: 10px 20px;
-  font-size: 1rem;
-  cursor: pointer;
-  transition: background-color 0.3s;
-}
-
-.btn:hover {
-  background-color: #005bb5;
-}
-
-.password-section {
-  margin-top: 30px;
-  text-align: center;
-}
-
-.password-section h3 {
-  font-size: 1.5rem;
-  color: #0073d1;
-  margin-bottom: 10px;
-}
-
-.btn-secondary {
-  background-color: #6c757d;
-}
-
-.btn-secondary:hover {
-  background-color: #5a6268;
-}
-
-
-/* Create Project Page Styles */
-.create-project-container {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  min-height: 100vh;
-  background-color: #0d0d0d; /* Darker background */
-  color: #ffffff;
-  padding: 20px;
-}
-
-.create-project-container h2 {
-  font-size: 2.5rem;
-  color: #0073d1;
-  margin-bottom: 20px;
-}
-
-.create-project-container .form-group {
-  margin-bottom: 15px;
-  text-align: center; /* Center text */
-}
-
-.create-project-container .form-group label {
-  font-size: 1rem;
-  color: #ffffff;
-}
-
-.create-project-container .form-group input[type="text"],
-.create-project-container .form-group input[type="password"],
-.create-project-container .form-group input[type="email"],
-.create-project-container .form-group input[type="number"],
-.create-project-container .form-group textarea {
-  width: 100%;
-  padding: 10px;
-  font-size: 1rem;
-  color: #ffffff;
-  background-color: #333;
-  border: none;
-  border-bottom: 2px solid #0062d1;
-  border-radius: 4px;
-  margin-bottom: 10px; /* Add space between inputs */
-  resize: none; /* Prevent manual resizing */
-}
-
-.create-project-container .form-group input[type="text"]:focus,
-.create-project-container .form-group input[type="password"]:focus,
-.create-project-container .form-group input[type="email"]:focus,
-.create-project-container .form-group input[type="number"]:focus,
-.create-project-container .form-group textarea:focus {
-  outline: none;
-  border-bottom: 2px solid #00d1b2;
-}
-
-.create-project-container .form-error {
-  color: #ff0000;
-  font-size: 0.875rem;
-}
-
-.create-project-container .btn-submit {
-  width: 100%;
-  padding: 10px;
-  font-size: 1rem;
-  background-color: #0073d1;
-  color: #ffffff;
-  border: none;
-  border-radius: 4px;
-  cursor: pointer;
-  transition: background-color 0.3s;
-}
-
-.create-project-container .btn-submit:hover {
-  background-color: #005bb5;
-}
-
-.add-task-btn,
-.add-collaborator-btn {
-  background-color: #0073d1;
-  color: #ffffff;
-  border: none;
-  border-radius: 50%;
-  cursor: pointer;
-  font-size: 1.5rem;
-  width: 30px;
-  height: 30px;
-  margin-top: 10px;
-  transition: background-color 0.3s;
-}
-
-.add-task-btn:hover,
-.add-collaborator-btn:hover {
-  background-color: #005bb5;
-}
-
-/* Styles for input wrapper and remove button */
-.input-wrapper {
-  display: flex;
-  align-items: center;
-  margin-bottom: 10px;
-}
-
-.remove-btn {
-  background-color: #888;
-  color: #fff;
-  border: none;
-  border-radius: 50%;
-  cursor: pointer;
-  font-size: 1rem;
-  width: 20px;
-  height: 20px;
-  margin-left: 10px;
-  transition: background-color 0.3s;
-}
-
-.remove-btn:hover {
-  background-color: #555;
-}
-
-.create-project-container .form-group .custom-select {
-  background-color: #333; /* Gray background */
-  color: #0073d1; /* Blue text */
-  font-family: "Gruppo", sans-serif; /* Matching font */
-  border: none;
-  border-bottom: 2px solid #0062d1;
-  border-radius: 4px;
-  padding: 10px;
-  margin-left: 10px; /* Add space between input and select */
-  -webkit-appearance: none; /* Remove default arrow in Chrome/Safari */
-  -moz-appearance: none; /* Remove default arrow in Firefox */
-  appearance: none; /* Remove default arrow in other browsers */
-}
-
-.create-project-container .form-group .custom-select:focus {
-  outline: none;
-  border-bottom: 2px solid #00d1b2;
-}
 
 /* VRS viewReviewSpecific   A->Z */
 
@@ -1627,5 +1033,3 @@ For ex for login title I did login-title instead of title
   text-decoration: none;
   cursor: pointer;
 }
-
-/* ??? */

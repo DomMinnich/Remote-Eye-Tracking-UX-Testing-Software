@@ -1,51 +1,113 @@
 {% extends 'base.html' %} {% block content %}
+
 <style>
-  body {
-    background-color: black;
+  .admin-panel-page {
+    max-width: 600px;
+    margin: 80px auto 100px auto;
+    padding: 20px;
+    background: rgba(255, 255, 255, 0.07);
+    backdrop-filter: blur(10px);
+    border-radius: 12px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+    color: #fff;
   }
 
-  .admin-panel {
-    margin: 20px;
-    padding: 15px;
-    border: 1px solid #ccc;
-    border-radius: 5px;
-    max-width: 400px;
-    margin-left: auto;
-    margin-right: auto;
-  }
-
-  section {
-    margin-bottom: 20px;
+  .admin-panel-title {
     text-align: center;
+    font-size: 2rem;
+    margin-bottom: 30px;
+    text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.8);
   }
 
-  label {
-    display: block;
+  .admin-panel-section {
+    margin-bottom: 30px;
+    background: rgba(255, 255, 255, 0.05);
+    padding: 15px;
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.4);
+  }
+
+  .admin-panel-section h3 {
+    margin-top: 0;
+    margin-bottom: 15px;
+    text-align: center;
+    text-shadow: 1px 1px 2px black;
+  }
+
+  .admin-panel-section form {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .admin-panel-section label {
     margin-bottom: 5px;
-    color: white; /* Text color for visibility against black background */
+    font-weight: 600;
+    color: #ffd700;
+    align-self: flex-start;
+    margin-left: 10%;
   }
 
-  input,
-  select,
-  button {
+  .admin-panel-section input[type="text"],
+  .admin-panel-section select {
+    width: 80%;
+    padding: 10px;
     margin-bottom: 10px;
-    padding: 8px;
-    width: 90%;
-    margin-left: auto;
-    margin-right: auto;
+    border-radius: 6px;
+    border: 1px solid #ccc;
+    outline: none;
+    transition: border-color 0.3s;
+  }
+  .admin-panel-section input[type="text"]:focus,
+  .admin-panel-section select:focus {
+    border-color: #00c1ff;
   }
 
-  button {
+  .btn {
     cursor: pointer;
+    font-weight: 600;
+    border: none;
+    border-radius: 6px;
+    padding: 10px 16px;
+    transition: background-color 0.3s;
+    margin-top: 5px;
+    margin-bottom: 5px;
+  }
+
+  .btn.btn-primary {
+    background-color: #4169e1;
+    color: #fff;
+  }
+  .btn.btn-primary:hover {
+    background-color: #27408b;
+  }
+
+  .btn.btn-danger {
+    background-color: #ff0000;
+    color: #fff;
+  }
+  .btn.btn-danger:hover {
+    background-color: #cc0000;
+  }
+
+  .admin-panel-section p[style*="color: red"] {
+    margin: 4px 0 0;
+    font-weight: 600;
+  }
+
+  body {
+    background-color: #000;
   }
 </style>
 
-<div class="admin-panel">
-  <!-- Edit Account Type Section -->
-  <section class="edit-account">
+<div class="admin-panel-page">
+  <h2 class="admin-panel-title">Admin Panel</h2>
+
+  <div class="admin-panel-section">
     <h3>Edit Account Type</h3>
     <form method="post" action="{{ url_for('main.adminPanel') }}">
       {{ edit_account_form.hidden_tag() }}
+
       <label for="username">{{ edit_account_form.username.label }}</label>
       {{ edit_account_form.username() }}
 
@@ -55,26 +117,26 @@
       <p style="color: red">{{ error }}</p>
       {% endfor %}
     </form>
-  </section>
+  </div>
 
-  <!-- Delete User Section -->
-  <section class="delete-user">
+  <div class="admin-panel-section">
     <h3>Delete User</h3>
     <form method="post" action="{{ url_for('main.adminPanel') }}">
       {{ delete_user_form.hidden_tag() }}
+
       <label for="username">{{ delete_user_form.username.label }}</label>
       {{ delete_user_form.username() }} {{ delete_user_form.submit(class="btn
       btn-danger") }} {% for error in delete_user_form.username.errors %}
       <p style="color: red">{{ error }}</p>
       {% endfor %}
     </form>
-  </section>
+  </div>
 
-  <!-- Delete Project Section -->
-  <section class="delete-project">
+  <div class="admin-panel-section">
     <h3>Delete Project</h3>
     <form method="post" action="{{ url_for('main.adminPanel') }}">
       {{ delete_project_form.hidden_tag() }}
+
       <label for="project_id">{{ delete_project_form.project_id.label }}</label>
       {{ delete_project_form.project_id() }} {{
       delete_project_form.submit(class="btn btn-danger") }} {% for error in
@@ -82,7 +144,7 @@
       <p style="color: red">{{ error }}</p>
       {% endfor %}
     </form>
-  </section>
+  </div>
 </div>
 
 {% endblock %}

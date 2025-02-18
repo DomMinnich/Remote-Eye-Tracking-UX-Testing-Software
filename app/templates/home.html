@@ -1,85 +1,318 @@
 {% extends 'base.html' %} {% block content %}
 <style>
-  body,
-  html {
+  html,
+  body {
+    margin: 0;
+    padding: 0;
     height: 100%;
     overflow: hidden;
-    background: #1e1e2f;
+  }
+
+  .home-fullscreen {
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
     color: #ffffff;
     user-select: none;
+    position: relative;
+  }
+
+  .home-dashboard-title {
+    margin: 0;
+    padding: 20px;
+    font-family: "gruppo", sans-serif;
+    font-size: 3em;
+    text-align: center;
+    letter-spacing: 2px;
+    text-shadow: 2px 2px 4px #0000007a;
+  }
+
+  .home-clock-date {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-bottom: 20px;
+  }
+
+  .home-clock {
+    font-size: 3rem;
+    font-weight: 600;
+    margin: 10px 0;
+    padding: 10px;
+    background: rgba(0, 0, 0, 0.4);
+    border-radius: 8px;
+    box-shadow: 0 2px 15px rgba(0, 0, 0, 0.5);
+  }
+
+  .home-date {
+    font-size: 1.2rem;
+    text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.8);
+  }
+
+  .home-cards-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: 20px;
+    margin: 0 20px 80px 20px;
+  }
+
+  .home-card {
+    background: rgba(255, 255, 255, 0.1);
+    padding: 20px;
+    border-radius: 8px;
+    backdrop-filter: blur(4px);
+    position: relative;
+    overflow: hidden;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+  }
+
+  .home-card::before {
+    content: "";
+    position: absolute;
+    top: -2px;
+    left: -2px;
+    width: calc(100% + 4px);
+    height: calc(100% + 4px);
+    background: linear-gradient(
+      135deg,
+      rgb(212, 5, 5),
+      rgb(19, 80, 142),
+      rgb(212, 3, 3)
+    );
+    background-size: 400% 400%;
+    z-index: -1;
+    animation: animate-card-border 15s linear infinite;
+    opacity: 0;
+    transition: opacity 0.5s;
+  }
+  .home-card:hover::before {
+    opacity: 1;
+  }
+
+  .home-card:hover {
+    transform: translateY(-10px);
+    box-shadow: 0 12px 30px rgba(0, 0, 0, 0.5);
+  }
+
+  .home-card-title {
+    font-weight: 700;
+    font-size: 1.4rem;
+    margin-bottom: 10px;
+  }
+
+  .home-card-content {
+    font-size: 0.95rem;
+    line-height: 1.4rem;
+  }
+
+  @keyframes animate-card-border {
+    0% {
+      background-position: 0% 50%;
+    }
+    50% {
+      background-position: 100% 50%;
+    }
+    100% {
+      background-position: 0% 50%;
+    }
+  }
+
+  .home-progress-bar {
+    background-color: rgba(255, 255, 255, 0.2);
+    height: 10px;
+    border-radius: 5px;
+    overflow: hidden;
+    margin-top: 10px;
+  }
+
+  .home-progress-fill {
+    background-color: #00c1ff;
+    height: 100%;
+    width: 0%;
+    border-radius: 5px;
+    transition: width 1s ease-in-out;
+  }
+
+  .login-page,
+  .register-page {
+    width: 100%;
+    height: 100%;
+    position: relative;
+  }
+
+  .log-reg-alert-active {
+    animation: log-reg-slideDown-alert 0.12s forwards;
+  }
+  .slideInFromTop {
+    animation: log-reg-slideDown-normal 0.8s forwards;
+  }
+  .log-reg-page-transition-normal {
+    animation: log-reg-slideOut-normal 0.5s forwards;
+  }
+  .log-reg-page-transition-alert {
+    animation: log-reg-slideOut-alert 0.12s forwards;
+  }
+
+  @keyframes log-reg-slideDown-normal {
+    0% {
+      opacity: 0;
+      transform: translateY(-100%);
+      filter: blur(100px);
+    }
+    100% {
+      opacity: 1;
+      transform: translateY(0);
+      filter: blur(0);
+    }
+  }
+
+  @keyframes log-reg-slideOut-normal {
+    0% {
+      opacity: 1;
+      transform: translateY(0);
+      filter: blur(100px);
+    }
+    100% {
+      opacity: 0;
+      transform: translateY(100%);
+      filter: blur(0);
+    }
+  }
+
+  @keyframes log-reg-slideDown-alert {
+    0% {
+      opacity: 1;
+      transform: translateY(0);
+    }
+    100% {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+  @keyframes log-reg-slideOut-alert {
+    0% {
+      opacity: 1;
+      transform: translateY(0);
+      filter: blur(100px);
+    }
+    100% {
+      opacity: 0;
+      transform: translateY(100%);
+      filter: blur(0);
+    }
   }
 </style>
 
-<!-- Main Content -->
-<div class="home-main-content">
-  <!-- Rain Animation Container -->
-  <div class="home-rain-container">
-    <div class="home-raindrops"></div>
-  </div>
+<div class="home-fullscreen">
+  <h1 class="home-dashboard-title">Dashboard</h1>
 
-  <!-- Dashboard Header with Profile -->
-  <div class="home-dashboard-header">
-    <h1>Dashboard</h1>
-  </div>
-
-  <!-- Clock and Date Display -->
   <div class="home-clock-date">
     <div class="home-clock" id="clock">--:--:--</div>
     <div class="home-date" id="date">Loading date...</div>
   </div>
 
-  <!-- Dashboard Cards-->
-  <div class="home-card-container">
-    <div class="home-card home-card-small">
-      <a href="/profile" class="home-card-button">Go to Profile</a>
-      <h2>Profile</h2>
-      <div class="base-profile-info">
-        <p>Name: {{ current_user.first_name }} {{ current_user.last_name }}</p>
-        <p>Email: {{ current_user.email }}</p>
-        <p>Role: {{ current_user.role }}</p>
+  <div class="home-cards-container">
+    <div class="home-card">
+      <div>
+        <h2 class="home-card-title">Profile</h2>
+        <div class="home-card-content">
+          <p>
+            Name: {{ current_user.first_name }} {{ current_user.last_name }}
+          </p>
+          <p>Email: {{ current_user.email }}</p>
+          <p>Role: {{ current_user.role }}</p>
+        </div>
+      </div>
+      <div style="margin-top: 10px">
+        <a
+          href="{{ url_for('main.profile') }}"
+          style="color: #00c1ff; text-decoration: none; font-weight: bold"
+        >
+          Go to Profile &rarr;
+        </a>
       </div>
     </div>
-    <div class="home-card home-card-small">
-      <h2>Projects Owned</h2>
-      <div class="home-project-chart">
+
+    <div class="home-card">
+      <h2 class="home-card-title">Projects Owned</h2>
+      <div class="home-card-content">
         <p>
           <span id="home-projectCount">{{ projects|length }}</span> out of
-          <span id="home-projectTotal"
-            >{{ max_projects_per_user_privilaged if current_user.role == "admin"
-            else max_projects_per_user_unprivilaged }}</span
-          >
+          <span id="home-projectTotal">
+            {% if current_user.role == "admin" %} {{
+            max_projects_per_user_privilaged }} {% else %} {{
+            max_projects_per_user_unprivilaged }} {% endif %}
+          </span>
         </p>
         <div class="home-progress-bar">
           <div class="home-progress-fill" id="home-progressFill"></div>
         </div>
       </div>
     </div>
-    <div class="home-card home-card-small">
-      <h2>Blank Card</h2>
-    </div>
-    <div class="home-card home-card-small">
-      <h2>Blank Card</h2>
+
+    <div class="home-card">
+      <h2 class="home-card-title">Analytics</h2>
+      <div class="home-card-content">
+        <p>You own {{ projects|length }} project(s).</p>
+        <p>
+          You are a collaborator on {{ shared_projects|length }} shared
+          project(s).
+        </p>
+        <p>Total tasks in your owned projects: {{ total_tasks }}</p>
+      </div>
     </div>
 
-    <div class="home-card home-card-large">
-      <a href="/viewProjects" class="home-card-button">Go to Projects List</a>
-      <h2>Projects List</h2>
-      <ul style="list-style: none; padding-left: 0">
-        {% for project in projects %}
-        <li>{{ project.link }}</li>
-        {% endfor %}
-      </ul>
+    <div class="home-card">
+      <h2 class="home-card-title">Notifications</h2>
+      <div class="home-card-content">
+        {% if notifications|length > 0 %}
+        <ul style="list-style: none; padding: 0">
+          {% for notice in notifications %}
+          <li>{{ notice }}</li>
+          {% endfor %}
+        </ul>
+        {% else %}
+        <p>No notifications at this time.</p>
+        {% endif %}
+      </div>
     </div>
-    <div class="home-card home-card-large">
-      <a href="/card" class="home-card-button">Go to Card</a>
-      <h2>Card</h2>
-      <div class="base-profile-info">
-        <p>Waddle</p>
-        <p>Waddle</p>
-        <p>Waddle</p>
+
+    <div class="home-card">
+      <h2 class="home-card-title">Projects List</h2>
+      <div class="home-card-content">
+        <ul style="list-style-type: none; padding-left: 0; margin: 0">
+          {% for project in projects[:2] %}
+          <li>{{ project.link }}</li>
+          {% endfor %}
+        </ul>
+      </div>
+      <div style="margin-top: 10px">
+        <a
+          href="{{ url_for('main.viewProjects') }}"
+          style="color: #00c1ff; text-decoration: none; font-weight: bold"
+        >
+          Go to Projects List &rarr;
+        </a>
+      </div>
+    </div>
+
+    <div class="home-card">
+      <h2 class="home-card-title">Other Feature</h2>
+      <div class="home-card-content">
+        <p>waddle.</p>
+      </div>
+      <div style="margin-top: 10px">
+        <a
+          href="/card"
+          style="color: #00c1ff; text-decoration: none; font-weight: bold"
+        >
+          Go to Card &rarr;
+        </a>
       </div>
     </div>
   </div>
 </div>
-
 {% endblock %}

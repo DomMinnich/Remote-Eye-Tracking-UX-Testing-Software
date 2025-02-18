@@ -48,7 +48,6 @@ content %}
 <a href="#" class="btn" id="start-session">Start Session</a>
 <a href="#" class="btn" id="end-session">End Session</a>
 
-<!-- Include webgazer.js script -->
 <script src="{{ url_for('static', filename='webgazer.js') }}"></script>
 
 <script>
@@ -60,20 +59,18 @@ content %}
       .setRegression("ridge")
       .setGazeListener(function (data, clock) {
         if (data) {
-          console.log(data); // Log gaze data
+          console.log(data);
         }
       })
       .begin()
-      .showVideo(true) // Show video feed for WebGazer
-      .showPredictionPoints(true); // Show gaze prediction points
+      .showVideo(true)
+      .showPredictionPoints(true);
 
-    // Request access to the webcam and store the stream
     navigator.mediaDevices
       .getUserMedia({ video: true })
       .then(function (stream) {
         webcamStream = stream;
 
-        // Set the WebGazer video feed to use this stream
         const video = document.getElementById("webgazerVideoFeed");
         if (video) {
           video.srcObject = webcamStream;
@@ -86,29 +83,24 @@ content %}
     updateWebGazerElements();
   }
 
-  // Function to stop WebGazer and camera
   function stopWebGazer() {
-    webgazer.end(); // End WebGazer
+    webgazer.end();
     console.log("Stopping WebGazer...");
 
-    // Stop all media tracks (camera)
     if (webcamStream) {
       const tracks = webcamStream.getTracks();
-      tracks.forEach((track) => track.stop()); // Stop each track of the camera
-      webcamStream = null; // Clear the stream reference
+      tracks.forEach((track) => track.stop());
+      webcamStream = null;
     }
 
-    // Hide WebGazer video elements
     webgazer.showVideo(false);
     webgazer.showPredictionPoints(false);
 
-    // Show alert and reload the page after ending the session
     alert("Eye Tracker stopped and data saved.");
     console.log("Redirecting to home page...");
-    window.location.href = "/"; // Redirect to home page
+    window.location.href = "/";
   }
 
-  // Function to update the style of elements
   function updateWebGazerElements() {
     const gazeDot = document.getElementById("webgazerGazeDot");
     if (gazeDot) {
@@ -154,7 +146,6 @@ content %}
     }
   }
 
-  // Set up MutationObserver to watch for changes to the feedback box
   const observer = new MutationObserver((mutations) => {
     mutations.forEach((mutation) => {
       if (mutation.target.id === "webgazerFaceFeedbackBox") {
@@ -169,7 +160,6 @@ content %}
     attributes: true,
   });
 
-  // Event listeners for session buttons
   document
     .getElementById("start-session")
     .addEventListener("click", function () {
@@ -184,64 +174,64 @@ content %}
 </script>
 
 <script>
-  // RECORD SCREEN :)
+    const benchmarkMode = {{ 'true' if request.args.get('benchmark') else 'false' }};
+    const startBtn = document.getElementById("start-session");
+    const stopBtn = document.getElementById("end-session");
+    let mediaRecorder;
+    let recordedChunks = [];
 
-  const startBtn = document.getElementById("start-session");
-  const stopBtn = document.getElementById("end-session");
-  let mediaRecorder;
-  let recordedChunks = [];
+    startBtn.onclick = async () => {
+      try {
+        const stream = await navigator.mediaDevices.getDisplayMedia({
+          video: {
+            cursor: "always",
+          },
+          audio: false,
+        });
 
-  // Start recording
-  startBtn.onclick = async () => {
-    try {
-      // Request to capture the entire screen
-      const stream = await navigator.mediaDevices.getDisplayMedia({
-        video: {
-          cursor: "always", // Always show the cursor in the recording
-        },
-        audio: false, // Set to true if audio capture is needed
-      });
+        mediaRecorder = new MediaRecorder(stream, { mimeType: "video/webm" });
 
-      mediaRecorder = new MediaRecorder(stream, { mimeType: "video/webm" });
+        mediaRecorder.ondataavailable = (event) => {
+          if (event.data.size > 0) {
+            recordedChunks.push(event.data);
+          }
+        };
 
-      mediaRecorder.ondataavailable = (event) => {
-        if (event.data.size > 0) {
-          recordedChunks.push(event.data);
-        }
-      };
-
-      mediaRecorder.onstop = () => {
-        const blob = new Blob(recordedChunks, { type: "video/webm" });
-        const formData = new FormData();
-        formData.append("video", blob, "recorded_video.webm"); // Still using .webm for uploading
-        formData.append("project_id", "{{ project.id }}"); // Add project_id to form data
-
-        fetch("/upload", {
-          method: "POST",
-          body: formData,
-        })
-          .then((response) => response.json())
-          .then((data) => {
-            console.log(data);
-            alert("Eye Tracker stopped and data saved.");
-            console.log("Redirecting to home page...");
-            window.location.href = "/"; // Redirect to home page
-          })
-          .catch((error) => console.error("Error uploading video:", error));
-      };
-
-      mediaRecorder.start();
-    } catch (error) {
-      console.error("Error accessing display media.", error);
+        mediaRecorder.onstop = () => {
+    const blob = new Blob(recordedChunks, { type: "video/webm" });
+    const formData = new FormData();
+    formData.append("video", blob, "recorded_video.webm");
+    formData.append("project_id", "{{ project.id }}");
+    // If benchmark mode is active, include that flag.
+    if (benchmarkMode === true || benchmarkMode === "true") {
+      formData.append("benchmark", "true");
     }
+    fetch("/upload", {
+      method: "POST",
+      body: formData,
+    })
+    .then((response) => response.json())
+    .then((data) => {
+      console.log(data);
+      alert("Eye Tracker stopped and data saved.");
+      console.log("Redirecting to home page...");
+      window.location.href = "/";
+    })
+    .catch((error) => console.error("Error uploading video:", error));
   };
 
-  // Stop recording
-  stopBtn.onclick = () => {
-    if (mediaRecorder && mediaRecorder.state !== "inactive") {
-      mediaRecorder.stop();
-    }
-  };
+
+        mediaRecorder.start();
+      } catch (error) {
+        console.error("Error accessing display media.", error);
+      }
+    };
+
+    stopBtn.onclick = () => {
+      if (mediaRecorder && mediaRecorder.state !== "inactive") {
+        mediaRecorder.stop();
+      }
+    };
 </script>
 
 {% endblock %}
