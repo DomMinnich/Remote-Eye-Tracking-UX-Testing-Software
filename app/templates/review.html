@@ -174,59 +174,64 @@ content %}
 </script>
 
 <script>
-  const startBtn = document.getElementById("start-session");
-  const stopBtn = document.getElementById("end-session");
-  let mediaRecorder;
-  let recordedChunks = [];
+    const benchmarkMode = {{ 'true' if request.args.get('benchmark') else 'false' }};
+    const startBtn = document.getElementById("start-session");
+    const stopBtn = document.getElementById("end-session");
+    let mediaRecorder;
+    let recordedChunks = [];
 
-  startBtn.onclick = async () => {
-    try {
-      const stream = await navigator.mediaDevices.getDisplayMedia({
-        video: {
-          cursor: "always",
-        },
-        audio: false,
-      });
+    startBtn.onclick = async () => {
+      try {
+        const stream = await navigator.mediaDevices.getDisplayMedia({
+          video: {
+            cursor: "always",
+          },
+          audio: false,
+        });
 
-      mediaRecorder = new MediaRecorder(stream, { mimeType: "video/webm" });
+        mediaRecorder = new MediaRecorder(stream, { mimeType: "video/webm" });
 
-      mediaRecorder.ondataavailable = (event) => {
-        if (event.data.size > 0) {
-          recordedChunks.push(event.data);
-        }
-      };
+        mediaRecorder.ondataavailable = (event) => {
+          if (event.data.size > 0) {
+            recordedChunks.push(event.data);
+          }
+        };
 
-      mediaRecorder.onstop = () => {
-        const blob = new Blob(recordedChunks, { type: "video/webm" });
-        const formData = new FormData();
-        formData.append("video", blob, "recorded_video.webm");
-        formData.append("project_id", "{{ project.id }}");
-
-        fetch("/upload", {
-          method: "POST",
-          body: formData,
-        })
-          .then((response) => response.json())
-          .then((data) => {
-            console.log(data);
-            alert("Eye Tracker stopped and data saved.");
-            console.log("Redirecting to home page...");
-            window.location.href = "/";
-          })
-          .catch((error) => console.error("Error uploading video:", error));
-      };
-
-      mediaRecorder.start();
-    } catch (error) {
-      console.error("Error accessing display media.", error);
+        mediaRecorder.onstop = () => {
+    const blob = new Blob(recordedChunks, { type: "video/webm" });
+    const formData = new FormData();
+    formData.append("video", blob, "recorded_video.webm");
+    formData.append("project_id", "{{ project.id }}");
+    // If benchmark mode is active, include that flag.
+    if (benchmarkMode === true || benchmarkMode === "true") {
+      formData.append("benchmark", "true");
     }
+    fetch("/upload", {
+      method: "POST",
+      body: formData,
+    })
+    .then((response) => response.json())
+    .then((data) => {
+      console.log(data);
+      alert("Eye Tracker stopped and data saved.");
+      console.log("Redirecting to home page...");
+      window.location.href = "/";
+    })
+    .catch((error) => console.error("Error uploading video:", error));
   };
 
-  stopBtn.onclick = () => {
-    if (mediaRecorder && mediaRecorder.state !== "inactive") {
-      mediaRecorder.stop();
-    }
-  };
+
+        mediaRecorder.start();
+      } catch (error) {
+        console.error("Error accessing display media.", error);
+      }
+    };
+
+    stopBtn.onclick = () => {
+      if (mediaRecorder && mediaRecorder.state !== "inactive") {
+        mediaRecorder.stop();
+      }
+    };
 </script>
 
 {% endblock %}
