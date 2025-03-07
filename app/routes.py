@@ -366,9 +366,8 @@ def editProject(project_id):
 
     if request.method == "POST":
         new_link = request.form.get("link", "")
-
-        tasks_json = request.form.get("tasks_hidden", "[]")
-        collab_json = request.form.get("collaborators_hidden", "[]")
+        tasks_json = request.form.get("tasks", "[]")
+        collab_json = request.form.get("collaborators", "[]")
 
         try:
             new_tasks = json.loads(tasks_json)
@@ -443,24 +442,34 @@ def createProject():
         default_max_submissions = 100
 
         try:
-            tasks = json.loads(form.tasks.data)
-            collaborators_data = json.loads(form.collaborators.data)
+            # Parse the major_tasks_hidden input which contains both major and minor tasks
+            major_tasks_data = json.loads(form.major_tasks_hidden.data)
+            
+            # The tasks are now already in the correct format with name and minor_tasks
+            tasks = major_tasks_data
         except json.JSONDecodeError:
-            flash("Invalid JSON format in tasks or collaborators.", "danger")
+            flash("Invalid JSON format in tasks.", "danger")
             return render_template("createProject.html", form=form, user=current_user)
 
+        # Handle collaborators
         collaborators = []
-        for collaborator in collaborators_data:
-            email = collaborator.get("email")
-            role = collaborator.get("role")
-            user_id = Project.find_user_id_by_email(email)
-            if user_id:
-                collaborators.append({"email": email, "id": user_id, "role": role})
-            else:
-                flash(f"Collaborator with email {email} not found.", "danger")
-                return render_template(
-                    "createProject.html", form=form, user=current_user
-                )
+        if current_user.role in ['admin', 'project_manager']:
+            try:
+                collaborators_data = json.loads(form.collaborators_hidden.data)
+                for collaborator in collaborators_data:
+                    email = collaborator.get("email")
+                    role = collaborator.get("role")
+                    user_id = Project.find_user_id_by_email(email)
+                    if user_id:
+                        collaborators.append({"email": email, "id": user_id, "role": role})
+                    else:
+                        flash(f"Collaborator with email {email} not found.", "danger")
+                        return render_template(
+                            "createProject.html", form=form, user=current_user
+                        )
+            except json.JSONDecodeError:
+                flash("Invalid JSON format in collaborators.", "danger")
+                return render_template("createProject.html", form=form, user=current_user)
 
         new_project = Project(
             id=Project.generate_unique_id(),
