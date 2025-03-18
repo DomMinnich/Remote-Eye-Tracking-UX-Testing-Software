@@ -123,23 +123,45 @@ function endSession() {
     sessionStarted = false;
   }
   
+  // Display a loading indicator
+  const loadingMessage = document.createElement('div');
+  loadingMessage.id = 'upload-progress';
+  loadingMessage.style.position = 'fixed';
+  loadingMessage.style.top = '50%';
+  loadingMessage.style.left = '50%';
+  loadingMessage.style.transform = 'translate(-50%, -50%)';
+  loadingMessage.style.backgroundColor = 'rgba(0,0,0,0.8)';
+  loadingMessage.style.color = 'white';
+  loadingMessage.style.padding = '20px';
+  loadingMessage.style.borderRadius = '10px';
+  loadingMessage.style.zIndex = '9999';
+  loadingMessage.innerHTML = 'Uploading session data...<br>Please do not close this page.';
+  document.body.appendChild(loadingMessage);
+  
   // Create a variable to store our form data
   let formData = new FormData();
   formData.append("project_id", projectId);
+  
+  console.log("Project ID being sent:", projectId);
+  
   // If benchmark mode is active, include that flag
   if (benchmarkMode) {
     formData.append("benchmark", "true");
+    console.log("Benchmark mode enabled");
   }
+  
   // Append task times to the form data
   formData.append("task_times", JSON.stringify(taskTimes));
+  console.log("Task times data:", JSON.stringify(taskTimes));
   
   let submissionPromise;
   
   // If we have recorded video, process it
   if (mediaRecorder && recordedChunks.length > 0) {
+    console.log("Video chunks collected:", recordedChunks.length);
     const blob = new Blob(recordedChunks, { type: "video/webm" });
+    console.log("Video blob size:", Math.round(blob.size / 1024 / 1024 * 100) / 100, "MB");
     formData.append("video", blob, "recorded_video.webm");
-    console.log("Video data added to form submission");
   } else {
     console.warn("No video data recorded - creating empty placeholder");
     // Create an empty video blob as a placeholder
@@ -159,9 +181,11 @@ function endSession() {
             const blob = new Blob(recordedChunks, { type: "video/webm" });
             formData.delete("video"); // Remove the old video if it exists
             formData.append("video", blob, "recorded_video.webm");
+            console.log("Updated video blob size after recorder stopped:", 
+                      Math.round(blob.size / 1024 / 1024 * 100) / 100, "MB");
           }
           resolve();
-        }, 1000); // Increase timeout to ensure data is processed
+        }, 2000); // Increase timeout to ensure data is processed
       });
     } catch (e) {
       console.error("Error stopping media recorder:", e);
@@ -174,13 +198,23 @@ function endSession() {
   
   // Chain all the promises
   stopWebGazer()
-    .then(() => submissionPromise)
+    .then(() => {
+      console.log("WebGazer stopped successfully");
+      return submissionPromise;
+    })
     .then(() => {
       console.log("Preparing to upload data...");
-      // Now submit the form data
+      // Add a CSRF token if your server requires it
+      const csrfToken = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content');
+      if (csrfToken) {
+        formData.append('csrf_token', csrfToken);
+      }
+      
+      // Now submit the form data with a longer timeout
       return fetch("/upload", {
         method: "POST",
         body: formData,
+        timeout: 120000 // 2 minute timeout
       });
     })
     .then((response) => {
@@ -193,14 +227,21 @@ function endSession() {
       return response.json();
     })
     .then((data) => {
-      console.log("Server response data:", data);
-      alert("Session ended and data saved successfully.");
-      window.location.href = "/";
+      console.log("Upload successful", data);
+      // Remove loading message
+      document.body.removeChild(document.getElementById('upload-progress'));
+      // Redirect to the review page or show a success message
+      alert("Session uploaded successfully!");
+      window.location.href = `/viewReviewBroad?projectId=${projectId}`;
     })
     .catch((error) => {
-      console.error("Error in session ending process:", error);
-      alert("There was an error saving your session data, but the session has been ended.");
-      window.location.href = "/";
+      console.error("Error during upload:", error);
+      // Remove loading message
+      document.body.removeChild(document.getElementById('upload-progress'));
+      
+      // Show more detailed error message
+      const errorDetail = error.message || "Unknown error";
+      alert(`Failed to upload session: ${errorDetail}\n\nPlease try again or contact support if the issue persists.`);
     });
 }
 

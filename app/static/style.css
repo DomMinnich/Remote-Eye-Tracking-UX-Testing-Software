@@ -1238,34 +1238,548 @@
   background-color: #0056b3;
 }
 
-.review-task-container {
-  display: none;
-  background-color: white;
-  color: black;
-  padding: 10px;
-  border-radius: 5px;
+/* Review page specific styles */
+.review-container {
+  position: relative;
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+/* Review controls container */
+.review-controls {
+  display: flex;
+  align-items: center;
   margin-top: 20px;
 }
 
+/* Task container styling - positioned next to buttons */
+.review-task-container {
+  position: relative; 
+  display: inline-flex;
+  flex-direction: column;
+  margin-left: 20px;
+  background-color: rgba(0, 0, 0, 0.8);
+  color: white;
+  padding: 15px 25px;
+  border-radius: 10px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+  z-index: 100;
+  text-align: center;
+  max-width: 600px;
+  flex: 1;
+}
+
+#major-task {
+  font-size: 1.3rem;
+  margin-top: 5px;
+  margin-bottom: 10px;
+  color: #ffd700;
+}
+
+#minor-tasks {
+  text-align: left;
+  margin: 10px auto;
+  max-width: 80%;
+  padding-left: 20px;
+}
+
+#minor-tasks li {
+  margin-bottom: 8px;
+}
+
+/* Style for the next task button */
 .review-next-task {
-  float: right;
+  display: inline-block;
+  margin: 10px auto;
+  background-color: #4169e1;
+  color: white;
+  border: none;
+  padding: 8px 20px;
+  border-radius: 5px;
+  cursor: pointer;
+  font-weight: bold;
 }
 
-/* WebGazer video feed positioning */
+.review-next-task:hover {
+  background-color: #27408b;
+}
+
+/* WebGazer video feed position - top left */
 .review-video-feed {
-  width: 300px;
-  height: 200px;
-  position: fixed;
-  right: 10px;
-  bottom: 10px;
+  position: fixed !important;
+  top: 20px !important;
+  left: 20px !important;
+  width: 200px !important;
+  height: auto !important;
+  border-radius: 8px !important;
+  z-index: 1500 !important;
+  opacity: 0.9 !important;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.3) !important;
 }
 
+/* Face overlay styling - top left */
 .review-face-overlay {
+  position: fixed !important;
+  top: 20px !important;
+  left: 20px !important;
+  z-index: 1550 !important;
+}
+
+/* Face feedback box styling */
+#webgazerFaceFeedbackBox {
+  z-index: 1600 !important;
+}
+
+/* Calibration Page Styles */
+.calibration-page {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100vh;
+  background-color: #07032c;
+}
+
+.calibration-title {
+  font-size: 3rem;
+  color: #0073d1;
+  margin-bottom: 2rem;
+  text-align: center;
+}
+
+.calibration-instructions {
+  font-size: 1.2rem;
+  color: #ffffff;
+  margin-bottom: 2rem;
+  text-align: center;
+}
+
+.webgazer-video-container {
+  position: relative;
+}
+
+.webgazer-video-feed,
+.webgazer-video-canvas {
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+
+.calibration-text-box {
+  position: relative;
+  top: 10px;
+  left: 50%;
+  transform: translateX(-50%);
+  background-color: rgba(0, 0, 0, 0.5);
+  color: white;
+  padding: 10px;
+  border-radius: 5px;
   width: 300px;
-  height: 200px;
-  position: fixed;
-  right: 10px;
-  bottom: 10px;
-  pointer-events: none;
+  text-align: center;
+}
+
+.calibration-controls {
+  margin-top: 2rem;
+}
+
+.calibration-controls .btn {
+  margin: 0 10px;
+}
+
+.redirect-button {
+  margin-top: 2rem;
+}
+
+.redirect-button .btn {
+  margin: 0 10px;
+}
+
+.calibration-status {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 10px;
+}
+
+.calibration-status label {
+  margin-left: 5px;
+  color: rgb(255, 255, 255);
+}
+
+.calibration-status input[type="checkbox"] {
+  appearance: none;
+  width: 20px;
+  height: 20px;
+  border: 2px solid #0073d1;
+  border-radius: 3px;
+  position: relative;
+  cursor: not-allowed;
+}
+
+.calibration-status input[type="checkbox"]:checked::before {
+  content: '✔';
+  color: #00f0ff; /* Neon blue color */
+  font-size: 16px;
+  position: absolute;
+  top: -2px;
+  left: 2px;
+}
+
+/* Calibration Point Styles */
+.calibration-point {
+  width: 20px;
+  height: 20px;
+  background-color: red;
+  border-radius: 50%;
+  position: absolute;
+  display: none;
+  cursor: pointer;
   z-index: 1000;
+}
+
+#pt1 { top: 10%; left: 10%; }
+#pt2 { top: 10%; left: 50%; }
+#pt3 { top: 10%; left: 90%; }
+#pt4 { top: 50%; left: 10%; }
+#pt5 { top: 50%; left: 50%; }
+#pt6 { top: 50%; left: 90%; }
+#pt7 { top: 90%; left: 10%; }
+#pt8 { top: 90%; left: 50%; }
+#pt9 { top: 90%; left: 90%; }
+
+/* Modal Styles */
+.modal {
+  display: none; /* Hidden by default */
+  position: fixed; /* Stay in place */
+  z-index: 1000; /* Sit on top */
+  left: 0;
+  top: 0;
+  width: 100%; /* Full width */
+  height: 100%; /* Full height */
+  overflow: auto; /* Enable scroll if needed */
+  background-color: rgb(0, 0, 0); /* Fallback color */
+  background-color: rgba(0, 0, 0, 0.4); /* Black w/ opacity */
+}
+
+.modal-content {
+  background-color: #fefefe;
+  margin: 15% auto; /* 15% from the top and centered */
+  padding: 20px;
+  border: 1px solid #888;
+  width: 80%; /* Could be more or less, depending on screen size */
+  max-width: 600px;
+  border-radius: 10px;
+  text-align: center;
+}
+
+.close {
+  color: #aaa;
+  float: right;
+  font-size: 28px;
+  font-weight: bold;
+}
+
+.close:hover,
+.close:focus {
+  color: black;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+/* Create Project Page Styles */
+.create-page {
+  max-width: 800px;
+  margin: 80px auto 100px auto;
+  padding: 20px;
+  background: rgba(255, 255, 255, 0.07);
+  backdrop-filter: blur(10px);
+  border-radius: 12px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+}
+
+.create-page-title {
+  font-size: 2rem;
+  text-align: center;
+  margin-bottom: 30px;
+  color: #fff;
+  text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.8);
+}
+
+.create-form-container {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.create-form {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  width: 100%;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+}
+
+.form-group label {
+  margin-bottom: 5px;
+  font-weight: 600;
+  color: #ffd700;
+}
+
+.form-group input[type="text"],
+.form-group input[type="email"],
+.form-group input[type="password"],
+.form-group textarea {
+  padding: 10px;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+  outline: none;
+  transition: border-color 0.3s;
+  background-color: #fff;
+}
+
+.form-group input:focus,
+.form-group textarea:focus {
+  border-color: #00c1ff;
+}
+
+.form-error {
+  color: #ff4f4f;
+  font-weight: 600;
+}
+
+.add-task-btn,
+.add-collaborator-btn,
+.remove-btn {
+  cursor: pointer;
+  font-weight: 600;
+  border: none;
+  border-radius: 6px;
+  padding: 6px 10px;
+  margin-top: 5px;
+  transition: background-color 0.3s;
+}
+
+.add-task-btn,
+.add-collaborator-btn {
+  background-color: #4169e1;
+  color: #fff;
+}
+.add-task-btn:hover,
+.add-collaborator-btn:hover {
+  background-color: #27408b;
+}
+
+.remove-btn {
+  background-color: #f44336;
+  color: #fff;
+  margin-left: 10px;
+}
+.remove-btn:hover {
+  background-color: #c0392b;
+}
+
+.btn-submit {
+  cursor: pointer;
+  font-weight: 600;
+  border: none;
+  border-radius: 6px;
+  padding: 10px 16px;
+  background-color: #4169e1;
+  color: #fff;
+  transition: background-color 0.3s;
+  margin-top: 10px;
+}
+.btn-submit:hover {
+  background-color: #27408b;
+}
+
+#major-tasks-container .input-wrapper,
+#collaborators-container .input-wrapper {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-top: 5px;
+}
+
+.form-control.custom-select {
+  padding: 8px;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+}
+.form-control.custom-select:focus {
+  border-color: #00c1ff;
+  outline: none;
+}
+
+.nested-ttasks {
+  margin-left: 20px;
+  margin-top: 10px;
+  border-left: 3px solid #4169e1;
+  padding-left: 15px;
+}
+
+.nested-tasks .input-wrapper {
+  display: flex;
+  align-items: center;
+  margin-bottom: 8px;
+}
+
+.task-number {
+  min-width: 30px;
+  text-align: right;
+  margin-right: 10px;
+  font-weight: bold;
+  color: #ffd700;
+}
+
+.major-task-wrapper {
+  position: relative;
+  margin-bottom: 15px;
+}
+
+.minor-task-buttons {
+  margin-top: 5px;
+  margin-left: 20px;
+}
+
+.major-task-separator {
+  border-top: 2px solid rgba(255, 255, 255, 0.2);
+  margin: 20px 0;
+}
+
+@media (max-width: 600px) {
+  .create-page {
+    margin: 60px 10px 100px 10px;
+    padding: 15px;
+  }
+  .create-page-title {
+    font-size: 1.8rem;
+  }
+}
+
+/* Review Page Styles */
+.review-h2 {
+  color: #ffffff;
+  text-align: center;
+}
+
+.review-p {
+  color: #ffffff;
+  text-align: center;
+}
+
+.review-iframe {
+  margin-top: 20px;
+}
+
+.review-btn {
+  display: inline-block;
+  padding: 10px 20px;
+  margin: 10px;
+  background-color: #007bff;
+  color: #fff;
+  text-decoration: none;
+  border-radius: 5px;
+}
+
+.review-btn:hover {
+  background-color: #0056b3;
+}
+
+/* Review page specific styles */
+.review-container {
+  position: relative;
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+/* Review controls container */
+.review-controls {
+  display: flex;
+  align-items: center;
+  margin-top: 20px;
+}
+
+/* Task container styling - positioned next to buttons */
+.review-task-container {
+  position: relative; 
+  display: inline-flex;
+  flex-direction: column;
+  margin-left: 20px;
+  background-color: rgba(0, 0, 0, 0.8);
+  color: white;
+  padding: 15px 25px;
+  border-radius: 10px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+  z-index: 100;
+  text-align: center;
+  max-width: 600px;
+  flex: 1;
+}
+
+#major-task {
+  font-size: 1.3rem;
+  margin-top: 5px;
+  margin-bottom: 10px;
+  color: #ffd700;
+}
+
+#minor-tasks {
+  text-align: left;
+  margin: 10px auto;
+  max-width: 80%;
+  padding-left: 20px;
+}
+
+#minor-tasks li {
+  margin-bottom: 8px;
+}
+
+/* Style for the next task button */
+.review-next-task {
+  display: inline-block;
+  margin: 10px auto;
+  background-color: #4169e1;
+  color: white;
+  border: none;
+  padding: 8px 20px;
+  border-radius: 5px;
+  cursor: pointer;
+  font-weight: bold;
+}
+
+.review-next-task:hover {
+  background-color: #27408b;
+}
+
+/* WebGazer video feed position - top left */
+.review-video-feed {
+  position: fixed !important;
+  top: 20px !important;
+  left: 20px !important;
+  width: 200px !important;
+  height: auto !important;
+  border-radius: 8px !important;
+  z-index: 1500 !important;
+  opacity: 0.9 !important;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.3) !important;
+}
+
+/* Face overlay styling - top left */
+.review-face-overlay {
+  position: fixed !important;
+  top: 20px !important;
+  left: 20px !important;
+  z-index: 1550 !important;
+}
+
+/* Face feedback box styling */
+#webgazerFaceFeedbackBox {
+  z-index: 1600 !important;
 }

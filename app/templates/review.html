@@ -1,16 +1,15 @@
 {% extends "base.html" %} 
 {% block title %}Project{% endblock %} 
+
+{% block head %}
+  {{ super() }}
+{% endblock %}
+
 {% block content %}
 
 <div class="review-container">
   <h2 class="review-h2">Project: {{ project.name }}</h2>
   <p class="review-p"><strong>ID:</strong> {{ project.id }}</p>
-
-  <div id="task-container" class="review-task-container">
-    <h3 id="major-task"></h3>
-    <ul id="minor-tasks"></ul>
-    <a href="#" class="review-btn review-next-task" id="next-task">Next</a>
-  </div>
 
   <iframe
     src="{{ proxied_link }}"
@@ -28,6 +27,13 @@
   <div class="review-controls">
     <a href="#" class="review-btn" id="start-session">Start Session</a>
     <a href="#" class="review-btn" id="end-session">End Session</a>
+    
+    <!-- Task container moved next to buttons -->
+    <div id="task-container" class="review-task-container" style="display: none;">
+      <h3 id="major-task"></h3>
+      <ul id="minor-tasks"></ul>
+      <a href="#" class="review-btn review-next-task" id="next-task">Next</a>
+    </div>
   </div>
 </div>
 
@@ -41,6 +47,50 @@
     projectId = "{{ project.id }}";
     majorTasks = {{ project.tasks|tojson }};
     benchmarkMode = {{ 'true' if request.args.get('benchmark') else 'false' }};
+  });
+</script>
+
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    // Wait for review.js to load and define the original function
+    setTimeout(() => {
+      if (typeof stopWebGazer === 'function') {
+        console.log("Patching stopWebGazer function");
+        
+        // Replace the original function with a fixed version
+        window.stopWebGazer = function() {
+          return new Promise((resolve, reject) => {
+            try {
+              console.log("Stopping WebGazer");
+              
+              // End the webgazer session
+              webgazer.end();
+              
+              // Save data across sessions if available
+              if (typeof webgazer.saveDataAcrossSessions === 'function') {
+                webgazer.saveDataAcrossSessions(true);
+              }
+              
+              // Clean up webcam stream
+              if (webcamStream) {
+                const tracks = webcamStream.getTracks();
+                tracks.forEach((track) => track.stop());
+                webcamStream = null;
+              }
+              
+              // Hide video and prediction points
+              webgazer.showVideo(false);
+              webgazer.showPredictionPoints(false);
+              
+              resolve(); // Successfully stopped webgazer
+            } catch (err) {
+              console.error("Error stopping WebGazer:", err);
+              resolve(); // Resolve anyway to allow session to continue ending
+            }
+          });
+        };
+      }
+    }, 500);
   });
 </script>
 

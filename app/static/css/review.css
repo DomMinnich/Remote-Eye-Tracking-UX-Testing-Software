@@ -1,0 +1,86 @@
+/* Review page specific styles */
+
+.review-container {
+  position: relative;
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+/* Task container styling */
+.review-task-container {
+  position: fixed;
+  top: 100px; /* Position from top of viewport */
+  left: 50%;
+  transform: translateX(-50%); /* Center horizontally */
+  width: 80%;
+  max-width: 600px;
+  background-color: rgba(0, 0, 0, 0.8);
+  color: white;
+  padding: 15px 25px;
+  border-radius: 10px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+  z-index: 2000; /* Ensure it's above webcam */
+  text-align: center;
+}
+
+#major-task {
+  font-size: 1.3rem;
+  margin-top: 5px;
+  margin-bottom: 10px;
+  color: #ffd700;
+}
+
+#minor-tasks {
+  text-align: left;
+  margin: 10px auto;
+  max-width: 80%;
+  padding-left: 20px;
+}
+
+#minor-tasks li {
+  margin-bottom: 8px;
+}
+
+/* Style for the next task button */
+.review-next-task {
+  display: inline-block;
+  margin: 10px auto;
+  background-color: #4169e1;
+  color: white;
+  border: none;
+  padding: 8px 20px;
+  border-radius: 5px;
+  cursor: pointer;
+  font-weight: bold;
+}
+
+.review-next-task:hover {
+  background-color: #27408b;
+}
+
+/* WebGazer video feed position */
+.review-video-feed {
+  position: fixed !important;
+  bottom: 20px !important;
+  right: 20px !important;
+  width: 200px !important;
+  height: auto !important;
+  border-radius: 8px !important;
+  z-index: 1500 !important;
+  opacity: 0.9 !important;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.3) !important;
+}
+
+/* Face overlay styling */
+.review-face-overlay {
+  position: fixed !important;
+  bottom: 20px !important;
+  right: 20px !important;
+  z-index: 1550 !important;
+}
+
+/* Face feedback box styling */
+#webgazerFaceFeedbackBox {
+  z-index: 1600 !important;
+}
