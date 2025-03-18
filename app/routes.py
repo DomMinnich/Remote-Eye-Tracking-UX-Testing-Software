@@ -599,6 +599,40 @@ def project(project_id):
     return render_template("review.html", project=project, proxied_link=proxied_link)
 
 
+@main.route("/delete_review", methods=["POST"])
+@login_required
+def delete_review():
+    data = request.json
+    project_id = data.get("project_id")
+    video_path = data.get("video_path")
+
+    if not project_id or not video_path:
+        return (
+            jsonify({"success": False, "message": "Missing required parameters"}),
+            400,
+        )
+
+    # Get the full file path
+    video_file_path = os.path.join(current_app.root_path, "static", video_path)
+
+    # Check if the file exists
+    if not os.path.exists(video_file_path):
+        return jsonify({"success": False, "message": "Video file not found"}), 404
+
+    try:
+        # Get the session directory (parent of the video)
+        video_dir = os.path.dirname(video_file_path)
+        session_dir = os.path.dirname(video_dir)
+
+        # Remove the entire session directory
+        if os.path.exists(session_dir):
+            shutil.rmtree(session_dir)
+
+        return jsonify({"success": True, "message": "Review deleted successfully"}), 200
+    except Exception as e:
+        return jsonify({"success": False, "message": f"Error: {str(e)}"}), 500
+
+
 @main.route("/proxy/")
 def proxy():
     # Get the target URL from the query parameter
@@ -629,8 +663,10 @@ def proxy():
 
     return Response(response.content, response.status_code, headers)
 
+
 # Route to delete a projects session submission folder called benchmark
-#also edits the project model field 'benchmarked' to False
+# also edits the project model field 'benchmarked' to False
+
 
 @main.route("/delete_benchmark/<uuid:project_id>", methods=["POST"])
 @login_required
@@ -638,7 +674,9 @@ def delete_benchmark(project_id):
     project = Project.query.get(str(project_id))  # Convert UUID to string
     if project:
         # Delete the benchmark folder
-        benchmark_folder = os.path.join(UPLOAD_FOLDER, secure_filename(str(project_id)), "benchmark")
+        benchmark_folder = os.path.join(
+            UPLOAD_FOLDER, secure_filename(str(project_id)), "benchmark"
+        )
         if os.path.exists(benchmark_folder):
             shutil.rmtree(benchmark_folder)
         # Update the project model field 'benchmarked'
@@ -785,42 +823,84 @@ import os
 import glob
 
 
-@main.route("/viewReviewBroad")
+@main.route("/viewReviewBroad/<uuid:project_id>")
 @login_required
-def viewReviewBroad():
-    project_id = request.args.get("projectId")
+def viewReviewBroad(project_id):
+    """
+    View all reviews for a specific project
+    """
+    current_app.logger.info(f"Accessing viewReviewBroad with project_id: {project_id}")
 
-    # Ensure a project ID is provided
-    if not project_id:
-        return "Project ID is required", 400
+    try:
+        project = Project.query.get_or_404(str(project_id))
+        current_app.logger.info(f"Found project: {project.id}")
 
-    # Path to the project folder
-    project_folder = os.path.join(UPLOAD_FOLDER, secure_filename(project_id))
+        # Check if the current user has access to this project
+        if current_user.role != "admin" and current_user.id != project.creator:
+            # Check if it's a shared project
+            has_access = False
+            if current_user.shared_projects:
+                shared_projects = json.loads(current_user.shared_projects)
+                project_ids = [p["project_id"] for p in shared_projects]
+                if str(project_id) in project_ids:
+                    has_access = True
 
-    # Check if the project folder exists
-    if not os.path.exists(project_folder):
-        return jsonify({"error": "No reviews available for this project."}), 404
+            if not has_access:
+                flash("You don't have permission to access this project.", "danger")
+                return redirect(url_for("main.viewProjects"))
 
-    # Collect all .webm files from the session folders
-    video_files = glob.glob(
-        os.path.join(project_folder, "**", "Video", "*.webm"), recursive=True
-    )
-    amended_video_files_urls = [
-        os.path.relpath(file, UPLOAD_FOLDER).replace("\\", "/").replace("static/", "")
-        for file in video_files
-    ]
-    # Add static_data/data/Projects/ to the front of every file path in the list
-    amended_video_files_urls = [
-        os.path.join("static_data/data/Projects/", file)
-        for file in amended_video_files_urls
-    ]
+        # Get all video review files for this project
+        project_folder = os.path.join(UPLOAD_FOLDER, secure_filename(str(project_id)))
+        current_app.logger.info(f"Looking for videos in folder: {project_folder}")
 
-    # Debugging: Print the collected video file paths
-    print("Collected video file paths:", amended_video_files_urls)
+        videos = []
 
-    return render_template(
-        "viewReviewBroad.html", project_id=project_id, videos=amended_video_files_urls
-    )
+        if os.path.exists(project_folder):
+            current_app.logger.info(
+                f"Project folder exists, contents: {os.listdir(project_folder)}"
+            )
+
+            # Walk through all subdirectories (sessions)
+            for session_dir in os.listdir(project_folder):
+                session_path = os.path.join(project_folder, session_dir)
+                # Skip the benchmark folder or non-directories
+                if session_dir == "benchmark" or not os.path.isdir(session_path):
+                    continue
+
+                current_app.logger.info(f"Processing session directory: {session_dir}")
+
+                # Look for video files in each session directory
+                video_folder = os.path.join(session_path, "Video")
+                if os.path.exists(video_folder) and os.path.isdir(video_folder):
+                    current_app.logger.info(
+                        f"Video folder exists, contents: {os.listdir(video_folder)}"
+                    )
+
+                    for file in os.listdir(video_folder):
+                        if file.endswith(".webm"):
+                            # Store the relative path for use in templates
+                            relative_path = os.path.join(
+                                "static_data",
+                                "data",
+                                "Projects",
+                                str(project_id),
+                                session_dir,
+                                "Video",
+                                file,
+                            )
+                            videos.append(relative_path)
+        else:
+            current_app.logger.warning(
+                f"Project folder does not exist: {project_folder}"
+            )
+
+        current_app.logger.info(f"Found {len(videos)} videos")
+        return render_template(
+            "viewReviewBroad.html", videos=videos, project_id=project_id
+        )
+    except Exception as e:
+        current_app.logger.error(f"Error in viewReviewBroad: {str(e)}")
+        raise
 
 
 @main.route("/viewSharedProjects")

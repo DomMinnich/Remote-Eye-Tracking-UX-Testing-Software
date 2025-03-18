@@ -379,8 +379,8 @@
     document
       .querySelector(".edit-button")
       .setAttribute(
-        "onclick",
-        `editProject('${currentProject.getAttribute("data-id")}')`
+        "href",
+        `/editProject/${currentProject.getAttribute("data-id")}`
       );
 
     document
@@ -389,14 +389,42 @@
         "href",
         `/review/${currentProject.getAttribute("data-id")}`
       );
+
+    // Update benchmark link logic based on current project
+    const benchmarkContainer = document.querySelector(".benchmark-container");
+    if (benchmarkContainer) {
+      if (
+        currentProject.hasAttribute("data-benchmarked") &&
+        currentProject.getAttribute("data-benchmarked") === "True"
+      ) {
+        benchmarkContainer.innerHTML = `
+          <form action="/delete_benchmark/${currentProject.getAttribute(
+            "data-id"
+          )}" method="post" onsubmit="return confirmDeleteBenchmark()">
+            <button type="submit" class="benchmark-link" style="background-color: #ff9800; padding: 8px 12px; border-radius: 4px; text-decoration: none; color: #fff;">
+              Delete Benchmark
+            </button>
+          </form>
+        `;
+      } else {
+        benchmarkContainer.innerHTML = `
+          <a href="/review/${currentProject.getAttribute(
+            "data-id"
+          )}?benchmark=true" class="benchmark-link" style="background-color: #ff9800; padding: 8px 12px; border-radius: 4px; text-decoration: none; color: #fff;">
+            Benchmark Project
+          </a>
+        `;
+      }
+    }
   }
 
   function goToProject(projectId) {
-    window.location.href = `/viewReviewBroad?projectId=${projectId}`;
+    // Use the exact same URL structure as defined in the route
+    window.location.href = `/viewReviewBroad/${projectId}`;
   }
 
   function editProject(projectId) {
-    window.location.href = `/editProject?id=${projectId}`;
+    window.location.href = `/editProject/${projectId}`;
   }
 </script>
 
