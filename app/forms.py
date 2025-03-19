@@ -17,6 +17,7 @@ from wtforms import (
     BooleanField,
     IntegerField,
     DateTimeField,
+    HiddenField,
 )
 from wtforms import TextAreaField  # Add this import
 from wtforms.validators import DataRequired, Length, EqualTo, Email, URL
@@ -62,9 +63,11 @@ class LoginForm(FlaskForm):
 
 # CreateProjectForm class, inherits from FlaskForm
 class CreateProjectForm(FlaskForm):
-    link = StringField("Project Link", validators=[DataRequired(), URL()])
-    tasks = TextAreaField("Tasks", validators=[DataRequired()])
-    collaborators = TextAreaField("Collaborators", validators=[DataRequired()])
+    link = StringField("Link to Figma Project", validators=[DataRequired()])
+    major_tasks = StringField("Major Tasks")
+    major_tasks_hidden = HiddenField("Major Tasks Hidden")
+    collaborators = StringField("Collaborators")
+    collaborators_hidden = HiddenField("Collaborators Hidden")
     submit = SubmitField("Create Project")
 
 

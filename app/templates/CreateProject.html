@@ -1,143 +1,6 @@
 {% extends 'base.html' %} {% block content %}
-<style>
-  .create-page {
-    max-width: 800px;
-    margin: 80px auto 100px auto;
-    padding: 20px;
-    background: rgba(255, 255, 255, 0.07);
-    backdrop-filter: blur(10px);
-    border-radius: 12px;
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
-  }
 
-  .create-page-title {
-    font-size: 2rem;
-    text-align: center;
-    margin-bottom: 30px;
-    color: #fff;
-    text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.8);
-  }
-
-  .create-form-container {
-    display: flex;
-    flex-direction: column;
-    gap: 20px;
-  }
-
-  .create-form {
-    display: flex;
-    flex-direction: column;
-    gap: 15px;
-    width: 100%;
-  }
-
-  .form-group {
-    display: flex;
-    flex-direction: column;
-  }
-
-  .form-group label {
-    margin-bottom: 5px;
-    font-weight: 600;
-    color: #ffd700;
-  }
-
-  .form-group input[type="text"],
-  .form-group input[type="email"],
-  .form-group input[type="password"],
-  .form-group textarea {
-    padding: 10px;
-    border-radius: 6px;
-    border: 1px solid #ccc;
-    outline: none;
-    transition: border-color 0.3s;
-    background-color: #fff;
-  }
-
-  .form-group input:focus,
-  .form-group textarea:focus {
-    border-color: #00c1ff;
-  }
-
-  .form-error {
-    color: #ff4f4f;
-    font-weight: 600;
-  }
-
-  .add-task-btn,
-  .add-collaborator-btn,
-  .remove-btn {
-    cursor: pointer;
-    font-weight: 600;
-    border: none;
-    border-radius: 6px;
-    padding: 6px 10px;
-    margin-top: 5px;
-    transition: background-color 0.3s;
-  }
-
-  .add-task-btn,
-  .add-collaborator-btn {
-    background-color: #4169e1;
-    color: #fff;
-  }
-  .add-task-btn:hover,
-  .add-collaborator-btn:hover {
-    background-color: #27408b;
-  }
-
-  .remove-btn {
-    background-color: #f44336;
-    color: #fff;
-    margin-left: 10px;
-  }
-  .remove-btn:hover {
-    background-color: #c0392b;
-  }
-
-  .btn-submit {
-    cursor: pointer;
-    font-weight: 600;
-    border: none;
-    border-radius: 6px;
-    padding: 10px 16px;
-    background-color: #4169e1;
-    color: #fff;
-    transition: background-color 0.3s;
-    margin-top: 10px;
-  }
-  .btn-submit:hover {
-    background-color: #27408b;
-  }
-
-  #tasks-container .input-wrapper,
-  #collaborators-container .input-wrapper {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    margin-top: 5px;
-  }
-
-  .form-control.custom-select {
-    padding: 8px;
-    border-radius: 6px;
-    border: 1px solid #ccc;
-  }
-  .form-control.custom-select:focus {
-    border-color: #00c1ff;
-    outline: none;
-  }
-
-  @media (max-width: 600px) {
-    .create-page {
-      margin: 60px 10px 100px 10px;
-      padding: 15px;
-    }
-    .create-page-title {
-      font-size: 1.8rem;
-    }
-  }
-</style>
+<link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}" />
 
 <div class="create-page">
   <h2 class="create-page-title">Create New Project</h2>
@@ -163,12 +26,12 @@
       </div>
 
       <div class="form-group">
-        {{ form.tasks.label }}<br />
-        <div id="tasks-container">
-          {{ form.tasks(rows=1, oninput="autoResize(this)") }}<br />
+        {{ form.major_tasks.label }}<br />
+        <div id="major-tasks-container">
+          <!-- Major tasks will be added here -->
         </div>
-        <button type="button" class="add-task-btn">+</button>
-        {% for error in form.tasks.errors %}
+        <button type="button" class="add-major-task-btn">Add Major Task</button>
+        {% for error in form.major_tasks.errors %}
         <span class="form-error">[{{ error }}]</span>
         {% endfor %}
       </div>
@@ -194,8 +57,8 @@
       {% endif %}
 
       <div class="form-group">
-        <input type="hidden" name="tasks" value="[]" />
-        <input type="hidden" name="collaborators" value="[]" />
+        <input type="hidden" name="major_tasks_hidden" value="[]" />
+        <input type="hidden" name="collaborators_hidden" value="[]" />
         <input type="submit" value="Create Project" class="btn-submit" />
       </div>
     </form>
@@ -203,33 +66,93 @@
 </div>
 
 <script>
-  document
-    .querySelector(".add-task-btn")
-    .addEventListener("click", function () {
-      const container = document.getElementById("tasks-container");
-      const inputWrapper = document.createElement("div");
-      inputWrapper.className = "input-wrapper";
+  document.querySelector(".add-major-task-btn").addEventListener("click", function () {
+    const container = document.getElementById("major-tasks-container");
+    const inputWrapper = document.createElement("div");
+    inputWrapper.className = "input-wrapper major-task-wrapper";
 
-      const input = document.createElement("textarea");
-      input.name = "tasks";
-      input.rows = 1;
-      input.cols = 32;
-      input.oninput = function () {
-        autoResize(this);
-      };
+    const input = document.createElement("textarea");
+    input.name = "major_tasks";
+    input.rows = 1;
+    input.cols = 32;
+    input.placeholder = "Enter major task";
+    input.oninput = function () {
+      autoResize(this);
+    };
 
-      const removeBtn = document.createElement("button");
-      removeBtn.type = "button";
-      removeBtn.className = "remove-btn";
-      removeBtn.innerHTML = "x";
-      removeBtn.addEventListener("click", function () {
-        container.removeChild(inputWrapper);
-      });
+    const nestedContainer = document.createElement("div");
+    nestedContainer.className = "nested-tasks";
 
-      inputWrapper.appendChild(input);
-      inputWrapper.appendChild(removeBtn);
-      container.appendChild(inputWrapper);
+    const minorTaskButtons = document.createElement("div");
+    minorTaskButtons.className = "minor-task-buttons";
+    
+    const addMinorBtn = document.createElement("button");
+    addMinorBtn.type = "button";
+    addMinorBtn.className = "add-task-btn";
+    addMinorBtn.innerHTML = "Add Minor Task";
+    addMinorBtn.addEventListener("click", function () {
+      addMinorTask(nestedContainer);
     });
+
+    const removeMajorBtn = document.createElement("button");
+    removeMajorBtn.type = "button";
+    removeMajorBtn.className = "remove-btn";
+    removeMajorBtn.innerHTML = "x";
+    removeMajorBtn.addEventListener("click", function () {
+      container.removeChild(inputWrapper);
+      container.removeChild(separator);
+    });
+
+    minorTaskButtons.appendChild(addMinorBtn);
+    inputWrapper.appendChild(input);
+    inputWrapper.appendChild(removeMajorBtn);
+    inputWrapper.appendChild(nestedContainer);
+    inputWrapper.appendChild(minorTaskButtons);
+    container.appendChild(inputWrapper);
+
+    const separator = document.createElement("div");
+    separator.className = "major-task-separator";
+    container.appendChild(separator);
+  });
+
+  function addMinorTask(nestedTasksContainer) {
+    const minorInputWrapper = document.createElement("div");
+    minorInputWrapper.className = "input-wrapper";
+
+    const taskNumber = document.createElement("span");
+    taskNumber.className = "task-number";
+    taskNumber.textContent = (nestedTasksContainer.querySelectorAll(".input-wrapper").length + 1) + ".";
+
+    const minorInput = document.createElement("textarea");
+    minorInput.name = "minor_tasks";
+    minorInput.rows = 1;
+    minorInput.cols = 32;
+    minorInput.placeholder = "Enter minor task";
+    minorInput.oninput = function () {
+      autoResize(this);
+    };
+
+    const removeMinorBtn = document.createElement("button");
+    removeMinorBtn.type = "button";
+    removeMinorBtn.className = "remove-btn";
+    removeMinorBtn.innerHTML = "x";
+    removeMinorBtn.addEventListener("click", function () {
+      nestedTasksContainer.removeChild(minorInputWrapper);
+      updateMinorTaskNumbers(nestedTasksContainer);
+    });
+
+    minorInputWrapper.appendChild(taskNumber);
+    minorInputWrapper.appendChild(minorInput);
+    minorInputWrapper.appendChild(removeMinorBtn);
+    nestedTasksContainer.appendChild(minorInputWrapper);
+  }
+
+  function updateMinorTaskNumbers(container) {
+    const minorTasks = container.querySelectorAll(".input-wrapper");
+    minorTasks.forEach((task, index) => {
+      task.querySelector(".task-number").textContent = (index + 1) + ".";
+    });
+  }
 
   {% if user.role == 'admin' or user.role == 'project_manager' %}
   document
@@ -294,11 +217,17 @@
       return false;
     }
 
-    const tasksContainer = document.getElementById("tasks-container");
-    const tasks = Array.from(tasksContainer.querySelectorAll("textarea")).map(
-      (textarea) => textarea.value
+    const majorTasksContainer = document.getElementById("major-tasks-container");
+    const majorTasks = Array.from(majorTasksContainer.querySelectorAll(".major-task-wrapper")).map(
+      (wrapper) => {
+        const majorTask = wrapper.querySelector("textarea[name='major_tasks']").value;
+        const minorTasks = Array.from(wrapper.querySelectorAll(".nested-tasks textarea")).map(
+          (textarea) => textarea.value
+        );
+        return { name: majorTask, minor_tasks: minorTasks };
+      }
     );
-    document.querySelector('textarea[name="tasks"]').value = JSON.stringify(tasks);
+    document.querySelector('input[name="major_tasks_hidden"]').value = JSON.stringify(majorTasks);
 
     {% if user.role == 'admin' or user.role == 'project_manager' %}
     const collaboratorsContainer = document.getElementById("collaborators-container");
@@ -310,8 +239,10 @@
         role: wrapper.querySelector("select").value,
       };
     });
-    document.querySelector('textarea[name="collaborators"]').value =
+    document.querySelector('input[name="collaborators_hidden"]').value =
       JSON.stringify(collaborators);
+    {% else %}
+    document.querySelector('input[name="collaborators_hidden"]').value = JSON.stringify([]);
     {% endif %}
 
     return true;

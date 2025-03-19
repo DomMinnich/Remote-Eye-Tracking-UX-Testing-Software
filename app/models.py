@@ -66,7 +66,7 @@ class Project(db.Model):
     priviledged = db.Column(
         db.Boolean, nullable=False
     )  # This will not change, and allows the collaberator field to be used. This allows for demotion of a owner to not affect the project
-    tasks = db.Column(db.JSON, nullable=False)  # JSON object of tasks (Example in Disc)
+    tasks = db.Column(db.JSON, nullable=False)  # JSON object of major and minor tasks
     max_submissions = db.Column(db.Integer, nullable=False)  # Max number of submissions
     eol_time = db.Column(db.DateTime, nullable=False)  # End of life time
     collaborators = db.Column(

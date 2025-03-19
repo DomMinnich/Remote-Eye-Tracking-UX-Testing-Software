@@ -99,40 +99,26 @@
 
     <div>
       <label for="tasks">Tasks (JSON array):</label>
-      <textarea name="tasks" id="tasks" rows="3">
-{{ project.tasks|tojson }}</textarea
-      >
-      <small style="color: #aaa"
-        >Enter a JSON array, e.g. ["Task1","Task2"]</small
-      >
+      <textarea name="tasks" id="tasks" rows="3">{{ project.tasks|tojson }}</textarea>
+      <small style="color: #aaa">Enter a JSON array, e.g. [{"name":"Task1","minor_tasks":["Subtask1","Subtask2"]}]</small>
     </div>
 
     <div>
       <label for="collaborators">Collaborators (JSON array):</label>
-      <textarea name="collaborators" id="collaborators" rows="3">
-{{ project.collaborators|tojson }}</textarea
-      >
-      <small style="color: #aaa"
-        >Format:
-        [{"email":"user@example.com","id":"...","role":"editor"},...]</small
-      >
+      <textarea name="collaborators" id="collaborators" rows="3">{{ project.collaborators|tojson }}</textarea>
+      <small style="color: #aaa">Format: [{"email":"user@example.com","id":"...","role":"editor"},...]</small>
     </div>
 
     <div style="text-align: center; margin-top: 10px">
-      <form
-        action="{{ url_for('main.delete_project', project_id=project.id) }}"
-        method="POST"
-        style="display: inline"
-      ></form>
       <button class="btn save-button" type="submit">Save</button>
     </div>
-    <form
-      action="{{ url_for('main.delete_project', project_id=project.id) }}"
-      method="POST"
-      style="display: inline"
-    >
-      <button class="btn delete-button" type="submit">Delete</button>
-    </form>
+  </form>
+  <form
+    action="{{ url_for('main.delete_project', project_id=project.id) }}"
+    method="POST"
+    style="display: inline"
+  >
+    <button class="btn delete-button" type="submit">Delete</button>
   </form>
 </div>
 

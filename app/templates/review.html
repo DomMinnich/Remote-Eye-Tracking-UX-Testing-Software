@@ -1,237 +1,97 @@
-{% extends "base.html" %} {% block title %}Project{% endblock %} {% block
-content %}
+{% extends "base.html" %} 
+{% block title %}Project{% endblock %} 
 
-<style>
-  h2 {
-    color: #ffffff;
-    text-align: center;
-  }
+{% block head %}
+  {{ super() }}
+{% endblock %}
 
-  p {
-    color: #ffffff;
-    text-align: center;
-  }
+{% block content %}
 
-  iframe {
-    margin-top: 20px;
-  }
+<div class="review-container">
+  <h2 class="review-h2">Project: {{ project.name }}</h2>
+  <p class="review-p"><strong>ID:</strong> {{ project.id }}</p>
 
-  .btn {
-    display: inline-block;
-    padding: 10px 20px;
-    margin: 10px;
-    background-color: #007bff;
-    color: #fff;
-    text-decoration: none;
-    border-radius: 5px;
-  }
+  <iframe
+    src="{{ proxied_link }}"
+    width="100%"
+    height="600"
+    frameborder="0"
+    class="review-iframe"
+    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+    allowfullscreen
+  ></iframe>
 
-  .btn:hover {
-    background-color: #0056b3;
-  }
-</style>
+  <!-- Eye Tracking Elements -->
+  <div id="videoContainer"></div>
 
-<h2>Project: {{ project.name }}</h2>
-<p><strong>ID:</strong> {{ project.id }}</p>
-<iframe
-  src="{{ proxied_link }}"
-  width="100%"
-  height="600"
-  frameborder="0"
-  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-  allowfullscreen
-></iframe>
+  <div class="review-controls">
+    <a href="#" class="review-btn" id="start-session">Start Session</a>
+    <a href="#" class="review-btn" id="end-session">End Session</a>
+    
+    <!-- Task container moved next to buttons -->
+    <div id="task-container" class="review-task-container" style="display: none;">
+      <h3 id="major-task"></h3>
+      <ul id="minor-tasks"></ul>
+      <a href="#" class="review-btn review-next-task" id="next-task">Next</a>
+    </div>
+  </div>
+</div>
 
-<!-- Eye Tracking Elements -->
-<div id="videoContainer"></div>
-
-<a href="#" class="btn" id="start-session">Start Session</a>
-<a href="#" class="btn" id="end-session">End Session</a>
-
+<!-- Scripts -->
 <script src="{{ url_for('static', filename='webgazer.js') }}"></script>
-
+<script src="{{ url_for('static', filename='js/review.js') }}"></script>
 <script>
-  let webcamStream;
-
-  // Function to start WebGazer
-  function startWebGazer() {
-    webgazer
-      .setRegression("ridge")
-      .setGazeListener(function (data, clock) {
-        if (data) {
-          console.log(data);
-        }
-      })
-      .begin()
-      .showVideo(true)
-      .showPredictionPoints(true);
-
-    navigator.mediaDevices
-      .getUserMedia({ video: true })
-      .then(function (stream) {
-        webcamStream = stream;
-
-        const video = document.getElementById("webgazerVideoFeed");
-        if (video) {
-          video.srcObject = webcamStream;
-        }
-      })
-      .catch(function (error) {
-        console.error("Error accessing the webcam: ", error);
-      });
-
-    updateWebGazerElements();
-  }
-
-  function stopWebGazer() {
-    webgazer.end();
-    console.log("Stopping WebGazer...");
-
-    if (webcamStream) {
-      const tracks = webcamStream.getTracks();
-      tracks.forEach((track) => track.stop());
-      webcamStream = null;
-    }
-
-    webgazer.showVideo(false);
-    webgazer.showPredictionPoints(false);
-
-    alert("Eye Tracker stopped and data saved.");
-    console.log("Redirecting to home page...");
-    window.location.href = "/";
-  }
-
-  function updateWebGazerElements() {
-    const gazeDot = document.getElementById("webgazerGazeDot");
-    if (gazeDot) {
-      gazeDot.style.opacity = "1";
-      gazeDot.style.backgroundColor = "blue";
-    }
-
-    const videoElement = document.getElementById("webgazerVideoFeed");
-    if (videoElement) {
-      videoElement.style.width = "300px";
-      videoElement.style.height = "200px";
-      videoElement.style.position = "fixed";
-      videoElement.style.right = "10px";
-      videoElement.style.bottom = "10px";
-    }
-
-    const faceOverlay = document.getElementById("webgazerFaceOverlay");
-    if (faceOverlay) {
-      faceOverlay.style.width = "300px";
-      faceOverlay.style.height = "200px";
-      faceOverlay.style.position = "fixed";
-      faceOverlay.style.right = "10px";
-      faceOverlay.style.bottom = "10px";
-      faceOverlay.style.pointerEvents = "none";
-      faceOverlay.style.zIndex = "1000";
-    }
-
-    const faceFeedbackBox = document.getElementById("webgazerFaceFeedbackBox");
-    if (faceFeedbackBox && videoElement) {
-      const videoRect = videoElement.getBoundingClientRect();
-      const feedbackWidth = faceFeedbackBox.offsetWidth;
-      const feedbackHeight = faceFeedbackBox.offsetHeight;
-
-      faceFeedbackBox.style.position = "fixed";
-      faceFeedbackBox.style.left = `${
-        videoRect.left + (videoRect.width - feedbackWidth) / 2
-      }px`;
-      faceFeedbackBox.style.top = `${
-        videoRect.top + (videoRect.height - feedbackHeight) / 2
-      }px`;
-      faceFeedbackBox.style.pointerEvents = "none";
-      faceFeedbackBox.style.zIndex = "1001";
-    }
-  }
-
-  const observer = new MutationObserver((mutations) => {
-    mutations.forEach((mutation) => {
-      if (mutation.target.id === "webgazerFaceFeedbackBox") {
-        updateWebGazerElements();
-      }
-    });
-  });
-
-  observer.observe(document.body, {
-    childList: true,
-    subtree: true,
-    attributes: true,
-  });
-
-  document
-    .getElementById("start-session")
-    .addEventListener("click", function () {
-      startWebGazer();
-      alert("Eye Tracker started.");
-    });
-
-  document.getElementById("end-session").addEventListener("click", function () {
-    console.log("End session button clicked.");
-    stopWebGazer();
+  // Initialize variables with server-provided data
+  document.addEventListener('DOMContentLoaded', function() {
+    // Set project data from the server
+    projectId = "{{ project.id }}";
+    majorTasks = {{ project.tasks|tojson }};
+    benchmarkMode = {{ 'true' if request.args.get('benchmark') else 'false' }};
   });
 </script>
 
 <script>
-    const benchmarkMode = {{ 'true' if request.args.get('benchmark') else 'false' }};
-    const startBtn = document.getElementById("start-session");
-    const stopBtn = document.getElementById("end-session");
-    let mediaRecorder;
-    let recordedChunks = [];
-
-    startBtn.onclick = async () => {
-      try {
-        const stream = await navigator.mediaDevices.getDisplayMedia({
-          video: {
-            cursor: "always",
-          },
-          audio: false,
-        });
-
-        mediaRecorder = new MediaRecorder(stream, { mimeType: "video/webm" });
-
-        mediaRecorder.ondataavailable = (event) => {
-          if (event.data.size > 0) {
-            recordedChunks.push(event.data);
-          }
+  document.addEventListener('DOMContentLoaded', function() {
+    // Wait for review.js to load and define the original function
+    setTimeout(() => {
+      if (typeof stopWebGazer === 'function') {
+        console.log("Patching stopWebGazer function");
+        
+        // Replace the original function with a fixed version
+        window.stopWebGazer = function() {
+          return new Promise((resolve, reject) => {
+            try {
+              console.log("Stopping WebGazer");
+              
+              // End the webgazer session
+              webgazer.end();
+              
+              // Save data across sessions if available
+              if (typeof webgazer.saveDataAcrossSessions === 'function') {
+                webgazer.saveDataAcrossSessions(true);
+              }
+              
+              // Clean up webcam stream
+              if (webcamStream) {
+                const tracks = webcamStream.getTracks();
+                tracks.forEach((track) => track.stop());
+                webcamStream = null;
+              }
+              
+              // Hide video and prediction points
+              webgazer.showVideo(false);
+              webgazer.showPredictionPoints(false);
+              
+              resolve(); // Successfully stopped webgazer
+            } catch (err) {
+              console.error("Error stopping WebGazer:", err);
+              resolve(); // Resolve anyway to allow session to continue ending
+            }
+          });
         };
-
-        mediaRecorder.onstop = () => {
-    const blob = new Blob(recordedChunks, { type: "video/webm" });
-    const formData = new FormData();
-    formData.append("video", blob, "recorded_video.webm");
-    formData.append("project_id", "{{ project.id }}");
-    // If benchmark mode is active, include that flag.
-    if (benchmarkMode === true || benchmarkMode === "true") {
-      formData.append("benchmark", "true");
-    }
-    fetch("/upload", {
-      method: "POST",
-      body: formData,
-    })
-    .then((response) => response.json())
-    .then((data) => {
-      console.log(data);
-      alert("Eye Tracker stopped and data saved.");
-      console.log("Redirecting to home page...");
-      window.location.href = "/";
-    })
-    .catch((error) => console.error("Error uploading video:", error));
-  };
-
-
-        mediaRecorder.start();
-      } catch (error) {
-        console.error("Error accessing display media.", error);
       }
-    };
-
-    stopBtn.onclick = () => {
-      if (mediaRecorder && mediaRecorder.state !== "inactive") {
-        mediaRecorder.stop();
-      }
-    };
+    }, 500);
+  });
 </script>
 
 {% endblock %}
