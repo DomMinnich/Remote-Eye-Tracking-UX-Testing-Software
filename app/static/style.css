@@ -1323,6 +1323,37 @@
   position: fixed !important;
   top: 20px !important;
   left: 20px !important;
+  width: 200px !important; /* Match video feed width */
+  height: auto !important;
+  z-index: 1550 !important; /* Higher than video feed */
+  pointer-events: none !important; /* Allow clicks to pass through */
+}
+
+/* Face feedback box styling */
+#webgazerFaceFeedbackBox {
+  z-index: 1600 !important;
+  pointer-events: none !important;
+  border: 2px solid green !important;
+}
+
+/* WebGazer gaze prediction point styling */
+#webgazerGazeDot {
+  position: fixed !important;
+  z-index: 2000 !important; /* Higher than all other elements */
+  background-color: red !important;
+  border-radius: 50% !important;
+  width: 10px !important;
+  height: 10px !important;
+  transform: translate(-50%, -50%) !important; /* Center dot on gaze point */
+  pointer-events: none !important;
+  opacity: 0.8 !important;
+}
+
+/* Face overlay styling - top left */
+.review-face-overlay {
+  position: fixed !important;
+  top: 20px !important;
+  left: 20px !important;
   z-index: 1550 !important;
 }
 
@@ -1771,15 +1802,33 @@
   box-shadow: 0 4px 8px rgba(0,0,0,0.3) !important;
 }
 
-/* Face overlay styling - top left */
+/* Face overlay styling - EXACT same position as video feed to ensure alignment */
 .review-face-overlay {
   position: fixed !important;
   top: 20px !important;
   left: 20px !important;
-  z-index: 1550 !important;
+  width: 200px !important; /* Match video feed width */
+  height: auto !important;
+  z-index: 1550 !important; /* Higher than video feed */
+  pointer-events: none !important; /* Allow clicks to pass through */
 }
 
 /* Face feedback box styling */
 #webgazerFaceFeedbackBox {
   z-index: 1600 !important;
+  pointer-events: none !important;
+  border: 2px solid green !important;
+}
+
+/* WebGazer gaze prediction point styling */
+#webgazerGazeDot {
+  position: fixed !important;
+  z-index: 2000 !important; /* Higher than all other elements */
+  background-color: red !important;
+  border-radius: 50% !important;
+  width: 10px !important;
+  height: 10px !important;
+  transform: translate(-50%, -50%) !important; /* Center dot on gaze point */
+  pointer-events: none !important;
+  opacity: 0.8 !important;
 }

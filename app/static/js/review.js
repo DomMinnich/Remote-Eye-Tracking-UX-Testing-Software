@@ -76,8 +76,15 @@ function stopWebGazer() {
 function updateWebGazerElements() {
   const gazeDot = document.getElementById("webgazerGazeDot");
   if (gazeDot) {
-    gazeDot.style.opacity = "1";
-    gazeDot.style.backgroundColor = "blue";
+    gazeDot.style.opacity = "0.8";
+    gazeDot.style.backgroundColor = "red";
+    gazeDot.style.width = "10px";
+    gazeDot.style.height = "10px";
+    gazeDot.style.position = "fixed";
+    gazeDot.style.zIndex = "2000";
+    gazeDot.style.pointerEvents = "none";
+    gazeDot.style.borderRadius = "50%";
+    gazeDot.style.transform = "translate(-50%, -50%)";
   }
 
   const videoElement = document.getElementById("webgazerVideoFeed");
@@ -88,6 +95,15 @@ function updateWebGazerElements() {
   const faceOverlay = document.getElementById("webgazerFaceOverlay");
   if (faceOverlay) {
     faceOverlay.classList.add("review-face-overlay");
+    
+    // Ensure the face overlay matches the video dimensions and position
+    if (videoElement) {
+      const videoRect = videoElement.getBoundingClientRect();
+      faceOverlay.style.top = videoRect.top + "px";
+      faceOverlay.style.left = videoRect.left + "px";
+      faceOverlay.style.width = videoRect.width + "px";
+      faceOverlay.style.height = videoRect.height + "px";
+    }
   }
 
   const faceFeedbackBox = document.getElementById("webgazerFaceFeedbackBox");
