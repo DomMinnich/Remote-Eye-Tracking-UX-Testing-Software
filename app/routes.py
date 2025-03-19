@@ -849,20 +849,25 @@ def viewReviewBroad(project_id):
                 flash("You don't have permission to access this project.", "danger")
                 return redirect(url_for("main.viewProjects"))
 
-        # Get all video review files for this project
-        project_folder = os.path.join(UPLOAD_FOLDER, secure_filename(str(project_id)))
-        current_app.logger.info(f"Looking for videos in folder: {project_folder}")
+        # Path to project folder in the static directory
+        project_folder_name = secure_filename(str(project_id))
+        
+        # Use forward slashes for web paths - this is the critical change
+        static_project_folder = f"static_data/data/Projects/{project_folder_name}"
+        
+        # Still use os.path.join for the physical file path
+        physical_project_folder = os.path.join(current_app.root_path, "static", "static_data", "data", "Projects", project_folder_name)
+        
+        current_app.logger.info(f"Looking for videos in folder: {physical_project_folder}")
 
         videos = []
 
-        if os.path.exists(project_folder):
-            current_app.logger.info(
-                f"Project folder exists, contents: {os.listdir(project_folder)}"
-            )
+        if os.path.exists(physical_project_folder):
+            current_app.logger.info(f"Project folder exists, contents: {os.listdir(physical_project_folder)}")
 
             # Walk through all subdirectories (sessions)
-            for session_dir in os.listdir(project_folder):
-                session_path = os.path.join(project_folder, session_dir)
+            for session_dir in os.listdir(physical_project_folder):
+                session_path = os.path.join(physical_project_folder, session_dir)
                 # Skip the benchmark folder or non-directories
                 if session_dir == "benchmark" or not os.path.isdir(session_path):
                     continue
@@ -872,36 +877,24 @@ def viewReviewBroad(project_id):
                 # Look for video files in each session directory
                 video_folder = os.path.join(session_path, "Video")
                 if os.path.exists(video_folder) and os.path.isdir(video_folder):
-                    current_app.logger.info(
-                        f"Video folder exists, contents: {os.listdir(video_folder)}"
-                    )
+                    current_app.logger.info(f"Video folder exists, contents: {os.listdir(video_folder)}")
 
                     for file in os.listdir(video_folder):
                         if file.endswith(".webm"):
-                            # Store the relative path for use in templates
-                            relative_path = os.path.join(
-                                "static_data",
-                                "data",
-                                "Projects",
-                                str(project_id),
-                                session_dir,
-                                "Video",
-                                file,
-                            )
+                            # Create a relative path with forward slashes for URL
+                            relative_path = f"{static_project_folder}/{session_dir}/Video/{file}"
                             videos.append(relative_path)
         else:
-            current_app.logger.warning(
-                f"Project folder does not exist: {project_folder}"
-            )
+            current_app.logger.warning(f"Project folder does not exist: {physical_project_folder}")
 
-        current_app.logger.info(f"Found {len(videos)} videos")
+        current_app.logger.info(f"Found {len(videos)} videos: {videos}")
         return render_template(
             "viewReviewBroad.html", videos=videos, project_id=project_id
         )
     except Exception as e:
         current_app.logger.error(f"Error in viewReviewBroad: {str(e)}")
-        raise
-
+        flash(f"Error loading project reviews: {str(e)}", "danger")
+        return redirect(url_for("main.viewProjects"))
 
 @main.route("/viewSharedProjects")
 @login_required
