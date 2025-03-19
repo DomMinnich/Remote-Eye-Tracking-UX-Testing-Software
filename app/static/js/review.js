@@ -232,7 +232,7 @@ function endSession() {
       document.body.removeChild(document.getElementById('upload-progress'));
       // Redirect to the review page or show a success message
       alert("Session uploaded successfully!");
-      window.location.href = `/viewReviewBroad?projectId=${projectId}`;
+      window.location.href = `/viewReviewBroad/${projectId}`;
     })
     .catch((error) => {
       console.error("Error during upload:", error);
