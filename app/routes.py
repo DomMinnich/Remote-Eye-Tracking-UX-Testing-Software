@@ -577,6 +577,27 @@ def adminPanel():
         delete_user_form=delete_user_form,
         delete_project_form=delete_project_form,
     )
+    
+    
+@main.route('/write_logs', methods=['POST'])
+def write_logs():
+    """Write logs to log.txt file"""
+    try:
+        data = request.get_json()
+        logs = data.get('logs', [])
+        
+        # Create the log file if it doesn't exist
+        log_file_path = os.path.join(main.root_path, '..', 'log.txt')
+        
+        # Append logs to the file
+        with open(log_file_path, 'a', encoding='utf-8') as log_file:
+            for log in logs:
+                log_file.write(f"{log}\n")
+        
+        return jsonify({"status": "success"}), 200
+    except Exception as e:
+        main.logger.error(f"Error writing logs: {str(e)}")
+        return jsonify({"status": "error", "message": str(e)}), 500
 
 
 @main.route("/viewReviewSpecific")

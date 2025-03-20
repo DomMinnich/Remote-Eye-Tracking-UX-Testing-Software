@@ -373,24 +373,49 @@
     });
 
     forwardBtn.addEventListener("click", () => {
-      video.currentTime = Math.min(video.currentTime + 5, video.duration);
+      if (
+        video.duration &&
+        isFinite(video.duration) &&
+        isFinite(video.currentTime)
+      ) {
+        video.currentTime = Math.min(video.currentTime + 5, video.duration);
+        seekBar.value = (video.currentTime / video.duration) * 100;
+      }
     });
 
     backwardBtn.addEventListener("click", () => {
-      video.currentTime = Math.max(video.currentTime - 5, 0);
+      if (isFinite(video.currentTime)) {
+        video.currentTime = Math.max(video.currentTime - 5, 0);
+        if (video.duration && isFinite(video.duration)) {
+          seekBar.value = (video.currentTime / video.duration) * 100;
+        }
+      }
     });
 
     video.addEventListener("timeupdate", () => {
-      const progress = (video.currentTime / video.duration) * 100;
-      seekBar.value = progress;
-      timeDisplay.textContent = `${formatTime(
-        video.currentTime
-      )} / ${formatTime(video.duration)}`;
+      if (
+        video.duration &&
+        isFinite(video.duration) &&
+        isFinite(video.currentTime)
+      ) {
+        const progress = (video.currentTime / video.duration) * 100;
+        seekBar.value = progress;
+        timeDisplay.textContent = `${formatTime(
+          video.currentTime
+        )} / ${formatTime(video.duration)}`;
+      }
     });
 
     seekBar.addEventListener("input", () => {
-      const time = (seekBar.value / 100) * video.duration;
-      video.currentTime = time;
+      if (video.duration && isFinite(video.duration)) {
+        const seekPosition = parseFloat(seekBar.value);
+        const seekTime = (seekPosition / 100) * video.duration;
+
+        // Make sure seekTime is finite before setting currentTime
+        if (isFinite(seekTime)) {
+          video.currentTime = seekTime;
+        }
+      }
     });
 
     muteBtn.addEventListener("click", () => {
@@ -415,6 +440,7 @@
     });
 
     function formatTime(seconds) {
+      if (!seconds || !isFinite(seconds)) return "0:00";
       const minutes = Math.floor(seconds / 60);
       const secs = Math.floor(seconds % 60);
       return `${minutes}:${secs < 10 ? "0" : ""}${secs}`;

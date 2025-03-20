@@ -223,13 +223,13 @@
 
 @keyframes color-rotation {
   0% {
-    filter: hue-rotate(-15deg) saturate(100%) blur(40px) brightness(0.7) opacity(0.7);
+    filter: hue-rotate(-15deg) saturate(100%) blur(40px) brightness(1) opacity(0.7);
   }
   50% {
-    filter: hue-rotate(-0deg) saturate(90%) blur(10px) brightness(0.9) opacity(0.8);
+    filter: hue-rotate(-0deg) saturate(90%) blur(10px) brightness(1.1) opacity(0.8);
   }
   100% {
-    filter: hue-rotate(-15deg) saturate(100%) blur(40px) brightness(0.7) opacity(0.7);
+    filter: hue-rotate(-15deg) saturate(100%) blur(40px) brightness(1) opacity(0.7);
   }
 }
 
@@ -1039,7 +1039,7 @@
   max-width: 800px;
   margin: 80px auto 100px auto;
   padding: 20px;
-  background: rgba(255, 255, 255, 0.07);
+  background: rgba(10, 36, 61, 0.555);
   backdrop-filter: blur(10px);
   border-radius: 12px;
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
@@ -1337,17 +1337,7 @@
 }
 
 /* WebGazer gaze prediction point styling */
-#webgazerGazeDot {
-  position: fixed !important;
-  z-index: 2000 !important; /* Higher than all other elements */
-  background-color: red !important;
-  border-radius: 50% !important;
-  width: 10px !important;
-  height: 10px !important;
-  transform: translate(-50%, -50%) !important; /* Center dot on gaze point */
-  pointer-events: none !important;
-  opacity: 0.8 !important;
-}
+
 
 /* Face overlay styling - top left */
 .review-face-overlay {
@@ -1523,7 +1513,7 @@
   max-width: 800px;
   margin: 80px auto 100px auto;
   padding: 20px;
-  background: rgba(255, 255, 255, 0.07);
+  background: rgba(10, 36, 61, 0.555);
   backdrop-filter: blur(10px);
   border-radius: 12px;
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
@@ -1822,13 +1812,15 @@
 
 /* WebGazer gaze prediction point styling */
 #webgazerGazeDot {
+  display: block !important;
   position: fixed !important;
-  z-index: 2000 !important; /* Higher than all other elements */
+  z-index: 2000 !important;
   background-color: red !important;
   border-radius: 50% !important;
   width: 10px !important;
   height: 10px !important;
-  transform: translate(-50%, -50%) !important; /* Center dot on gaze point */
+  transform: translate(-50%, -50%) !important;
   pointer-events: none !important;
   opacity: 0.8 !important;
+  box-shadow: 0 0 5px rgba(255, 0, 0, 0.7) !important;
 }

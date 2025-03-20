@@ -66,7 +66,74 @@
 </div>
 
 <script>
+  // Logging functionality
+  (function() {
+    // Store the original console.log function
+    const originalConsoleLog = console.log;
+    const logBuffer = [];
+
+    // Override console.log
+    console.log = function() {
+      // Call the original console.log
+      originalConsoleLog.apply(console, arguments);
+
+      // Convert arguments to a string
+      const logMessage = Array.from(arguments).map(arg => {
+        if (typeof arg === 'object') {
+          try {
+            return JSON.stringify(arg);
+          } catch (e) {
+            return String(arg);
+          }
+        }
+        return String(arg);
+      }).join(' ');
+
+      // Add timestamp
+      const timestamp = new Date().toISOString();
+      const formattedLog = `[${timestamp}] ${logMessage}`;
+
+      // Add to buffer
+      logBuffer.push(formattedLog);
+
+      // Send logs to server if we have enough or when leaving page
+      if (logBuffer.length >= 10) {
+        sendLogsToServer();
+      }
+    };
+
+    // Function to send logs to server
+    function sendLogsToServer() {
+      if (logBuffer.length === 0) return;
+
+      fetch("{{ url_for('main.write_logs') }}", {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ logs: logBuffer }),
+      })
+      .then(response => {
+        if (response.ok) {
+          // Clear the buffer after successful write
+          logBuffer.length = 0;
+        }
+      })
+      .catch(error => {
+        originalConsoleLog("Error writing logs:", error);
+      });
+    }
+
+    // Send logs when leaving the page
+    window.addEventListener('beforeunload', sendLogsToServer);
+
+    // Also send logs periodically
+    setInterval(sendLogsToServer, 30000); // Every 30 seconds
+  })();
+
+  // Original script continues below
   document.querySelector(".add-major-task-btn").addEventListener("click", function () {
+    console.log("Add major task button clicked");
     const container = document.getElementById("major-tasks-container");
     const inputWrapper = document.createElement("div");
     inputWrapper.className = "input-wrapper major-task-wrapper";
@@ -85,7 +152,7 @@
 
     const minorTaskButtons = document.createElement("div");
     minorTaskButtons.className = "minor-task-buttons";
-    
+
     const addMinorBtn = document.createElement("button");
     addMinorBtn.type = "button";
     addMinorBtn.className = "add-task-btn";
@@ -197,7 +264,7 @@
   function validateForm() {
     const linkInput = document.querySelector('input[name="link"]');
     const linkError = document.getElementById("link-error");
-    const figmaPattern = /^https:\/\/www\.figma\.com\/(file|design)\/.+$/;
+    const figmaPattern = /^https:\/\/www\.figma\.com\/(file|design|proto)\/.+$/;
 
     if (!figmaPattern.test(linkInput.value)) {
       linkError.style.display = "block";
@@ -231,14 +298,38 @@
 
     {% if user.role == 'admin' or user.role == 'project_manager' %}
     const collaboratorsContainer = document.getElementById("collaborators-container");
-    const collaborators = Array.from(
-      collaboratorsContainer.querySelectorAll(".input-wrapper")
-    ).map((wrapper) => {
-      return {
-        email: wrapper.querySelector("textarea").value,
-        role: wrapper.querySelector("select").value,
-      };
+    const collaborators = [];
+
+    // Process all input-wrapper elements in the container
+    Array.from(collaboratorsContainer.querySelectorAll(".input-wrapper")).forEach((wrapper) => {
+      // Try first for a dynamically created element
+      let textarea = wrapper.querySelector("textarea[name='collaborators']");
+      let select = wrapper.querySelector("select[name='collaborator_role']");
+
+      // If textarea is null, it might be a server-rendered field (has ID instead of just name)
+      if (!textarea) {
+        textarea = wrapper.querySelector("#collaborators");
+      }
+
+      // Debug what we're finding
+      console.log("Processing wrapper:", {
+        textarea: textarea ? "Found" : "Not found",
+        select: select ? "Found" : "Not found"
+      });
+
+      // Check if we found both elements and email isn't empty
+      if (textarea && select && textarea.value.trim() !== "") {
+        collaborators.push({
+          email: textarea.value.trim(),
+          role: select.value
+        });
+        console.log("Added collaborator:", textarea.value.trim(), select.value);
+      } else {
+        console.log("Skipping entry - Missing data or empty email");
+      }
     });
+
+    console.log("Final collaborators data:", collaborators);
     document.querySelector('input[name="collaborators_hidden"]').value =
       JSON.stringify(collaborators);
     {% else %}
