@@ -27,3 +27,14 @@
 [2025-03-20T19:04:46.759Z] Processing wrapper: {"textarea":"Found","select":"Found"}
 [2025-03-20T19:04:46.759Z] Added collaborator: dominic@gmail.com viewer
 [2025-03-20T19:04:46.760Z] Final collaborators data: [{"email":"dominic@gmail.com","role":"viewer"}]
+[2025-03-20T20:13:50.184Z] Processing wrapper: {"textarea":"Found","select":"Found"}
+[2025-03-20T20:13:50.184Z] Added collaborator: dominic@gmail.com co-owner
+[2025-03-20T20:13:50.184Z] Final collaborators data: [{"email":"dominic@gmail.com","role":"co-owner"}]
+[2025-03-20T20:18:59.606Z] Processing wrapper: {"textarea":"Found","select":"Found"}
+[2025-03-20T20:18:59.606Z] Skipping entry - Missing data or empty email
+[2025-03-20T20:18:59.606Z] Final collaborators data: []
+[2025-03-20T20:24:25.250Z] Add major task button clicked
+[2025-03-20T20:24:31.939Z] Add major task button clicked
+[2025-03-20T20:24:51.052Z] Processing wrapper: {"textarea":"Found","select":"Found"}
+[2025-03-20T20:24:51.053Z] Added collaborator: dominic@gmail.com viewer
+[2025-03-20T20:24:51.053Z] Final collaborators data: [{"email":"dominic@gmail.com","role":"viewer"}]

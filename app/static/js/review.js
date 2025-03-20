@@ -161,7 +161,7 @@ function endSession() {
   loadingMessage.style.top = '50%';
   loadingMessage.style.left = '50%';
   loadingMessage.style.transform = 'translate(-50%, -50%)';
-  loadingMessage.style.backgroundColor = 'rgba(0,0,0,0.8)';
+  loadingMessage.style.backgroundColor = 'rgba(255, 79, 79, 0.8)';
   loadingMessage.style.color = 'white';
   loadingMessage.style.padding = '20px';
   loadingMessage.style.borderRadius = '10px';
