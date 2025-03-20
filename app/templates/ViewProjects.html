@@ -208,6 +208,50 @@
     border-radius: 4px;
     display: inline-block;
   }
+  
+ 
+  .button {
+    background-color:rgb(172, 6, 6);
+    color: #fff;
+    border: none;
+    border-radius: 8px;
+    padding: 10px 16px;
+    margin-top: 15px;
+    margin-right: 10px;
+    cursor: pointer;
+    font-weight: 600;
+    transition: background-color 0.3s ease;
+    text-decoration: none;
+  }
+
+  .button:hover{
+    background-color:rgb(108, 7, 7);
+  }
+
+  .button-container {
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 10px;
+  } 
+  
+  .shareable-link-container {
+    margin-top: 15px;
+    display: none;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .shareable-link {
+    background: rgba(255, 255, 255, 0.07);
+    padding: 8px 12px;
+    border-radius: 4px;
+    color: #fff;
+    border: 1px solid #ccc;
+    width: 250px;
+    text-align: center;
+  }
+  
 </style>
 <div class="project-container">
   <h2 class="title">My Projects</h2>
@@ -346,7 +390,17 @@
       </div>
       {% endif %}
     </div>
-  </div>
+
+    <div class="generate-link-container">
+      <button class="button" onclick="generateShareableLink()">Generate Link</button>
+      <div class="shareable-link-container" id="shareable-link-container">
+        <input type="text" id="shareable-link" class="shareable-link" readonly />
+        <button class="button" onclick="copyShareableLink()">Copy</button>
+        <button class="button" onclick="closeShareableLink()">Close</button>
+      </div>
+    </div>   
+
+
   {% else %}
   <p id="unavailable">No Projects Available</p>
   <img
@@ -360,6 +414,26 @@
 <script>
   function confirmDeleteBenchmark() {
     return confirm("Are you sure you want to delete this benchmark?");
+  }
+
+  function generateShareableLink() {
+    const projectId = document.getElementById("detail-id").innerText;
+    const shareableLink = `${window.location.origin}/review/${projectId}`;
+    document.getElementById("shareable-link").value = shareableLink;
+    document.getElementById("shareable-link-container").style.display = "flex";
+  }
+
+  function copyShareableLink() {
+    const linkInput = document.getElementById("shareable-link");
+    linkInput.select();
+    linkInput.setSelectionRange(0, 99999);
+    navigator.clipboard.writeText(linkInput.value).then(() => {
+      alert("Link has been copied!");
+    });
+  }
+
+  function closeShareableLink() {
+    document.getElementById("shareable-link-container").style.display = "none";
   }
 
   function scrollCarousel(direction) {
