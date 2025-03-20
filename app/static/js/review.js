@@ -7,11 +7,16 @@ function startWebGazer() {
     .setRegression("ridge")
     .setGazeListener(function (data, clock) {
       if (data) {
-        console.log(data);
+        // Update the gaze dot position
+        const gazeDot = document.getElementById("webgazerGazeDot");
+        if (gazeDot && data.x && data.y) {
+          gazeDot.style.left = data.x + "px";
+          gazeDot.style.top = data.y + "px";
+        }
       }
     })
     .showVideo(true)
-    .showPredictionPoints(true)
+    .showPredictionPoints(true) // Ensure this is set to true
     .begin();
 
   navigator.mediaDevices
@@ -75,16 +80,26 @@ function stopWebGazer() {
 
 function updateWebGazerElements() {
   const gazeDot = document.getElementById("webgazerGazeDot");
-  if (gazeDot) {
-    gazeDot.style.opacity = "0.8";
-    gazeDot.style.backgroundColor = "red";
-    gazeDot.style.width = "10px";
-    gazeDot.style.height = "10px";
-    gazeDot.style.position = "fixed";
-    gazeDot.style.zIndex = "2000";
-    gazeDot.style.pointerEvents = "none";
-    gazeDot.style.borderRadius = "50%";
-    gazeDot.style.transform = "translate(-50%, -50%)";
+  if (!gazeDot) {
+    // Create the gaze dot if it doesn't exist
+    const newGazeDot = document.createElement("div");
+    newGazeDot.id = "webgazerGazeDot";
+    document.body.appendChild(newGazeDot);
+  }
+  
+  // Now style the dot (either existing or newly created)
+  const updatedGazeDot = document.getElementById("webgazerGazeDot");
+  if (updatedGazeDot) {
+    updatedGazeDot.style.display = "block";
+    updatedGazeDot.style.opacity = "0.8";
+    updatedGazeDot.style.backgroundColor = "red";
+    updatedGazeDot.style.width = "10px";
+    updatedGazeDot.style.height = "10px";
+    updatedGazeDot.style.position = "fixed";
+    updatedGazeDot.style.zIndex = "2000";
+    updatedGazeDot.style.pointerEvents = "none";
+    updatedGazeDot.style.borderRadius = "50%";
+    updatedGazeDot.style.transform = "translate(-50%, -50%)";
   }
 
   const videoElement = document.getElementById("webgazerVideoFeed");
