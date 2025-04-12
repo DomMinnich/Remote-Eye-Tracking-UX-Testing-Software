@@ -133,11 +133,12 @@ let benchmarkMode = false;
 function endSession() {
   console.log("End session function called");
   
-  // First record the time for the last task
-  if (sessionStarted && taskStartTime !== null) {
+  // Only record the last task time if we're still within valid task range
+  if (sessionStarted && taskStartTime !== null && currentTaskIndex < majorTasks.length) {
     endTask(); // Record time for the last task
-    sessionStarted = false;
   }
+  
+  sessionStarted = false;
   
   // Display a loading indicator
   const loadingMessage = document.createElement('div');
@@ -343,17 +344,12 @@ function startTask(index) {
 }
 
 function endTask() {
-  if (taskStartTime !== null) {
+  if (taskStartTime !== null && currentTaskIndex < majorTasks.length) {
     const endTime = new Date();
     const timeSpent = (endTime - taskStartTime) / 1000; // time in seconds
     
-    // Check if currentTaskIndex is valid before accessing majorTasks array
-    if (currentTaskIndex >= 0 && currentTaskIndex < majorTasks.length) {
-      taskTimes.push({ task: majorTasks[currentTaskIndex].name, time: timeSpent });
-    } else {
-      console.log("Task index out of bounds, recording time for unknown task");
-      taskTimes.push({ task: "Unknown task", time: timeSpent });
-    }
+    taskTimes.push({ task: majorTasks[currentTaskIndex].name, time: timeSpent });
+    taskStartTime = null; // Reset task start time
   }
 }
 
@@ -380,11 +376,17 @@ document.addEventListener('DOMContentLoaded', function() {
   
   document.getElementById("next-task").addEventListener("click", function() {
     if (!sessionStarted) return;
+    
+    // End timing for current task
     endTask();
     currentTaskIndex++;
     
     // If we've reached the end of tasks, end the session
     if (currentTaskIndex >= majorTasks.length) {
+      // Since we've incremented past the end, set taskStartTime to null
+      // to prevent recording an "Unknown task" entry
+      taskStartTime = null;
+      
       alert("You've completed all tasks! The session will now end.");
       
       // End the session after a brief delay to give the user time to see the alert

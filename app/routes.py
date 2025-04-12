@@ -48,7 +48,7 @@ from flask_login import (
     LoginManager,
 )
 
-from .models import db, User, Project, mail, Message
+from .models import db, User, Project, mail, Message, TaskTime  # Ensure TaskTime is imported
 from .forms import (
     RegistrationForm,
     LoginForm,
@@ -579,12 +579,49 @@ def adminPanel():
     )
 
 
-@main.route("/viewReviewSpecific")
+@main.route("/viewReviewSpecific/<string:session_id>", methods=["GET"])
 @login_required
-def viewReviewSpecific():
-    video_url = request.args.get("video_url")
+def viewReviewSpecific(session_id):
+    project_id = request.args.get("project_id")
+    if not project_id:
+        flash("Missing project ID", "danger")
+        return redirect(url_for("main.home"))
+
+    # Fetch benchmark times dynamically from the database
+    benchmark_times = TaskTime.query.filter_by(project_id=project_id, is_benchmark=True).all()
+    benchmark_times = [
+        {"task": task.task_name, "time": task.time_spent} for task in benchmark_times
+    ]
+
+    # Fetch review times dynamically for the given session
+    review_times = TaskTime.query.filter_by(project_id=project_id, session_id=session_id).all()
+    review_times = [
+        {"task": task.task_name, "time": task.time_spent} for task in review_times
+    ]
+
+    # If no task times are found, provide defaults to avoid the undefined error
+    if not benchmark_times:
+        benchmark_times = [{"task": "No benchmark data", "time": 0}]
+    if not review_times:
+        review_times = [{"task": "No review data", "time": 0}]
+
+    # Construct the correct video path
+    video_url = f"static_data/data/Projects/{project_id}/{session_id}/Video/{session_id}.webm"
+    
+    # Check if the specific video exists, if not try to find any video in the directory
+    video_path = os.path.join(current_app.root_path, "static", "static_data", "data", "Projects", 
+                             secure_filename(project_id), secure_filename(session_id), "Video")
+    
+    if os.path.exists(video_path):
+        video_files = [f for f in os.listdir(video_path) if f.endswith('.webm')]
+        if video_files:
+            video_url = f"static_data/data/Projects/{project_id}/{session_id}/Video/{video_files[0]}"
+
     return render_template(
-        "viewReviewSpecific.html", user=current_user, video_url=video_url
+        "viewReviewSpecific.html",
+        benchmark_times=benchmark_times,
+        review_times=review_times,
+        video_url=video_url
     )
 
 
@@ -705,6 +742,7 @@ def upload_video():
     project_id = request.form.get("project_id")
     # Determine if this is a benchmark upload
     benchmark_flag = request.form.get("benchmark", "false").lower() == "true"
+    task_times = request.form.get("task_times")  # Retrieve task_times from the form
 
     # Generate a session ID
     if benchmark_flag:
@@ -724,6 +762,23 @@ def upload_video():
 
     video_path = os.path.join(video_folder, f"{video_id}.webm")
     video.save(video_path)
+
+    # Save task times to the database
+    if task_times:
+        try:
+            task_times = json.loads(task_times)
+            for task_time in task_times:
+                new_task_time = TaskTime(
+                    project_id=project_id,
+                    session_id=session_id,
+                    task_name=task_time["task"],
+                    time_spent=task_time["time"],
+                    is_benchmark=benchmark_flag
+                )
+                db.session.add(new_task_time)
+            db.session.commit()
+        except Exception as e:
+            return jsonify({"error": f"Failed to save task times: {str(e)}"}), 500
 
     # If benchmark mode, update the project model field 'benchmarked'
     if benchmark_flag:
@@ -883,7 +938,7 @@ def viewReviewBroad(project_id):
                         if file.endswith(".webm"):
                             # Create a relative path with forward slashes for URL
                             relative_path = f"{static_project_folder}/{session_dir}/Video/{file}"
-                            videos.append(relative_path)
+                            videos.append({"path": relative_path, "session_id": session_dir})
         else:
             current_app.logger.warning(f"Project folder does not exist: {physical_project_folder}")
 

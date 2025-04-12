@@ -92,3 +92,11 @@ class Project(db.Model):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
         self.id = self.generate_unique_id()
+
+class TaskTime(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    project_id = db.Column(db.String, db.ForeignKey('project.id'), nullable=False)
+    session_id = db.Column(db.String, nullable=False)
+    task_name = db.Column(db.String, nullable=False)
+    time_spent = db.Column(db.Float, nullable=False)
+    is_benchmark = db.Column(db.Boolean, default=False)  # To differentiate benchmark data
