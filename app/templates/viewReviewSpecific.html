@@ -170,6 +170,7 @@
     outline: none;
     font-weight: 600;
     background-color: #fff;
+    color: #000; /* Ensuring text is black */
   }
   #vrs-speed-control:focus {
     border-color: #00c1ff;
@@ -215,6 +216,55 @@
     .vrs-volume-bar {
       width: 100%;
     }
+  }
+
+  .task-comparison-sidebar {
+    position: fixed;
+    top: 100px;
+    left: 20px;
+    width: 250px;
+    background-color: rgba(0, 0, 0, 0.8);
+    color: white;
+    padding: 15px;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+    z-index: 1000;
+  }
+  .task-comparison-sidebar h3 {
+    text-align: center;
+    margin-bottom: 10px;
+    color: #ffffff;
+  }
+  .task-comparison-sidebar .task {
+    margin-bottom: 12px;
+    padding: 8px;
+    background-color: rgba(255, 255, 255, 0.1);
+    border-radius: 4px;
+  }
+  .task-comparison-sidebar .task span {
+    display: block;
+    margin-bottom: 3px;
+  }
+  .task-comparison-sidebar .task-name {
+    font-weight: bold;
+    color: #ffd700;
+  }
+  .task-comparison-sidebar .benchmark-time {
+    color: #ffffff;
+  }
+  .task-comparison-sidebar .review-time {
+    color: #cccccc;
+  }
+  .task-comparison-sidebar .positive {
+    color: #4ecdc4; /* Green color for positive/faster times */
+  }
+  .task-comparison-sidebar .negative {
+    color: #ff6b6b; /* Red color for negative/slower times */
+  }
+  
+  /* Label colors */
+  label {
+    color: #ffffff;
   }
 </style>
 
@@ -326,6 +376,13 @@
   </div>
 
   <div class="vrs-lens" id="vrs-lens"></div>
+</div>
+
+<div class="task-comparison-sidebar">
+  <h3>Task Comparison</h3>
+  <div id="task-comparison-list">
+    <!-- Task comparisons will be dynamically inserted here -->
+  </div>
 </div>
 
 <script>
@@ -530,6 +587,107 @@
       const ctx = canvas.getContext("2d");
       ctx.drawImage(videoElement, 0, 0, canvas.width, canvas.height);
       return canvas.toDataURL("image/png");
+    }
+
+    // Task comparison functionality
+    const benchmarkTimes = {{ benchmark_times|tojson }}; // Benchmark times from the server
+    const reviewTimes = {{ review_times|tojson }}; // Review times from the server
+
+    const taskComparisonList = document.getElementById("task-comparison-list");
+    
+    // Clear any previous content
+    taskComparisonList.innerHTML = "";
+    
+    // Debug
+    console.log("Benchmark times:", benchmarkTimes);
+    console.log("Review times:", reviewTimes);
+    
+    if (!benchmarkTimes || !reviewTimes || benchmarkTimes.length === 0 || reviewTimes.length === 0) {
+      const noDataElement = document.createElement("p");
+      noDataElement.textContent = "No task comparison data available";
+      taskComparisonList.appendChild(noDataElement);
+    } else {
+      // Create a map of tasks to review times for easier lookup
+      const reviewTimesMap = {};
+      reviewTimes.forEach(item => {
+        if (item && item.task && item.time !== undefined) {
+          reviewTimesMap[item.task] = item.time;
+        }
+      });
+      
+      // For each benchmark task, find its corresponding review time
+      benchmarkTimes.forEach(benchmarkTask => {
+        if (!benchmarkTask || !benchmarkTask.task) return;
+        
+        const taskName = benchmarkTask.task;
+        const benchmarkTime = benchmarkTask.time || 0;
+        const reviewTime = reviewTimesMap[taskName] || 0;
+        const timeDifference = reviewTime - benchmarkTime;
+        
+        const taskElement = document.createElement("div");
+        taskElement.classList.add("task");
+        
+        const taskNameElem = document.createElement("span");
+        taskNameElem.classList.add("task-name");
+        taskNameElem.textContent = taskName;
+        
+        const benchmarkTimeElem = document.createElement("span");
+        benchmarkTimeElem.classList.add("benchmark-time");
+        benchmarkTimeElem.textContent = `Benchmark: ${formatTime(benchmarkTime)}`;
+        
+        const reviewTimeElem = document.createElement("span");
+        reviewTimeElem.classList.add("review-time");
+        reviewTimeElem.textContent = `Review: ${formatTime(reviewTime)}`;
+        
+        const diffElem = document.createElement("span");
+        diffElem.textContent = `Difference: ${timeDifference >= 0 ? '+' : ''}${formatTime(timeDifference)}`;
+        diffElem.classList.add(timeDifference <= 0 ? "positive" : "negative");
+        
+        taskElement.appendChild(taskNameElem);
+        taskElement.appendChild(benchmarkTimeElem);
+        taskElement.appendChild(reviewTimeElem);
+        taskElement.appendChild(diffElem);
+        
+        taskComparisonList.appendChild(taskElement);
+      });
+      
+      // Also show any review tasks that don't have benchmark equivalents
+      reviewTimes.forEach(reviewTask => {
+        if (!reviewTask || !reviewTask.task) return;
+        
+        // Skip if we've already processed this task
+        const found = benchmarkTimes.some(b => b.task === reviewTask.task);
+        if (found) return;
+        
+        const taskElement = document.createElement("div");
+        taskElement.classList.add("task");
+        
+        const taskNameElem = document.createElement("span");
+        taskNameElem.classList.add("task-name");
+        taskNameElem.textContent = reviewTask.task + " (No benchmark)";
+        
+        const reviewTimeElem = document.createElement("span");
+        reviewTimeElem.classList.add("review-time");
+        reviewTimeElem.textContent = `Review: ${formatTime(reviewTask.time)}`;
+        
+        taskElement.appendChild(taskNameElem);
+        taskElement.appendChild(reviewTimeElem);
+        
+        taskComparisonList.appendChild(taskElement);
+      });
+    }
+    
+    // Format time in seconds to mm:ss
+    function formatTime(seconds) {
+      if (seconds === undefined || seconds === null) return "00:00";
+      
+      const isNegative = seconds < 0;
+      seconds = Math.abs(seconds);
+      
+      const mins = Math.floor(seconds / 60);
+      const secs = Math.floor(seconds % 60);
+      
+      return `${isNegative ? '-' : ''}${mins}:${secs.toString().padStart(2, '0')}`;
     }
   });
 </script>

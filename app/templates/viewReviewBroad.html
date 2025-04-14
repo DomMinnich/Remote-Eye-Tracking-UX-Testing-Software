@@ -75,7 +75,7 @@
       >
         <a
           href="#"
-          onclick="confirmDelete(event, '{{ video }}')"
+          onclick="confirmDelete(event, '{{ video.path }}')"
           style="
             color: #ff4d4d;
             text-decoration: none;
@@ -89,7 +89,7 @@
     </div>
 
     <a
-      href="{{ url_for('main.viewReviewSpecific', video_url=video) }}"
+      href="{{ url_for('main.viewReviewSpecific', session_id=video.session_id, project_id=project_id) }}"
       style="text-decoration: none; color: inherit"
     >
       <div style="position: relative; display: inline-block">
@@ -100,7 +100,7 @@
           height="200"
           style="border-radius: 5px; filter: blur(2px)"
         >
-         <source src="{{ url_for('static', filename=video) }}" type="video/webm" />
+          <source src="{{ url_for('static', filename=video.path) }}" type="video/webm" />
           Your browser does not support the video tag.
         </video>
         <img
@@ -118,7 +118,6 @@
         />
       </div>
       <p style="margin-top: 10px; font-size: 16px">
-        <!--  <strong>Session ID:</strong> {{ video }} -->
         Submission #{{ loop.index }}
       </p>
     </a>
