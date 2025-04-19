@@ -351,6 +351,14 @@
       Go to Review
     </a>
 
+    <a
+    href="{{ url_for('main.generate_heatmap', project_id=projects[0].id) }}"
+    class="edit-button"
+    style="background-color: #28a745; margin-top: 10px;"
+  >
+    Generate Heatmap
+  </a>
+
     <div class="benchmark-container">
       {% if projects[0].benchmarked %}
       <form

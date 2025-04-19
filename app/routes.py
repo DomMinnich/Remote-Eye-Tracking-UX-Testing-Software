@@ -66,6 +66,13 @@ from werkzeug.utils import secure_filename
 from werkzeug.security import generate_password_hash
 from flask import Response, request
 from itsdangerous import URLSafeTimedSerializer
+import matplotlib.pyplot as plt
+import numpy as np
+from io import BytesIO
+import base64
+import random
+import matplotlib
+matplotlib.use("Agg")  # Use the Agg backend for non-GUI rendering
 
 # Blueprint
 main = Blueprint("main", __name__)
@@ -928,3 +935,58 @@ def viewSharedProjects():
     shared_project_ids = [project["project_id"] for project in shared_projects_list]
     shared_projects = Project.query.filter(Project.id.in_(shared_project_ids)).all()
     return render_template("viewSharedProjects.html", projects=shared_projects)
+
+
+@main.route("/generate_heatmap/<uuid:project_id>", methods=["GET"])
+@login_required
+def generate_heatmap(project_id):
+    # Generate dummy x-y coordinates
+    num_points = 1000  # Number of dummy points
+    x_coords = [random.randint(0, 1920) for _ in range(num_points)]  # Assuming a 1920px width screen
+    y_coords = [random.randint(0, 1080) for _ in range(num_points)]  # Assuming a 1080px height screen
+
+    # Generate the heatmap
+    heatmap, xedges, yedges = np.histogram2d(x_coords, y_coords, bins=(100, 100))
+    heatmap = np.log1p(heatmap)  # Apply log scale for better visualization
+
+    # Plot the heatmap
+    plt.figure(figsize=(10, 8))
+    plt.imshow(heatmap.T, origin="lower", cmap="hot", interpolation="gaussian")
+    plt.colorbar(label="Intensity")
+    plt.title(f"Heatmap for Project {project_id} (Dummy Data)")
+    plt.xlabel("X Coordinate")
+    plt.ylabel("Y Coordinate")
+
+    # Save the heatmap to a BytesIO object
+    img = BytesIO()
+    plt.savefig(img, format="png")
+    img.seek(0)
+    plt.close()
+
+    # Encode the image as base64 to embed in HTML
+    img_base64 = base64.b64encode(img.getvalue()).decode("utf-8")
+
+    return render_template(
+        "heatmap.html", project={"id": project_id}, heatmap_data=img_base64
+    )
+    
+@main.route("/save_gaze_data", methods=["POST"])
+@login_required
+def save_gaze_data():
+    data = request.get_json()
+    project_id = data.get("project_id")
+    gaze_data = data.get("gaze_data")
+
+    if not project_id or not gaze_data:
+        return jsonify({"error": "Missing required parameters"}), 400
+
+    project = Project.query.get(project_id)
+    if not project:
+        return jsonify({"error": "Project not found"}), 404
+
+    # Save gaze data to the database (assuming a Review model exists)
+    review = review(project_id=project_id, gaze_data=json.dumps(gaze_data))
+    db.session.add(review)
+    db.session.commit()
+
+    return jsonify({"message": "Gaze data saved successfully"}), 200

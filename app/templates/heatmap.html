@@ -1,0 +1,11 @@
+{% extends "base.html" %}
+
+{% block title %}Heatmap for {{ project.id }}{% endblock %}
+
+{% block content %}
+<div class="heatmap-container">
+    <h2>Heatmap for Project: {{ project.id }}</h2>
+    <img src="data:image/png;base64,{{ heatmap_data }}" alt="Heatmap" />
+    <a href="{{ url_for('main.viewProjects') }}" class="btn btn-primary">Back to Projects</a>
+</div>
+{% endblock %}

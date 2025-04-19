@@ -1,5 +1,6 @@
 // WebGazer functionality
 let webcamStream;
+let gazeData = [];
 
 // Function to start WebGazer
 function startWebGazer() {
@@ -13,6 +14,7 @@ function startWebGazer() {
           gazeDot.style.left = data.x + "px";
           gazeDot.style.top = data.y + "px";
         }
+        gazeData.push([data.x, data.y]);
       }
     })
     .showVideo(true)
@@ -273,6 +275,22 @@ function endSession() {
       // Show more detailed error message
       const errorDetail = error.message || "Unknown error";
       alert(`Failed to upload session: ${errorDetail}\n\nPlease try again or contact support if the issue persists.`);
+    });
+}
+
+// Send gaze data to the server when the review ends
+function endReview() {
+  fetch("/save_gaze_data", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ project_id: projectId, gaze_data: gazeData }),
+  })
+    .then((response) => response.json())
+    .then((data) => {
+      console.log("Gaze data saved:", data);
+    })
+    .catch((error) => {
+      console.error("Error saving gaze data:", error);
     });
 }
 
