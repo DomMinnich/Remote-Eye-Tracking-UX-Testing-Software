@@ -784,6 +784,16 @@ def upload_video():
     video_path = os.path.join(video_folder, f"{video_id}.webm")
     video.save(video_path)
 
+    if "csv" in request.files:
+        csv_data = request.files["csv"]
+        if csv_data.filename != "":
+            stream = io.StringIO(csv_data.stream.read().decode("utf-8"))
+            reader = csv.reader(stream)
+            csv_path = os.path.join(raw_folder, "output.csv")
+            with open(csv_path, mode='w', newline='') as file:
+                writer = csv.writer(file)
+                writer.writerows(reader)
+
     # Save task times to the database
     if task_times:
         try:
@@ -897,6 +907,8 @@ def calibration_complete():
 
 import os
 import glob
+import csv
+import io
 
 
 @main.route("/viewReviewBroad/<uuid:project_id>")
