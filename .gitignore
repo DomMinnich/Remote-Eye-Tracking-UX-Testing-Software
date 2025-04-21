@@ -3,6 +3,7 @@
 
 # Ignore .__pycache__/ folder
 __pycache__/
+*.pyc
 
 # Ignore anysubfolder in uploads/videos/
 uploads/videos/*
@@ -16,4 +17,14 @@ app/static/static_data/*
 # Ignore any non-default JPG files in userProfiles
 uploads/userProfiles/*.jpg
 !uploads/userProfiles/default.jpg
+
+# Ignore log files
+log.txt
+
+# Ignore virtual environments
+venv/
+.venv/
+
+# Ignore system files
+.DS_Store
 
