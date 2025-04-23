@@ -2173,6 +2173,7 @@ def upload_review_data():
                 409,
             )  # Conflict
     else:
+
         # Check submission limits for non-benchmarks
         review_count = (
             db.session.query(TaskTime.session_id)
@@ -2328,6 +2329,7 @@ def upload_review_data():
                 )  # Efficiently add many gaze points
                 current_app.logger.info(
                     f"Added {len(gaze_objects_to_add)} gaze points for TaskTime ID {target_task_time_id}"
+
                 )
 
         # Update project benchmark status if applicable
@@ -2807,6 +2809,7 @@ def calibration_complete():
 
         # Check if there's a pending redirection after calibration
         next_page = session.pop("next_after_calibration", None)
+
 
         if next_page:
             return (

@@ -2,6 +2,15 @@
 let webcamStream;
 let gazeData = [];
 
+// Function to add data to the CSV
+function addDataToCSV(x, y) {
+  const timestamp = new Date().toISOString(); // ISO 8601 format
+  // Create a row with x, y, and timestamp
+  const row = [timestamp, x, y];
+  // Add the row to the CSV data
+  csvData.push(row);
+}
+
 // Function to start WebGazer
 function startWebGazer() {
   webgazer
@@ -15,6 +24,7 @@ function startWebGazer() {
           // Check if gazeDot exists
           gazeDot.style.left = data.x + "px";
           gazeDot.style.top = data.y + "px";
+          addDataToCSV(data.x,data.y);
         }
         // Store as an object including the timestamp
         gazeData.push({ x: data.x, y: data.y, t: Math.round(clock) }); // 't' for timestamp
@@ -23,7 +33,6 @@ function startWebGazer() {
     .showVideo(true)
     .showPredictionPoints(true) // Ensure this is set to true
     .begin();
-
   navigator.mediaDevices
     .getUserMedia({ video: true })
     .then(function (stream) {
@@ -149,6 +158,7 @@ function updateWebGazerElements() {
 let mediaRecorder;
 let recordedChunks = [];
 let benchmarkMode = false;
+let csvData = [["Timestamp", "X", "Y"]];
 
 // Unified function to end the session and submit data
 function endSession() {
@@ -209,6 +219,7 @@ function endSession() {
       "MB"
     );
     formData.append("video", blob, "recorded_video.webm");
+
   } else {
     console.warn("No video data recorded - creating empty placeholder");
     // Create an empty video blob as a placeholder
