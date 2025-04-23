@@ -1,0 +1,69 @@
+2025-04-22 16:57:34,413 INFO: EyeC.Design startup [in C:\Users\domin\Desktop\runthrough\Remote-Eye-Tracking-UX-Testing-Software\app\__init__.py:95]
+2025-04-22 16:57:36,838 INFO: EyeC.Design startup [in C:\Users\domin\Desktop\runthrough\Remote-Eye-Tracking-UX-Testing-Software\app\__init__.py:95]
+2025-04-22 18:31:45,894 INFO: EyeC.Design startup [in C:\Users\domin\Desktop\runthrough\Remote-Eye-Tracking-UX-Testing-Software\app\__init__.py:95]
+2025-04-22 18:31:48,908 INFO: EyeC.Design startup [in C:\Users\domin\Desktop\runthrough\Remote-Eye-Tracking-UX-Testing-Software\app\__init__.py:95]
+2025-04-22 18:33:34,117 INFO: Saved video to: C:\Users\domin\Desktop\runthrough\Remote-Eye-Tracking-UX-Testing-Software\app\static\static_data\data\Projects\ae569fbf-49d9-4525-83a3-bf41b22b4847\7a86b5e7-db63-4c04-aee4-5f560b265984\Video\7a86b5e7-db63-4c04-aee4-5f560b265984.webm [in C:\Users\domin\Desktop\runthrough\Remote-Eye-Tracking-UX-Testing-Software\app\routes.py:1532]
+2025-04-22 18:33:34,160 ERROR: Error saving review data for project ae569fbf-49d9-4525-83a3-bf41b22b4847: (sqlite3.IntegrityError) NOT NULL constraint failed: gaze_data.id
+[SQL: INSERT INTO gaze_data (task_time_id, x, y) VALUES (?, ?, ?)]
+[parameters: [(16, 499.7352738531681, 500.1152148209896), (16, 495.43498277957434, 500.90944079734595), (16, 478.64292564956236, 509.67951120088986), (16, 452.72546216977275, 513.4102512725957), (16, 389.5544106551284, 539.6580876118071), (16, 304.46590421518306, 596.8027190302396), (16, 202.7648458015162, 703.8899103816821), (16, 103.2675191951059, 785.5779517536937)  ... displaying 10 of 447 total bound parameter sets ...  (16, 561.3305718095944, 409.25489322783477), (16, 511.1651849519291, 481.3836839206752)]]
+(Background on this error at: https://sqlalche.me/e/20/gkpj) [in C:\Users\domin\Desktop\runthrough\Remote-Eye-Tracking-UX-Testing-Software\app\routes.py:1650]
+Traceback (most recent call last):
+  File "C:\Users\domin\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.10_qbz5n2kfra8p0\LocalCache\local-packages\Python310\site-packages\sqlalchemy\engine\base.py", line 1934, in _exec_single_context
+    self.dialect.do_executemany(
+  File "C:\Users\domin\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.10_qbz5n2kfra8p0\LocalCache\local-packages\Python310\site-packages\sqlalchemy\engine\default.py", line 918, in do_executemany
+    cursor.executemany(statement, parameters)
+sqlite3.IntegrityError: NOT NULL constraint failed: gaze_data.id
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "C:\Users\domin\Desktop\runthrough\Remote-Eye-Tracking-UX-Testing-Software\app\routes.py", line 1621, in upload_review_data
+    db.session.bulk_save_objects(gaze_objects_to_add) # Efficiently add many gaze points
+  File "C:\Users\domin\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.10_qbz5n2kfra8p0\LocalCache\local-packages\Python310\site-packages\sqlalchemy\orm\scoping.py", line 1256, in bulk_save_objects
+    return self._proxied.bulk_save_objects(
+  File "C:\Users\domin\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.10_qbz5n2kfra8p0\LocalCache\local-packages\Python310\site-packages\sqlalchemy\orm\session.py", line 4396, in bulk_save_objects
+    self._bulk_save_mappings(
+  File "C:\Users\domin\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.10_qbz5n2kfra8p0\LocalCache\local-packages\Python310\site-packages\sqlalchemy\orm\session.py", line 4566, in _bulk_save_mappings
+    with util.safe_reraise():
+  File "C:\Users\domin\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.10_qbz5n2kfra8p0\LocalCache\local-packages\Python310\site-packages\sqlalchemy\util\langhelpers.py", line 147, in __exit__
+    raise exc_value.with_traceback(exc_tb)
+  File "C:\Users\domin\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.10_qbz5n2kfra8p0\LocalCache\local-packages\Python310\site-packages\sqlalchemy\orm\session.py", line 4555, in _bulk_save_mappings
+    bulk_persistence._bulk_insert(
+  File "C:\Users\domin\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.10_qbz5n2kfra8p0\LocalCache\local-packages\Python310\site-packages\sqlalchemy\orm\bulk_persistence.py", line 199, in _bulk_insert
+    result = persistence._emit_insert_statements(
+  File "C:\Users\domin\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.10_qbz5n2kfra8p0\LocalCache\local-packages\Python310\site-packages\sqlalchemy\orm\persistence.py", line 1043, in _emit_insert_statements
+    result = connection.execute(
+  File "C:\Users\domin\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.10_qbz5n2kfra8p0\LocalCache\local-packages\Python310\site-packages\sqlalchemy\engine\base.py", line 1412, in execute
+    return meth(
+  File "C:\Users\domin\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.10_qbz5n2kfra8p0\LocalCache\local-packages\Python310\site-packages\sqlalchemy\sql\elements.py", line 483, in _execute_on_connection
+    return connection._execute_clauseelement(
+  File "C:\Users\domin\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.10_qbz5n2kfra8p0\LocalCache\local-packages\Python310\site-packages\sqlalchemy\engine\base.py", line 1635, in _execute_clauseelement
+    ret = self._execute_context(
+  File "C:\Users\domin\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.10_qbz5n2kfra8p0\LocalCache\local-packages\Python310\site-packages\sqlalchemy\engine\base.py", line 1844, in _execute_context
+    return self._exec_single_context(
+  File "C:\Users\domin\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.10_qbz5n2kfra8p0\LocalCache\local-packages\Python310\site-packages\sqlalchemy\engine\base.py", line 1984, in _exec_single_context
+    self._handle_dbapi_exception(
+  File "C:\Users\domin\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.10_qbz5n2kfra8p0\LocalCache\local-packages\Python310\site-packages\sqlalchemy\engine\base.py", line 2339, in _handle_dbapi_exception
+    raise sqlalchemy_exception.with_traceback(exc_info[2]) from e
+  File "C:\Users\domin\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.10_qbz5n2kfra8p0\LocalCache\local-packages\Python310\site-packages\sqlalchemy\engine\base.py", line 1934, in _exec_single_context
+    self.dialect.do_executemany(
+  File "C:\Users\domin\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.10_qbz5n2kfra8p0\LocalCache\local-packages\Python310\site-packages\sqlalchemy\engine\default.py", line 918, in do_executemany
+    cursor.executemany(statement, parameters)
+sqlalchemy.exc.IntegrityError: (sqlite3.IntegrityError) NOT NULL constraint failed: gaze_data.id
+[SQL: INSERT INTO gaze_data (task_time_id, x, y) VALUES (?, ?, ?)]
+[parameters: [(16, 499.7352738531681, 500.1152148209896), (16, 495.43498277957434, 500.90944079734595), (16, 478.64292564956236, 509.67951120088986), (16, 452.72546216977275, 513.4102512725957), (16, 389.5544106551284, 539.6580876118071), (16, 304.46590421518306, 596.8027190302396), (16, 202.7648458015162, 703.8899103816821), (16, 103.2675191951059, 785.5779517536937)  ... displaying 10 of 447 total bound parameter sets ...  (16, 561.3305718095944, 409.25489322783477), (16, 511.1651849519291, 481.3836839206752)]]
+(Background on this error at: https://sqlalche.me/e/20/gkpj)
+2025-04-22 18:49:08,440 INFO: EyeC.Design startup [in C:\Users\domin\Desktop\runthrough\Remote-Eye-Tracking-UX-Testing-Software\app\__init__.py:95]
+2025-04-22 18:49:10,385 INFO: EyeC.Design startup [in C:\Users\domin\Desktop\runthrough\Remote-Eye-Tracking-UX-Testing-Software\app\__init__.py:95]
+2025-04-22 18:50:24,448 INFO: Saved video to: C:\Users\domin\Desktop\runthrough\Remote-Eye-Tracking-UX-Testing-Software\app\static\static_data\data\Projects\ae569fbf-49d9-4525-83a3-bf41b22b4847\19f0fe73-40cf-4c69-b1c6-a2f94f13b083\Video\19f0fe73-40cf-4c69-b1c6-a2f94f13b083.webm [in C:\Users\domin\Desktop\runthrough\Remote-Eye-Tracking-UX-Testing-Software\app\routes.py:1532]
+2025-04-22 18:53:08,365 INFO: EyeC.Design startup [in C:\Users\domin\Desktop\runthrough\Remote-Eye-Tracking-UX-Testing-Software\app\__init__.py:95]
+2025-04-22 18:54:54,234 INFO: EyeC.Design startup [in C:\Users\domin\Desktop\runthrough\Remote-Eye-Tracking-UX-Testing-Software\app\__init__.py:95]
+2025-04-22 18:54:56,605 INFO: EyeC.Design startup [in C:\Users\domin\Desktop\runthrough\Remote-Eye-Tracking-UX-Testing-Software\app\__init__.py:95]
+2025-04-22 19:02:18,988 INFO: Flushing session to get IDs for 2 major tasks before adding minors. [in C:\Users\domin\Desktop\runthrough\Remote-Eye-Tracking-UX-Testing-Software\app\routes.py:812]
+2025-04-22 19:02:19,014 INFO: Flush successful. [in C:\Users\domin\Desktop\runthrough\Remote-Eye-Tracking-UX-Testing-Software\app\routes.py:814]
+2025-04-22 19:02:19,016 INFO: Processing minor tasks for 2 major tasks... [in C:\Users\domin\Desktop\runthrough\Remote-Eye-Tracking-UX-Testing-Software\app\routes.py:825]
+2025-04-22 19:02:19,017 INFO: User 31bf9603-f7cf-4827-a35c-35e0dabfd6c4 (role: student) does not have permission to add collaborators during project creation. [in C:\Users\domin\Desktop\runthrough\Remote-Eye-Tracking-UX-Testing-Software\app\routes.py:936]
+2025-04-22 19:02:19,046 INFO: Project 'b7f06175-8d24-4667-b712-bd469e6446f7' (pgsdkjf) created by user 31bf9603-f7cf-4827-a35c-35e0dabfd6c4 with 2 major tasks, 3 minor tasks, and 0 additional collaborators. [in C:\Users\domin\Desktop\runthrough\Remote-Eye-Tracking-UX-Testing-Software\app\routes.py:942]
+2025-04-22 19:04:06,553 INFO: Saved video to: C:\Users\domin\Desktop\runthrough\Remote-Eye-Tracking-UX-Testing-Software\app\static\static_data\data\Projects\b7f06175-8d24-4667-b712-bd469e6446f7\472fe882-6603-448c-976b-ee5e6c5412d0\Video\472fe882-6603-448c-976b-ee5e6c5412d0.webm [in C:\Users\domin\Desktop\runthrough\Remote-Eye-Tracking-UX-Testing-Software\app\routes.py:1532]
+2025-04-22 19:04:06,574 INFO: Added 292 gaze points for TaskTime ID 1 [in C:\Users\domin\Desktop\runthrough\Remote-Eye-Tracking-UX-Testing-Software\app\routes.py:1622]
+2025-04-22 19:06:14,068 INFO: Added 353 gaze points for TaskTime ID 6 [in C:\Users\domin\Desktop\runthrough\Remote-Eye-Tracking-UX-Testing-Software\app\routes.py:1622]

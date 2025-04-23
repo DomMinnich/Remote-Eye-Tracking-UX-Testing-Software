@@ -1,109 +1,307 @@
-<!-- Dominic 2024 -->
-<!-- base.html -->
 <!DOCTYPE html>
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Flask App</title>
+    <title>{% block title %}EyeC.Design{% endblock %}</title>
     <link
       rel="stylesheet"
-      href="{{ url_for('static', filename='style.css') }}"
+      href="{{ url_for('static', filename='css/style.css') }}"
     />
-    <style>
-      body {
-        font-family: "Gruppo", sans-serif;
-        background: #1e1e2f;
-        margin: 0;
-        padding: 0;
-      }
-    </style>
+    {# Link Google Fonts #}
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Poppins:wght@500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    {% block head %}{% endblock %}
   </head>
-  <body class="base-body">
-    <main>
-      <!-- Main Content Block -->
-      {% block content %}{% endblock %}
-
-      <!-- Video Background -->
-      <div class="video-background">
-        <video autoplay muted loop playsinline>
-          <source
-            src="{{ url_for('static', filename='backgroundVideo2.mp4') }}"
-            type="video/mp4"
-          />
-          Your browser does not support the video tag.
-        </video>
-      </div>
-
-      <div class="base-dimming-overlay"></div>
-
-      <div class="base-menu-toggle">
-        <div class="base-bar"></div>
-        <div class="base-bar"></div>
-        <div class="base-bar"></div>
-      </div>
-
-      <!-- Sidebar Menu -->
-      <div class="base-sidebar-menu">
-        <div class="base-close-btn">&times;</div>
-        <ul class="base-menu-list">
-          {% if current_user.is_authenticated %}
-          <li><a href="{{ url_for('main.home') }}">🛖 HOME</a></li>
-          <li>
-            <a href="#">📃 PROJECTS <span class="base-expand-icon">+</span></a>
-            <ul class="base-submenu">
-              <li>
-                <a href="{{ url_for('main.viewProjects') }}">VIEW PROJECTS</a>
-              </li>
-              <li>
-                <a href="{{ url_for('main.viewSharedProjects') }}"
-                  >VIEW SHARED PROJECTS</a
-                >
-              </li>
-              <li>
-                <a href="{{ url_for('main.createProject') }}">NEW PROJECT</a>
-              </li>
-            </ul>
-          </li>
-          <li><a href="{{ url_for('main.profile') }}">😀 PROFILE</a></li>
-          <li><a href="{{ url_for('main.settings') }}">⚙️ SETTINGS</a></li>
-          {% if current_user.role == 'admin' %}
-          <li><a href="{{ url_for('main.adminPanel')}}">⚠️ ADMIN PANEL</a></li>
-          {% endif %}
-          <li><a href="{{ url_for('main.aboutUs') }}">🥷 ABOUT US</a></li>
-          <li><a href="{{ url_for('main.logout') }}">🪵 LOGOUT</a></li>
-          {% else %}
-          <li><a href="{{ url_for('main.aboutUs') }}">ABOUT US</a></li>
-          <li><a href="{{ url_for('main.login') }}">LOGIN</a></li>
-          <li><a href="{{ url_for('main.register') }}">REGISTER</a></li>
-          {% endif %}
-        </ul>
-      </div>
-
-      <!-- User Profile icon & name in top-right (when logged in) -->
-      {% if current_user.role %}
-      <a href="{{ url_for('main.profile') }}">
-        <div class="base-profile">
-          <img
-            src="{{ url_for('static', filename='uploads/userProfiles/' + (current_user.picture if current_user.picture else 'pic.png')) }}"
-            alt="base-profile Picture"
-          />
-          <span class="base-profile-name">
-            {{ current_user.first_name }} {{ current_user.last_name }}
-          </span>
+  <body class="page-{{ self.body_class|default('default') }}">
+    <header class="header">
+      <div class="header__container">
+        <div class="header__logo">
+          <a href="{{ url_for('main.home') }}">EyeC.Design 👀</a>
         </div>
-      </a>
-      {% endif %}
 
-      <!-- Footer Section -->
-      <footer class="base-footer">
-        <p>
-          Version 1.0.00 &emsp;|&emsp; &copy; 2024 EyeC.Design &emsp;|&emsp; All
-          rights reserved.
-        </p>
-      </footer>
+        {# Desktop Navigation #}
+        <nav class="nav-main" aria-label="Main Navigation">
+          <ul class="nav-main__list">
+            {% if current_user.is_authenticated %}
+            <li class="nav-main__item">
+              <a class="nav-main__link" href="{{ url_for('main.home') }}"
+                >Home</a
+              >
+            </li>
+            <li class="nav-main__item">
+              <a
+                class="nav-main__link"
+                href="{{ url_for('main.viewProjects') }}"
+                >My Projects</a
+              >
+            </li>
+            <li class="nav-main__item">
+              <a
+                class="nav-main__link"
+                href="{{ url_for('main.viewSharedProjects') }}"
+                >Shared Projects</a
+              >
+            </li>
+            <li class="nav-main__item">
+              <a
+                class="nav-main__link"
+                href="{{ url_for('main.createProject') }}"
+                >New Project</a
+              >
+            </li>
+            {% if current_user.role == 'admin' %}
+            <li class="nav-main__item">
+              <a class="nav-main__link" href="{{ url_for('main.admin_panel')}}"
+                >Admin Panel</a
+              >
+            </li>
+            {% endif %}
+            <li class="nav-main__item">
+              <a class="nav-main__link" href="{{ url_for('main.aboutUs') }}"
+                >About Us</a
+              >
+            </li>
+            {% else %}
+            <li class="nav-main__item">
+              <a class="nav-main__link" href="{{ url_for('main.aboutUs') }}"
+                >About Us</a
+              >
+            </li>
+            <li class="nav-main__item">
+              <a class="nav-main__link" href="{{ url_for('main.login') }}"
+                >Login</a
+              >
+            </li>
+            <li class="nav-main__item">
+              <a class="nav-main__link" href="{{ url_for('main.register') }}"
+                >Register</a
+              >
+            </li>
+            {% endif %}
+          </ul>
+
+          {# User Profile / Logout Button #} {% if current_user.is_authenticated
+          %}
+          <div class="nav-main__user">
+            <a
+              href="{{ url_for('main.profile') }}"
+              class="nav-main__profile-link"
+              title="Profile & Settings"
+            >
+              <img
+                class="nav-main__profile-img"
+                src="{{ url_for('static', filename='uploads/userProfiles/' + (current_user.picture if current_user.picture else 'images/pic.png')) }}"
+                alt="Profile Picture"
+              />
+              <span class="nav-main__profile-name"
+                >{{ current_user.first_name }}</span
+              >
+            </a>
+            <a
+              href="{{ url_for('main.logout') }}"
+              class="btn btn--secondary btn--small"
+              style="padding: 0.3rem 0.8rem; font-size: 0.9rem"
+              >Logout</a
+            >
+          </div>
+          {% endif %}
+        </nav>
+
+        {# Mobile Navigation Toggle #}
+        <button
+          class="nav-mobile-toggle"
+          aria-label="Toggle mobile navigation"
+          aria-expanded="false"
+        >
+          <span class="nav-mobile-toggle__bar"></span>
+          <span class="nav-mobile-toggle__bar"></span>
+          <span class="nav-mobile-toggle__bar"></span>
+        </button>
+      </div>
+    </header>
+
+    {# Mobile Navigation Menu (Off-canvas) #}
+    <nav class="nav-mobile-menu" aria-label="Mobile Navigation">
+      <button
+        class="nav-mobile-menu__close"
+        aria-label="Close mobile navigation"
+      >
+        &times;
+      </button>
+      <ul class="nav-mobile__list">
+        {% if current_user.is_authenticated %}
+        <li class="nav-mobile__item">
+          <a class="nav-mobile__link" href="{{ url_for('main.home') }}">Home</a>
+        </li>
+        <li class="nav-mobile__item nav-mobile__item--expandable">
+          <a class="nav-mobile__link" href="#"
+            >Projects <span class="nav-mobile__expand-icon">+</span></a
+          >
+          <ul class="nav-mobile__submenu">
+            <li>
+              <a
+                class="nav-mobile__submenu-link"
+                href="{{ url_for('main.viewProjects') }}"
+                >View Projects</a
+              >
+            </li>
+            <li>
+              <a
+                class="nav-mobile__submenu-link"
+                href="{{ url_for('main.viewSharedProjects') }}"
+                >View Shared Projects</a
+              >
+            </li>
+            <li>
+              <a
+                class="nav-mobile__submenu-link"
+                href="{{ url_for('main.createProject') }}"
+                >New Project</a
+              >
+            </li>
+          </ul>
+        </li>
+        <li class="nav-mobile__item">
+          <a class="nav-mobile__link" href="{{ url_for('main.profile') }}"
+            >Profile</a
+          >
+        </li>
+        <li class="nav-mobile__item">
+          <a class="nav-mobile__link" href="{{ url_for('main.settings') }}"
+            >Settings</a
+          >
+        </li>
+        {% if current_user.role == 'admin' %}
+        <li class="nav-mobile__item">
+          <a class="nav-mobile__link" href="{{ url_for('main.admin_panel')}}"
+            >Admin Panel</a
+          >
+        </li>
+        {% endif %}
+        <li class="nav-mobile__item">
+          <a class="nav-mobile__link" href="{{ url_for('main.aboutUs') }}"
+            >About Us</a
+          >
+        </li>
+        <li class="nav-mobile__item">
+          <a class="nav-mobile__link" href="{{ url_for('main.logout') }}"
+            >Logout</a
+          >
+        </li>
+        {% else %}
+        <li class="nav-mobile__item">
+          <a class="nav-mobile__link" href="{{ url_for('main.aboutUs') }}"
+            >About Us</a
+          >
+        </li>
+        <li class="nav-mobile__item">
+          <a class="nav-mobile__link" href="{{ url_for('main.login') }}"
+            >Login</a
+          >
+        </li>
+        <li class="nav-mobile__item">
+          <a class="nav-mobile__link" href="{{ url_for('main.register') }}"
+            >Register</a
+          >
+        </li>
+        {% endif %}
+      </ul>
+    </nav>
+    <div class="nav-overlay"></div>
+    {# Mobile nav overlay #}
+
+    <main class="main-content page-wrapper">
+      <div class="container">
+        <br /><br /><br />
+        {% block content %}{% endblock %}
+      </div>
     </main>
 
-    <script src="{{ url_for('static', filename='script.js') }}"></script>
+    <footer class="footer">
+      <p>&copy; 2024 EyeC.Design | All rights reserved.</p>
+    </footer>
+
+    {# General script for nav toggle etc. #}
+    <script>
+      document.addEventListener("DOMContentLoaded", () => {
+        const mobileToggle = document.querySelector(".nav-mobile-toggle");
+        const mobileMenu = document.querySelector(".nav-mobile-menu");
+        const mobileClose = document.querySelector(".nav-mobile-menu__close");
+        const navOverlay = document.querySelector(".nav-overlay");
+        const expandableItems = document.querySelectorAll(
+          ".nav-mobile__item--expandable > a"
+        ); // Target the link inside
+
+        function openMenu() {
+          mobileMenu.classList.add("active");
+          navOverlay.classList.add("active");
+          mobileToggle.setAttribute("aria-expanded", "true");
+          document.body.style.overflow = "hidden"; // Prevent background scroll
+        }
+
+        function closeMenu() {
+          mobileMenu.classList.remove("active");
+          navOverlay.classList.remove("active");
+          mobileToggle.setAttribute("aria-expanded", "false");
+          // Close all submenus when closing main menu
+          document
+            .querySelectorAll(".nav-mobile__item--expandable.active")
+            .forEach((item) => {
+              item.classList.remove("active");
+              const submenu = item.querySelector(".nav-mobile__submenu");
+              if (submenu) submenu.style.maxHeight = null;
+            });
+          document.body.style.overflow = ""; // Restore scroll
+        }
+
+        if (mobileToggle && mobileMenu && mobileClose && navOverlay) {
+          mobileToggle.addEventListener("click", () => {
+            if (mobileMenu.classList.contains("active")) {
+              closeMenu();
+            } else {
+              openMenu();
+            }
+          });
+          mobileClose.addEventListener("click", closeMenu);
+          navOverlay.addEventListener("click", closeMenu);
+        }
+
+        // Mobile Submenu Toggle
+        expandableItems.forEach((link) => {
+          link.addEventListener("click", (e) => {
+            e.preventDefault(); // Prevent link navigation
+            const parentItem = link.parentElement;
+            const submenu = parentItem.querySelector(".nav-mobile__submenu");
+
+            if (parentItem.classList.contains("active")) {
+              parentItem.classList.remove("active");
+              submenu.style.maxHeight = null;
+            } else {
+              // Close other open submenus first
+              document
+                .querySelectorAll(".nav-mobile__item--expandable.active")
+                .forEach((openItem) => {
+                  if (openItem !== parentItem) {
+                    openItem.classList.remove("active");
+                    const openSubmenu = openItem.querySelector(
+                      ".nav-mobile__submenu"
+                    );
+                    if (openSubmenu) openSubmenu.style.maxHeight = null;
+                  }
+                });
+              // Open the clicked one
+              parentItem.classList.add("active");
+              submenu.style.maxHeight = submenu.scrollHeight + "px";
+            }
+          });
+        });
+      });
+    </script>
+    {% block scripts %}{% endblock %}
   </body>
 </html>

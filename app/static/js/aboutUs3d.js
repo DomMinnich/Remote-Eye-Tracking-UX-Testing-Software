@@ -1,5 +1,5 @@
 // Dominic Minnich 2024
-// aboutUs3d.js
+// js/aboutus3d.js
 
 // Configuration options
 const config = {
@@ -230,25 +230,25 @@ const teamMembers = [
   {
     name: "Sulaiman Hussain",
     description: "Full Stack Developer",
-    imageUrl: "static/pic.png",
+    imageUrl: "static/images/pic.png",
     linkUrl: "https://example.com/sulaiman",
   },
   {
     name: "Dominic Minnich",
     description: "Team Leader\nFull Stack Developer",
-    imageUrl: "static/pic.png",
+    imageUrl: "static/images/pic.png",
     linkUrl: "https://github.com/DomMinnich",
   },
   {
     name: "Kyle Benich",
     description: "Full Stack Developer",
-    imageUrl: "static/pic.png",
+    imageUrl: "static/images/pic.png",
     linkUrl: "https://example.com/kyle",
   },
   {
     name: "Logan Smith",
     description: "Full Stack Developer",
-    imageUrl: "static/pic.png",
+    imageUrl: "static/images/pic.png",
     linkUrl: "https://github.com/lssmith80",
   },
 ];

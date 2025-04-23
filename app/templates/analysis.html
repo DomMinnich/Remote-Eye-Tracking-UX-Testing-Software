@@ -1,0 +1,232 @@
+{# templates/analysis.html #}
+{% extends 'base.html' %}
+{% set body_class = 'analysis' %}
+
+{% block title %}Project Analysis - {{ project.name }}{% endblock %}
+
+{% block head %}
+    {{ super() }}
+    {# Plotly JS is included via plot.to_html() with include_plotlyjs='cdn' #}
+    <style>
+        .analysis-section {
+            background-color: var(--clr-bg-alt);
+            padding: var(--space-lg);
+            border-radius: var(--radius-lg);
+            box-shadow: var(--shadow-soft);
+            margin-bottom: var(--space-xl);
+        }
+        .analysis-section h2 {
+            margin-top: 0;
+            margin-bottom: var(--space-lg);
+            font-size: 1.5rem;
+            color: var(--clr-primary-dark);
+            border-bottom: 1px solid var(--clr-border);
+            padding-bottom: var(--space-sm);
+        }
+        .plot-container {
+            overflow-x: auto; /* Allow horizontal scroll for wide plots */
+        }
+        table.dataframe { /* Basic table styling */
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: var(--space-md);
+            font-size: 0.9rem;
+        }
+        table.dataframe th, table.dataframe td {
+            border: 1px solid var(--clr-border);
+            padding: var(--space-sm) var(--space-md);
+            text-align: left;
+        }
+        table.dataframe th {
+            background-color: var(--clr-bg);
+            font-weight: 600;
+        }
+        table.dataframe tbody tr:nth-child(odd) {
+            background-color: var(--clr-bg);
+        }
+        .outlier-list li {
+            margin-bottom: var(--space-xs);
+            font-size: 0.9rem;
+        }
+        .session-list li {
+             margin-bottom: var(--space-sm);
+        }
+        .session-link {
+            margin-left: var(--space-md);
+            font-size: 0.9rem;
+        }
+    </style>
+{% endblock %}
+
+{% block content %}
+<div class="analysis-page container">
+    <div style="margin-bottom: var(--space-lg);">
+         <a href="{{ url_for('main.viewProjects') }}" class="btn btn--secondary" style="text-decoration: none;">← Back to My Projects</a>
+         {# Add link back to shared projects if appropriate #}
+    </div>
+
+    <h1 class="page-title">Analysis: {{ project.name }}</h1>
+    <p style="text-align: center; color: var(--clr-text-muted); margin-top: calc(-1 * var(--space-lg)); margin-bottom: var(--space-xl);">
+        Project ID: {{ project.id }}
+    </p>
+
+    {# Flash Messages #}
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            <div class="flash-messages" style="max-width: 100%; margin-bottom: var(--space-lg);">
+                {% for category, message in messages %}
+                    <div class="alert alert--{{ category }}">{{ message }}</div>
+                {% endfor %}
+            </div>
+        {% endif %}
+    {% endwith %}
+
+    {# --- Summary Stats --- #}
+    <section class="analysis-section">
+        <h2>Summary</h2>
+        <p><strong>Total Submissions:</strong> {{ analysis_results.total_submissions }}</p>
+        <p><strong>Benchmark Available:</strong> {{ 'Yes' if analysis_results.has_benchmark else 'No' }}</p>
+    </section>
+
+    {# --- Benchmark vs Average --- #}
+    {% if plots.benchmark_comparison %}
+    <section class="analysis-section">
+        <h2>Benchmark vs. Average Time</h2>
+        <div class="plot-container">
+            {{ plots.benchmark_comparison|safe }}
+        </div>
+    </section>
+    {% elif plots.benchmark_only %}
+     <section class="analysis-section">
+        <h2>Benchmark Times</h2>
+        <div class="plot-container">
+            {{ plots.benchmark_only|safe }}
+        </div>
+    </section>
+    {% elif plots.average_only %}
+     <section class="analysis-section">
+        <h2>Average Submission Times</h2>
+        <div class="plot-container">
+            {{ plots.average_only|safe }}
+        </div>
+    </section>
+    {% endif %}
+
+    {# --- Submission Time Distribution --- #}
+    {% if plots.time_distribution %}
+    <section class="analysis-section">
+        <h2>Submission Time Distribution</h2>
+        <div class="plot-container">
+            {{ plots.time_distribution|safe }}
+        </div>
+        <small style="display:block; text-align: center; margin-top: var(--space-sm); color: var(--clr-text-muted);">Hover over points to see Session ID. Boxes show interquartile range (IQR), whiskers typically extend 1.5x IQR.</small>
+    </section>
+    {% endif %}
+
+     {# --- Aggregate Heatmap --- #}
+    {% if plots.aggregate_heatmap %}
+    <section class="analysis-section">
+        <h2>Aggregate Gaze Heatmap</h2>
+        <div class="plot-container">
+             {{ plots.aggregate_heatmap|safe }}
+        </div>
+         <small style="display:block; text-align: center; margin-top: var(--space-sm); color: var(--clr-text-muted);">Combined gaze data from all non-benchmark submissions.</small>
+    </section>
+    {% endif %}
+
+    {# --- All Submission Data Table --- #}
+    {% if analysis_results.submission_summary %}
+    <section class="analysis-section">
+        <h2>All Submission Times (seconds)</h2>
+        <div style="max-height: 400px; overflow-y: auto;">
+            <table class="dataframe">
+                <thead>
+                    <tr>
+                        <th>Session ID</th>
+                        {# Dynamically create task name headers from the first entry #}
+                        {% if analysis_results.submission_summary %}
+                            {% set first_session_data = analysis_results.submission_summary.values()|first %}
+                            {% if first_session_data is mapping %} {# Check if it's dict from pivot #}
+                                {% for task_name in first_session_data.keys()|sort %}
+                                    <th>{{ task_name }}</th>
+                                {% endfor %}
+                            {% else %} {# Assume list of dicts #}
+                                {# This case is harder to make a clean table from without knowing all possible tasks #}
+                                 <th>Task Data</th>
+                            {% endif %}
+                         {% endif %}
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for session_id, tasks_data in analysis_results.submission_summary.items()|sort %}
+                    <tr>
+                        <td>{{ session_id[:8] }}...</td>
+                         {% if tasks_data is mapping %} {# Pivot data #}
+                            {% for task_name in tasks_data.keys()|sort %}
+                                <td>{{ tasks_data.get(task_name, 'N/A') }}</td>
+                            {% endfor %}
+                         {% else %} {# List of dicts data #}
+                             <td>
+                                 {% for task in tasks_data %}
+                                     {{ task.task_name }}: {{ task.time_spent }}s<br>
+                                 {% endfor %}
+                             </td>
+                         {% endif %}
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </section>
+    {% endif %}
+
+    {# --- Individual Session Heatmaps --- #}
+    {% if sessions %}
+    <section class="analysis-section">
+        <h2>Individual Session Heatmaps</h2>
+        <ul class="session-list">
+            {% if analysis_results.has_benchmark %}
+             <li>
+                 Benchmark
+                 <a href="{{ url_for('main.generate_session_heatmap', project_id=project.id, session_id='benchmark') }}" target="_blank" class="session-link">[View Heatmap]</a>
+             </li>
+            {% endif %}
+            {% for session_id in sessions %}
+            <li>
+                Session {{ session_id[:8] }}...
+                <a href="{{ url_for('main.generate_session_heatmap', project_id=project.id, session_id=session_id) }}" target="_blank" class="session-link">[View Heatmap]</a>
+                 <a href="{{ url_for('main.view_review_specific', project_id=project.id, session_id=session_id) }}" class="session-link">[View Details]</a>
+
+            </li>
+            {% endfor %}
+        </ul>
+    </section>
+    {% endif %}
+
+    {# --- Outlier Report --- #}
+    <section class="analysis-section">
+        <h2>Potential Time Outliers (IQR Method)</h2>
+        {% if analysis_results.outliers %}
+            <ul class="outlier-list">
+                {% for outlier in analysis_results.outliers %}
+                    <li>
+                        <strong>Session:</strong> {{ outlier.session_id[:8] }}... |
+                        <strong>Task:</strong> {{ outlier.task_name }} |
+                        <strong>Time:</strong> {{ outlier.time_spent }}s
+                        {# | <strong>User:</strong> {{ outlier.user_id[:8] if outlier.user_id else 'N/A' }}... #}
+                    </li>
+                {% endfor %}
+            </ul>
+        {% else %}
+            <p>No significant time outliers detected based on the 1.5 * IQR method.</p>
+        {% endif %}
+        <small style="display:block; margin-top: var(--space-sm); color: var(--clr-text-muted);">Outliers are points falling below Q1 - 1.5*IQR or above Q3 + 1.5*IQR for each task's submission times.</small>
+    </section>
+
+
+</div>
+{% endblock %}
+
+{% block scripts %}
+{# Add any analysis-page specific JS if needed #}
+{% endblock %}
