@@ -2,6 +2,15 @@
 let webcamStream;
 let gazeData = [];
 
+// Function to add data to the CSV
+function addDataToCSV(x, y) {
+  const timestamp = new Date().toISOString(); // ISO 8601 format
+  // Create a row with x, y, and timestamp
+  const row = [timestamp, x, y];
+  // Add the row to the CSV data
+  csvData.push(row);
+}
+
 // Function to start WebGazer
 function startWebGazer() {
   webgazer
@@ -13,6 +22,7 @@ function startWebGazer() {
         if (gazeDot && data.x && data.y) {
           gazeDot.style.left = data.x + "px";
           gazeDot.style.top = data.y + "px";
+          addDataToCSV(data.x,data.y);
         }
         gazeData.push([data.x, data.y]);
       }
@@ -20,7 +30,6 @@ function startWebGazer() {
     .showVideo(true)
     .showPredictionPoints(true) // Ensure this is set to true
     .begin();
-
   navigator.mediaDevices
     .getUserMedia({ video: true })
     .then(function (stream) {
@@ -145,6 +154,7 @@ function updateWebGazerElements() {
 let mediaRecorder;
 let recordedChunks = [];
 let benchmarkMode = false;
+let csvData = [["Timestamp", "X", "Y"]];
 
 // Unified function to end the session and submit data
 function endSession() {
@@ -187,6 +197,10 @@ function endSession() {
   // Append task times to the form data
   formData.append("task_times", JSON.stringify(taskTimes));
   console.log("Task times data:", JSON.stringify(taskTimes));
+
+  const csvString = csvData.map(row => row.join(",")).join("\n");
+  const csvBlob = new Blob([csvString], { type: "text/csv;charset=utf-8" });
+  formData.append("csv", csvBlob, "data.csv");
   
   let submissionPromise;
   
@@ -196,6 +210,7 @@ function endSession() {
     const blob = new Blob(recordedChunks, { type: "video/webm" });
     console.log("Video blob size:", Math.round(blob.size / 1024 / 1024 * 100) / 100, "MB");
     formData.append("video", blob, "recorded_video.webm");
+
   } else {
     console.warn("No video data recorded - creating empty placeholder");
     // Create an empty video blob as a placeholder
