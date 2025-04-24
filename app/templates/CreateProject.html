@@ -1,341 +1,379 @@
-{% extends 'base.html' %} {% block content %}
+{% extends 'base.html' %} {% set body_class = 'createproject' %} {% block title
+%}Create New Project{% endblock %} {% block content %}
+<div class="project-form-page">
+  <h2 class="page-title">Create New Project</h2>
 
-<link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}" />
+  {# Flash Messages #} {% with messages =
+  get_flashed_messages(with_categories=true) %} {% if messages %}
+  <div
+    class="flash-messages"
+    style="max-width: 100%; margin-bottom: var(--space-lg)"
+  >
+    {# Override centering for this page #} {% for category, message in messages
+    %}
+    <div class="alert alert--{{ category }}">{{ message }}</div>
+    {% endfor %}
+  </div>
+  {% endif %} {% endwith %}
 
-<div class="create-page">
-  <h2 class="create-page-title">Create New Project</h2>
+  <form
+    class="project-form"
+    method="POST"
+    action="{{ url_for('main.createProject') }}"
+    onsubmit="return prepareForm()"
+  >
+    {{ form.hidden_tag() }}
 
-  <div class="create-form-container">
-    <form
-      class="create-form"
-      method="POST"
-      action="{{ url_for('main.createProject') }}"
-      onsubmit="return prepareForm()"
-    >
-      {{ form.hidden_tag() }}
+    <div class="form-group">
+      <label class="form-label">Project Name</label>
+      <input
+        type="text"
+        name="name"
+        id="name"
+        class="form-control"
+        placeholder="Enter project name"
+        required
+      />
+    </div>
 
-      <div class="form-group">
-        {{ form.link.label }}<br />
-        {{ form.link(size=32) }}<br />
-        <span id="link-error" class="form-error" style="display: none">
-          [Invalid link. Only Figma domain links are allowed.]
-        </span>
-        {% for error in form.link.errors %}
-        <span class="form-error">[{{ error }}]</span>
-        {% endfor %}
+    <div class="form-group">
+      {{ form.link.label(class="form-label") }} {{
+      form.link(class="form-control",
+      placeholder="https://www.figma.com/file/...") }}
+      <span id="link-error" class="form-error" style="display: none">
+        Invalid link. Only Figma links are allowed.
+      </span>
+      {% for error in form.link.errors %}
+      <span class="form-error">{{ error }}</span>
+      {% endfor %}
+    </div>
+
+    {# Major Tasks Section #}
+    <div class="form-group">
+      <label class="form-label">Project Tasks</label>
+      <div id="major-tasks-container" class="dynamic-list-container">
+        {#
+        <!-- Major tasks added here by JS -->
+        #}
       </div>
+      <button
+        type="button"
+        class="btn btn--outline-primary add-major-task-btn"
+        style="background-color: #b8eb82; align-self: flex-start; margin-top: var(--space-sm)"
+      >
+        + Add Major Task
+      </button>
+      {% for error in form.major_tasks.errors %}
+      <span class="form-error">{{ error }}</span>
+      {% endfor %}
+    </div>
 
-      <div class="form-group">
-        {{ form.major_tasks.label }}<br />
-        <div id="major-tasks-container">
-          <!-- Major tasks will be added here -->
-        </div>
-        <button type="button" class="add-major-task-btn">Add Major Task</button>
-        {% for error in form.major_tasks.errors %}
-        <span class="form-error">[{{ error }}]</span>
-        {% endfor %}
-      </div>
-
-      {% if user.role == 'admin' or user.role == 'project_manager' %}
-      <div class="form-group">
-        {{ form.collaborators.label }}<br />
-        <div id="collaborators-container">
-          <div class="input-wrapper">
-            {{ form.collaborators(rows=1, oninput="autoResize(this)") }}
-            <select name="collaborator_role" class="form-control custom-select">
+    {# Collaborators Section (Conditional) #} {% if user.role == 'admin' or
+    user.role == 'project_manager' %}
+    <div class="form-group">
+      <label class="form-label"
+        >{{ form.collaborators.label }} (Enter email addresses)</label
+      >
+      <div id="collaborators-container" class="dynamic-list-container">
+        {#
+        <!-- Initial Collaborator Input -->
+        <div class="list-item collaborator-item">
+          <div class="form-group" style="margin-bottom: var(--space-sm)">
+            {{ form.collaborators(class="form-control collaborator-email",
+            placeholder="collaborator@example.com") }}
+          </div>
+          <div class="form-group" style="margin-bottom: 0">
+            <select
+              name="collaborator_role"
+              class="form-control collaborator-role"
+              style="max-width: 150px"
+            >
               <option value="co-owner">Co-owner</option>
               <option value="editor">Editor</option>
-              <option value="viewer">Viewer</option>
+              <option value="viewer" selected>Viewer</option>
             </select>
           </div>
+          <!-- Remove button added by JS -->
         </div>
-        <button type="button" class="add-collaborator-btn">+</button>
-        {% for error in form.collaborators.errors %}
-        <span class="form-error">[{{ error }}]</span>
-        {% endfor %}
+        #}
       </div>
-      {% endif %}
-
-      <div class="form-group">
-        <input type="hidden" name="major_tasks_hidden" value="[]" />
-        <input type="hidden" name="collaborators_hidden" value="[]" />
-        <input type="submit" value="Create Project" class="btn-submit" />
-      </div>
-    </form>
-  </div>
+      <button
+        type="button"
+        class="btn btn--outline-primary add-collaborator-btn"
+        style="background-color: rgb(104, 134, 255) !important; align-self: flex-start; margin-top: var(--space-sm)"
+      >
+        + Add Collaborator
+      </button>
+      {% for error in form.collaborators.errors %}
+      <span class="form-error">{{ error }}</span>
+      {% endfor %}
+    </div>
+    {% endif %} {# Hidden fields and Submit Button #}
+    <div
+      class="form-group"
+      style="text-align: center; margin-top: var(--space-lg)"
+    >
+      <input
+        type="hidden"
+        id="major_tasks_hidden"
+        name="major_tasks_hidden"
+        value="[]"
+      />
+      <input
+        type="hidden"
+        id="collaborators_hidden"
+        name="collaborators_hidden"
+        value="[]"
+      />
+      {{ form.submit(class="btn btn--primary btn--large", value="Create
+      Project") }} {# Optional: btn--large #}
+    </div>
+  </form>
 </div>
 
+<div
+  id="form-debug"
+  style="
+    margin: 20px 0;
+    padding: 10px;
+    background: #f0f0f0;
+    border-radius: 5px;
+    display: none;
+  "
+>
+  <pre id="form-debug-content"></pre>
+</div>
+{% endblock %} {% block scripts %}
 <script>
-  // Logging functionality
-  (function() {
-    // Store the original console.log function
-    const originalConsoleLog = console.log;
-    const logBuffer = [];
+  // --- Dynamic Form Logic ---
+  document.addEventListener("DOMContentLoaded", function () {
+    const majorTasksContainer = document.getElementById(
+      "major-tasks-container"
+    );
+    const addMajorTaskBtn = document.querySelector(".add-major-task-btn");
+    const collaboratorsContainer = document.getElementById(
+      "collaborators-container"
+    );
+    const addCollaboratorBtn = document.querySelector(".add-collaborator-btn");
 
-    // Override console.log
-    console.log = function() {
-      // Call the original console.log
-      originalConsoleLog.apply(console, arguments);
-
-      // Convert arguments to a string
-      const logMessage = Array.from(arguments).map(arg => {
-        if (typeof arg === 'object') {
-          try {
-            return JSON.stringify(arg);
-          } catch (e) {
-            return String(arg);
-          }
-        }
-        return String(arg);
-      }).join(' ');
-
-      // Add timestamp
-      const timestamp = new Date().toISOString();
-      const formattedLog = `[${timestamp}] ${logMessage}`;
-
-      // Add to buffer
-      logBuffer.push(formattedLog);
-
-      // Send logs to server if we have enough or when leaving page
-      if (logBuffer.length >= 10) {
-        sendLogsToServer();
-      }
-    };
-
-    // Function to send logs to server
-    function sendLogsToServer() {
-      if (logBuffer.length === 0) return;
-
-      fetch("{{ url_for('main.write_logs') }}", {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ logs: logBuffer }),
-      })
-      .then(response => {
-        if (response.ok) {
-          // Clear the buffer after successful write
-          logBuffer.length = 0;
-        }
-      })
-      .catch(error => {
-        originalConsoleLog("Error writing logs:", error);
-      });
-    }
-
-    // Send logs when leaving the page
-    window.addEventListener('beforeunload', sendLogsToServer);
-
-    // Also send logs periodically
-    setInterval(sendLogsToServer, 30000); // Every 30 seconds
-  })();
-
-  // Original script continues below
-  document.querySelector(".add-major-task-btn").addEventListener("click", function () {
-    console.log("Add major task button clicked");
-    const container = document.getElementById("major-tasks-container");
-    const inputWrapper = document.createElement("div");
-    inputWrapper.className = "input-wrapper major-task-wrapper";
-
-    const input = document.createElement("textarea");
-    input.name = "major_tasks";
-    input.rows = 1;
-    input.cols = 32;
-    input.placeholder = "Enter major task";
-    input.oninput = function () {
-      autoResize(this);
-    };
-
-    const nestedContainer = document.createElement("div");
-    nestedContainer.className = "nested-tasks";
-
-    const minorTaskButtons = document.createElement("div");
-    minorTaskButtons.className = "minor-task-buttons";
-
-    const addMinorBtn = document.createElement("button");
-    addMinorBtn.type = "button";
-    addMinorBtn.className = "add-task-btn";
-    addMinorBtn.innerHTML = "Add Minor Task";
-    addMinorBtn.addEventListener("click", function () {
-      addMinorTask(nestedContainer);
-    });
-
-    const removeMajorBtn = document.createElement("button");
-    removeMajorBtn.type = "button";
-    removeMajorBtn.className = "remove-btn";
-    removeMajorBtn.innerHTML = "x";
-    removeMajorBtn.addEventListener("click", function () {
-      container.removeChild(inputWrapper);
-      container.removeChild(separator);
-    });
-
-    minorTaskButtons.appendChild(addMinorBtn);
-    inputWrapper.appendChild(input);
-    inputWrapper.appendChild(removeMajorBtn);
-    inputWrapper.appendChild(nestedContainer);
-    inputWrapper.appendChild(minorTaskButtons);
-    container.appendChild(inputWrapper);
-
-    const separator = document.createElement("div");
-    separator.className = "major-task-separator";
-    container.appendChild(separator);
-  });
-
-  function addMinorTask(nestedTasksContainer) {
-    const minorInputWrapper = document.createElement("div");
-    minorInputWrapper.className = "input-wrapper";
-
-    const taskNumber = document.createElement("span");
-    taskNumber.className = "task-number";
-    taskNumber.textContent = (nestedTasksContainer.querySelectorAll(".input-wrapper").length + 1) + ".";
-
-    const minorInput = document.createElement("textarea");
-    minorInput.name = "minor_tasks";
-    minorInput.rows = 1;
-    minorInput.cols = 32;
-    minorInput.placeholder = "Enter minor task";
-    minorInput.oninput = function () {
-      autoResize(this);
-    };
-
-    const removeMinorBtn = document.createElement("button");
-    removeMinorBtn.type = "button";
-    removeMinorBtn.className = "remove-btn";
-    removeMinorBtn.innerHTML = "x";
-    removeMinorBtn.addEventListener("click", function () {
-      nestedTasksContainer.removeChild(minorInputWrapper);
-      updateMinorTaskNumbers(nestedTasksContainer);
-    });
-
-    minorInputWrapper.appendChild(taskNumber);
-    minorInputWrapper.appendChild(minorInput);
-    minorInputWrapper.appendChild(removeMinorBtn);
-    nestedTasksContainer.appendChild(minorInputWrapper);
-  }
-
-  function updateMinorTaskNumbers(container) {
-    const minorTasks = container.querySelectorAll(".input-wrapper");
-    minorTasks.forEach((task, index) => {
-      task.querySelector(".task-number").textContent = (index + 1) + ".";
-    });
-  }
-
-  {% if user.role == 'admin' or user.role == 'project_manager' %}
-  document
-    .querySelector(".add-collaborator-btn")
-    .addEventListener("click", function () {
-      const container = document.getElementById("collaborators-container");
-      const inputWrapper = document.createElement("div");
-      inputWrapper.className = "input-wrapper";
-
-      const input = document.createElement("textarea");
-      input.name = "collaborators";
-      input.rows = 1;
-      input.cols = 32;
-      input.oninput = function () {
-        autoResize(this);
-      };
-
-      const select = document.createElement("select");
-      select.name = "collaborator_role";
-      select.className = "form-control custom-select";
-      select.innerHTML = `
-        <option value="co-owner">Co-owner</option>
-        <option value="editor">Editor</option>
-        <option value="viewer">Viewer</option>
-      `;
-
+    // Function to create Remove Button (Standardized)
+    function createRemoveButton(itemToRemove) {
       const removeBtn = document.createElement("button");
       removeBtn.type = "button";
-      removeBtn.className = "remove-btn";
-      removeBtn.innerHTML = "x";
+      removeBtn.className = "remove-btn"; // Use the class from style.css
+      removeBtn.innerHTML = "×";
+      removeBtn.title = "Remove item";
       removeBtn.addEventListener("click", function () {
-        container.removeChild(inputWrapper);
+        itemToRemove.remove();
+        if (itemToRemove.closest(".minor-tasks-container")) {
+          // Check if removing a minor task
+          updateMinorTaskNumbers(
+            itemToRemove.closest(".minor-tasks-container")
+          );
+        }
       });
-
-      inputWrapper.appendChild(input);
-      inputWrapper.appendChild(select);
-      inputWrapper.appendChild(removeBtn);
-      container.appendChild(inputWrapper);
-    });
-  {% endif %}
-
-  function validateForm() {
-    const linkInput = document.querySelector('input[name="link"]');
-    const linkError = document.getElementById("link-error");
-    const figmaPattern = /^https:\/\/www\.figma\.com\/(file|design|proto)\/.+$/;
-
-    if (!figmaPattern.test(linkInput.value)) {
-      linkError.style.display = "block";
-      return false;
+      return removeBtn;
     }
-    linkError.style.display = "none";
-    return true;
-  }
 
+    // Function to add Major Task Item
+    function addMajorTask() {
+      const majorTaskItem = document.createElement("div");
+      majorTaskItem.className = "list-item major-task-item"; // Use new class
+
+      const input = document.createElement("textarea");
+      input.className = "form-control major-task-name"; // Use new classes
+      input.rows = 1;
+      input.placeholder = "Major task description";
+      input.oninput = () => autoResize(input);
+
+      const nestedContainer = document.createElement("div");
+      nestedContainer.className = "nested-list minor-tasks-container"; // Use new classes
+
+      const addMinorBtn = document.createElement("button");
+      addMinorBtn.type = "button";
+      // Use multiple BEM classes for styling
+      addMinorBtn.className =
+        "btn btn--outline-primary btn--small add-minor-task-btn";
+      addMinorBtn.style.cssText =
+        "background-color: pink; font-size: 0.8rem; padding: 0.2rem 0.5rem; margin-top: var(--space-sm);"; // Inline styles for specifics
+      addMinorBtn.innerHTML = "+ Add Minor Task";
+      addMinorBtn.addEventListener("click", () =>
+        addMinorTask(nestedContainer)
+      );
+
+      majorTaskItem.appendChild(input);
+      majorTaskItem.appendChild(nestedContainer);
+      majorTaskItem.appendChild(addMinorBtn); // Add button below nested container
+      majorTaskItem.appendChild(createRemoveButton(majorTaskItem));
+
+      majorTasksContainer.appendChild(majorTaskItem);
+      autoResize(input);
+    }
+
+    // Function to add Minor Task Item
+    function addMinorTask(nestedContainer) {
+      const minorTaskItem = document.createElement("div");
+      minorTaskItem.className = "list-item minor-task-item"; // Use new class
+      minorTaskItem.style.display = "flex"; // Align number and input
+      minorTaskItem.style.alignItems = "center";
+      minorTaskItem.style.gap = "var(--space-sm)";
+
+      const taskNumber = document.createElement("span");
+      taskNumber.className = "task-number"; // Keep for numbering
+
+      const minorInput = document.createElement("textarea");
+      minorInput.className = "form-control minor-task-name"; // Use new class
+      minorInput.rows = 1;
+      minorInput.placeholder = "Minor task description";
+      minorInput.oninput = () => autoResize(minorInput);
+      minorInput.style.flexGrow = "1"; // Allow input to grow
+
+      minorTaskItem.appendChild(taskNumber);
+      minorTaskItem.appendChild(minorInput);
+      minorTaskItem.appendChild(createRemoveButton(minorTaskItem));
+
+      nestedContainer.appendChild(minorTaskItem);
+      updateMinorTaskNumbers(nestedContainer);
+      autoResize(minorInput);
+    }
+
+    // Function to update minor task numbers
+    function updateMinorTaskNumbers(container) {
+      const minorTasks = container.querySelectorAll(".minor-task-item");
+      minorTasks.forEach((task, index) => {
+        const numberSpan = task.querySelector(".task-number");
+        if (numberSpan) numberSpan.textContent = index + 1 + ".";
+      });
+    }
+
+    // Function to add Collaborator Item
+    function addCollaborator() {
+      const collaboratorItem = document.createElement("div");
+      collaboratorItem.className = "list-item collaborator-item";
+      collaboratorItem.style.display = "flex";
+      collaboratorItem.style.alignItems = "center";
+      collaboratorItem.style.gap = "var(--space-md)";
+
+      const emailInput = document.createElement("input");
+      emailInput.type = "email";
+      emailInput.className = "form-control collaborator-email"; // Use new class
+      emailInput.placeholder = "collaborator@example.com";
+      emailInput.style.flexGrow = "1";
+
+      const roleSelect = document.createElement("select");
+      roleSelect.className = "form-control collaborator-role"; // Use new class
+      roleSelect.style.maxWidth = "150px";
+      roleSelect.innerHTML = `
+                <option value="co-owner">Co-owner</option>
+                <option value="editor">Editor</option>
+                <option value="viewer" selected>Viewer</option>
+            `;
+
+      collaboratorItem.appendChild(emailInput);
+      collaboratorItem.appendChild(roleSelect);
+      collaboratorItem.appendChild(createRemoveButton(collaboratorItem));
+
+      collaboratorsContainer.appendChild(collaboratorItem);
+    }
+
+    // --- Initial Setup & Event Listeners ---
+    if (addMajorTaskBtn) {
+      addMajorTaskBtn.addEventListener("click", addMajorTask);
+      // Add one major task initially?
+      // if (majorTasksContainer.children.length === 0) addMajorTask();
+    }
+
+    if (addCollaboratorBtn && collaboratorsContainer) {
+      addCollaboratorBtn.addEventListener("click", addCollaborator);
+      // Add initial collaborator row if container is empty
+      if (collaboratorsContainer.children.length === 0) {
+        addCollaborator();
+      }
+    }
+  });
+
+  // --- Utility: Auto-resize Textarea ---
   function autoResize(textarea) {
     textarea.style.height = "auto";
     textarea.style.height = textarea.scrollHeight + "px";
   }
 
+  // --- Utility: Validate Figma Link ---
+  function validateForm() {
+    const linkInput = document.querySelector('input[name="link"]'); // Target by name
+    const linkError = document.getElementById("link-error");
+    const figmaPattern = /^https:\/\/www\.figma\.com\/(file|design|proto)\/.+$/;
+
+    if (!linkInput || !figmaPattern.test(linkInput.value)) {
+      if (linkError) linkError.style.display = "block";
+      linkInput?.focus();
+      return false;
+    }
+    if (linkError) linkError.style.display = "none";
+    return true;
+  }
+
+  // --- Prepare Form Data for Submission ---
   function prepareForm() {
-    if (!validateForm()) {
+    if (!validateForm()) return false;
+
+    // Process Tasks
+    const majorTasksData = [];
+    document
+      .querySelectorAll("#major-tasks-container .major-task-item")
+      .forEach((majorItem) => {
+        const majorName = majorItem
+          .querySelector(".major-task-name")
+          ?.value.trim();
+        if (majorName) {
+          const minorTasks = [];
+          majorItem
+            .querySelectorAll(".minor-tasks-container .minor-task-name")
+            .forEach((minorInput) => {
+              const minorName = minorInput.value.trim();
+              if (minorName) minorTasks.push(minorName);
+            });
+          majorTasksData.push({ name: majorName, minor_tasks: minorTasks });
+        }
+      });
+
+    // Check if we have at least one task
+    if (majorTasksData.length === 0) {
+      alert("Please add at least one task for the project");
       return false;
     }
 
-    const majorTasksContainer = document.getElementById("major-tasks-container");
-    const majorTasks = Array.from(majorTasksContainer.querySelectorAll(".major-task-wrapper")).map(
-      (wrapper) => {
-        const majorTask = wrapper.querySelector("textarea[name='major_tasks']").value;
-        const minorTasks = Array.from(wrapper.querySelectorAll(".nested-tasks textarea")).map(
-          (textarea) => textarea.value
-        );
-        return { name: majorTask, minor_tasks: minorTasks };
-      }
+    document.getElementById("major_tasks_hidden").value =
+      JSON.stringify(majorTasksData);
+
+    // Process Collaborators
+    const collaboratorsData = [];
+    const collaboratorsContainer = document.getElementById(
+      "collaborators-container"
     );
-    document.querySelector('input[name="major_tasks_hidden"]').value = JSON.stringify(majorTasks);
-
-    {% if user.role == 'admin' or user.role == 'project_manager' %}
-    const collaboratorsContainer = document.getElementById("collaborators-container");
-    const collaborators = [];
-
-    // Process all input-wrapper elements in the container
-    Array.from(collaboratorsContainer.querySelectorAll(".input-wrapper")).forEach((wrapper) => {
-      // Try first for a dynamically created element
-      let textarea = wrapper.querySelector("textarea[name='collaborators']");
-      let select = wrapper.querySelector("select[name='collaborator_role']");
-
-      // If textarea is null, it might be a server-rendered field (has ID instead of just name)
-      if (!textarea) {
-        textarea = wrapper.querySelector("#collaborators");
-      }
-
-      // Debug what we're finding
-      console.log("Processing wrapper:", {
-        textarea: textarea ? "Found" : "Not found",
-        select: select ? "Found" : "Not found"
-      });
-
-      // Check if we found both elements and email isn't empty
-      if (textarea && select && textarea.value.trim() !== "") {
-        collaborators.push({
-          email: textarea.value.trim(),
-          role: select.value
+    if (collaboratorsContainer) {
+      collaboratorsContainer
+        .querySelectorAll(".collaborator-item")
+        .forEach((item) => {
+          const email = item.querySelector(".collaborator-email")?.value.trim();
+          const role = item.querySelector(".collaborator-role")?.value;
+          // Basic email format check
+          if (email && role && email.includes("@")) {
+            collaboratorsData.push({ email: email, role: role });
+          }
         });
-        console.log("Added collaborator:", textarea.value.trim(), select.value);
-      } else {
-        console.log("Skipping entry - Missing data or empty email");
-      }
-    });
+    }
+    document.getElementById("collaborators_hidden").value =
+      JSON.stringify(collaboratorsData);
 
-    console.log("Final collaborators data:", collaborators);
-    document.querySelector('input[name="collaborators_hidden"]').value =
-      JSON.stringify(collaborators);
-    {% else %}
-    document.querySelector('input[name="collaborators_hidden"]').value = JSON.stringify([]);
-    {% endif %}
-
+    console.log(
+      "Prepared Tasks:",
+      document.getElementById("major_tasks_hidden").value
+    );
+    console.log(
+      "Prepared Collaborators:",
+      document.getElementById("collaborators_hidden").value
+    );
     return true;
   }
 </script>

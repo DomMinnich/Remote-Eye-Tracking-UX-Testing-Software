@@ -1,694 +1,229 @@
-{% extends 'base.html' %} {% block content %}
-<title>Review Player</title>
+{% extends 'base.html' %}
+{% set body_class = 'viewreviewspecific' %}
 
-<style>
-  .video-player-page {
-    max-width: 900px;
-    margin: 80px auto 100px auto;
-    padding: 20px;
-    background: rgba(255, 255, 255, 0.07);
-    backdrop-filter: blur(10px);
-    border-radius: 12px;
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
-  }
+{% block title %}Review Submission{% endblock %}
 
-  .video-player-page h2 {
-    font-size: 2rem;
-    text-align: center;
-    color: #fff;
-    text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.8);
-    margin-bottom: 24px;
-  }
-
-  .vrs-back-button {
-    display: inline-block;
-    text-decoration: none;
-    color: #fff;
-    background-color: #616161;
-    padding: 8px 14px;
-    border-radius: 6px;
-    margin-bottom: 16px;
-    font-weight: 600;
-    transition: background-color 0.3s;
-  }
-  .vrs-back-button:hover {
-    background-color: #444;
-  }
-
-  .vrs-review_id {
-    color: #ffd700;
-    font-weight: 600;
-    margin-top: 0;
-    margin-bottom: 16px;
-  }
-  .vrs-review_date {
-    color: #ccc;
-    margin: 0 0 16px;
-  }
-
-  .vrs-video-container {
-    position: relative;
-    width: 100%;
-    margin-bottom: 20px;
-  }
-
-  video {
-    width: 100%;
-    height: auto;
-    display: block;
-    border-radius: 12px;
-    border: 2px solid #ccc;
-    background-color: #000;
-  }
-
-  .vrs-tooltip-icon {
-    position: absolute;
-    top: 10px;
-    right: 10px;
-    cursor: pointer;
-    font-size: 1.5rem;
-    color: #fff;
-    text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.8);
-  }
-  .vrs-tooltip-icon:hover {
-    color: #ffd700;
-  }
-
-  .vrs-tooltip-overlay {
-    display: none;
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    pointer-events: none;
-  }
-
-  .vrs-tooltip-item {
-    position: absolute;
-    background-color: rgba(0, 0, 0, 0.7);
-    color: #fff;
-    padding: 6px 10px;
-    border-radius: 6px;
-    font-size: 0.9rem;
-    text-align: center;
-    pointer-events: none;
-  }
-  .vrs-tooltip-item p {
-    margin: 0;
-  }
-  .vrs-arrow {
-    width: 0;
-    height: 0;
-    border-left: 6px solid transparent;
-    border-right: 6px solid transparent;
-    border-top: 6px solid rgba(0, 0, 0, 0.7);
-    margin: 4px auto 0 auto;
-  }
-
-  .vrs-controls {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    background-color: rgba(255, 255, 255, 0.1);
-    border-radius: 6px;
-    padding: 10px;
-    margin-top: 8px;
-    flex-wrap: wrap;
-  }
-
-  .vrs-box {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-  }
-
-  .vrs-sparkle {
-    cursor: pointer;
-    background-color: #4169e1;
-    color: #fff;
-    font-weight: 600;
-    border: none;
-    border-radius: 6px;
-    padding: 8px 12px;
-    transition: background-color 0.3s;
-  }
-  .vrs-sparkle:hover {
-    background-color: #27408b;
-  }
-
-  .vrs-sparkle:active {
-    transform: scale(0.95);
-  }
-
-  .vrs-seek-bar,
-  .vrs-volume-bar {
-    flex: 1 1 auto;
-    -webkit-appearance: none;
-    appearance: none;
-    background: #ccc;
-    height: 6px;
-    border-radius: 3px;
-    cursor: pointer;
-  }
-
-  .vrs-seek-bar::-webkit-slider-thumb,
-  .vrs-volume-bar::-webkit-slider-thumb {
-    -webkit-appearance: none;
-    width: 14px;
-    height: 14px;
-    background: #4169e1;
-    border-radius: 50%;
-    border: 1px solid #fff;
-    cursor: pointer;
-  }
-
-  #vrs-speed-control {
-    padding: 6px;
-    border-radius: 6px;
-    border: 1px solid #ccc;
-    outline: none;
-    font-weight: 600;
-    background-color: #fff;
-    color: #000; /* Ensuring text is black */
-  }
-  #vrs-speed-control:focus {
-    border-color: #00c1ff;
-  }
-
-  .vrs-time-display {
-    font-weight: 600;
-    color: #fff;
-    min-width: 100px;
-    text-align: center;
-    margin-right: 6px;
-  }
-
-  .vrs-lens {
-    display: none;
-    position: absolute;
-    pointer-events: none;
-    border: 2px solid #fff;
-    border-radius: 50%;
-    width: 200px;
-    height: 200px;
-    z-index: 10;
-    box-shadow: 0 0 10px rgba(255, 255, 255, 0.6);
-  }
-
-  @media (max-width: 600px) {
-    .video-player-page {
-      margin: 60px 10px 100px 10px;
-      padding: 15px;
-    }
-    .video-player-page h2 {
-      font-size: 1.6rem;
-    }
-    .vrs-controls {
-      flex-direction: column;
-      align-items: flex-start;
-      gap: 8px;
-    }
-    .vrs-time-display {
-      margin-left: 0;
-    }
-    .vrs-seek-bar,
-    .vrs-volume-bar {
-      width: 100%;
-    }
-  }
-
-  .task-comparison-sidebar {
-    position: fixed;
-    top: 100px;
-    left: 20px;
-    width: 250px;
-    background-color: rgba(0, 0, 0, 0.8);
-    color: white;
-    padding: 15px;
-    border-radius: 8px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
-    z-index: 1000;
-  }
-  .task-comparison-sidebar h3 {
-    text-align: center;
-    margin-bottom: 10px;
-    color: #ffffff;
-  }
-  .task-comparison-sidebar .task {
-    margin-bottom: 12px;
-    padding: 8px;
-    background-color: rgba(255, 255, 255, 0.1);
-    border-radius: 4px;
-  }
-  .task-comparison-sidebar .task span {
-    display: block;
-    margin-bottom: 3px;
-  }
-  .task-comparison-sidebar .task-name {
-    font-weight: bold;
-    color: #ffd700;
-  }
-  .task-comparison-sidebar .benchmark-time {
-    color: #ffffff;
-  }
-  .task-comparison-sidebar .review-time {
-    color: #cccccc;
-  }
-  .task-comparison-sidebar .positive {
-    color: #4ecdc4; /* Green color for positive/faster times */
-  }
-  .task-comparison-sidebar .negative {
-    color: #ff6b6b; /* Red color for negative/slower times */
-  }
-  
-  /* Label colors */
-  label {
-    color: #ffffff;
-  }
-</style>
-
-<div class="video-player-page">
-  <h2>Review Player</h2>
-
-  <a href="javascript:history.back()" class="vrs-back-button">
-    Back to Submissions
-  </a>
-
-  <p class="vrs-review_id">Project Submission</p>
-  <!--
-  <p class="vrs-review_date">Date: ...</p>
-  <p class="vrs-review_title">Title ...</p>
-  <p class="vrs-review_tasks">Tasks ...</p>
-  -->
-
-  <div class="vrs-video-container">
-    <video
-      id="vrs-video"
-      src="{{ url_for('static', filename=video_url) }}"
-      poster="static/Playbutton.png"
-      preload="metadata"
-    ></video>
-
-    <div class="vrs-tooltip-icon" title="Show Controls Guide">❔</div>
-
-    <div class="vrs-tooltip-overlay">
-      <div class="vrs-tooltip-item" style="top: 75%; left: 1%">
-        <p>Back 5</p>
-        <div class="vrs-arrow" style="transform: rotate(180deg)"></div>
-      </div>
-      <div class="vrs-tooltip-item" style="top: 80%; left: 5.5%">
-        <p>Play/Pause</p>
-        <div class="vrs-arrow" style="transform: rotate(180deg)"></div>
-      </div>
-      <div class="vrs-tooltip-item" style="top: 75%; left: 12%">
-        <p>Forward 5</p>
-        <div class="vrs-arrow" style="transform: rotate(180deg)"></div>
-      </div>
-      <div class="vrs-tooltip-item" style="top: 82%; left: 30%">
-        <p>Time Slider</p>
-        <div class="vrs-arrow" style="transform: rotate(180deg)"></div>
-      </div>
-      <div class="vrs-tooltip-item" style="top: 30%; left: 40%">
-        <p><br />Hold Shift For Magnifier<br /></p>
-        <div class="vrs-arrow" style="transform: rotate(180deg)"></div>
-      </div>
-      <div class="vrs-tooltip-item" style="top: 80%; left: 51.5%">
-        <p>Mute/Unmute</p>
-        <div class="vrs-arrow" style="transform: rotate(180deg)"></div>
-      </div>
-      <div class="vrs-tooltip-item" style="top: 75%; left: 84%">
-        <p>Video Speed</p>
-        <div class="vrs-arrow" style="transform: rotate(180deg)"></div>
-      </div>
-      <div class="vrs-tooltip-item" style="top: 80%; left: 92%">
-        <p>Fullscreen</p>
-        <div class="vrs-arrow" style="transform: rotate(180deg)"></div>
-      </div>
+{% block content %}
+<div class="video-player-page"> {# Reuse settings page style or specific #}
+    <div style="margin-bottom: var(--space-lg);">
+         <a href="{{ url_for('main.view_review_broad', project_id=request.args.get('project_id')) }}" class="btn btn--secondary" style="text-decoration: none;">&larr; Back to Submissions</a>
     </div>
 
-    <div class="vrs-controls">
-      <div class="vrs-box">
-        <button
-          id="vrs-backward"
-          aria-label="Backward 5 seconds"
-          class="vrs-sparkle"
-        >
-          -5
-        </button>
-        <button id="vrs-play-pause" aria-label="Play/Pause" class="vrs-sparkle">
-          ▶
-        </button>
-        <button
-          id="vrs-forward"
-          aria-label="Forward 5 seconds"
-          class="vrs-sparkle"
-        >
-          +5
-        </button>
-      </div>
+    <h1 class="page-title">Review Player</h1>
+     <p style="text-align: center; color: var(--clr-text-muted); margin-top: calc(-1 * var(--space-lg)); margin-bottom: var(--space-lg);">
+         Session ID: {{ request.args.get('session_id', 'N/A')[:8] }}...
+         {# Add date/time if available #}
+     </p>
 
-      <input type="range" id="vrs-seek-bar" class="vrs-seek-bar" value="0" />
-      <span id="vrs-time-display" class="vrs-time-display"> 0:00 / 0:00 </span>
+    <div style="display: flex; gap: var(--space-lg); flex-wrap: wrap;">
 
-      <button id="vrs-mute" aria-label="Mute/Unmute" class="vrs-sparkle">
-        🔈
-      </button>
-      <input
-        type="range"
-        id="vrs-volume-bar"
-        class="vrs-volume-bar"
-        min="0"
-        max="1"
-        step="0.1"
-        value="1"
-      />
-      <select id="vrs-speed-control" aria-label="Speed Control">
-        <option value="0.5">0.5x</option>
-        <option value="1" selected>1x</option>
-        <option value="1.5">1.5x</option>
-        <option value="2">2x</option>
-      </select>
-      <button id="vrs-fullscreen" aria-label="Fullscreen" class="vrs-sparkle">
-        ⛶
-      </button>
-    </div>
-  </div>
+        {# Video Player Main Area #}
+        <div style="flex-grow: 1; min-width: 60%;">
+            <div class="video-player__container">
+                <video id="reviewVideo" class="video-player__video" controls controlsList="nodownload" preload="metadata">
+                     {# Check if video_url is actually set and valid #}
+                     {% if video_url and video_url != 'static_data/data/Projects///Video/.webm' %}
+                        <source src="{{ url_for('static', filename=video_url) }}" type="video/webm">
+                     {% else %}
+                        <p style="padding: var(--space-xl); text-align:center; color: var(--clr-text-muted);">Video not found or unavailable.</p>
+                     {% endif %}
+                    Your browser does not support the video tag.
+                </video>
+                 {# Custom controls can be built here or rely on browser controls #}
+                 {# Example using default controls, controlsList prevents download #}
+            </div>
+             
+            <div class="magnifier-lens" id="magnifierLens"></div>
+        </div>
 
-  <div class="vrs-lens" id="vrs-lens"></div>
+        {# Task Comparison Sidebar Area #}
+        <aside class="task-comparison-sidebar" style="position: static; width: auto; flex-basis: 300px; max-height: 70vh;"> {# Adjust styling for page flow #}
+            <h3>Task Times</h3>
+            <div id="task-comparison-list" class="task-comparison-sidebar__list">
+                {# Populated by JavaScript #}
+            </div>
+        </aside>
+
+    </div> {# End Flex Container #}
+
 </div>
+{% endblock %}
 
-<div class="task-comparison-sidebar">
-  <h3>Task Comparison</h3>
-  <div id="task-comparison-list">
-    <!-- Task comparisons will be dynamically inserted here -->
-  </div>
-</div>
-
+{% block scripts %}
 <script>
-  document.addEventListener("DOMContentLoaded", function () {
-    const tooltipIcon = document.querySelector(".vrs-tooltip-icon");
-    const tooltipOverlay = document.querySelector(".vrs-tooltip-overlay");
+    document.addEventListener("DOMContentLoaded", function () {
+        const benchmarkTimes = {{ benchmark_times | tojson | safe }};
+        const reviewTimes = {{ review_times | tojson | safe }};
+        const taskComparisonList = document.getElementById("task-comparison-list");
 
-    tooltipIcon.addEventListener("mouseover", () => {
-      tooltipOverlay.style.display = "flex";
-    });
+        taskComparisonList.innerHTML = ""; // Clear placeholder
 
-    tooltipIcon.addEventListener("mouseout", () => {
-      tooltipOverlay.style.display = "none";
-    });
-
-    const video = document.getElementById("vrs-video");
-    const playPauseBtn = document.getElementById("vrs-play-pause");
-    const seekBar = document.getElementById("vrs-seek-bar");
-    const timeDisplay = document.getElementById("vrs-time-display");
-    const muteBtn = document.getElementById("vrs-mute");
-    const volumeBar = document.getElementById("vrs-volume-bar");
-    const fullscreenBtn = document.getElementById("vrs-fullscreen");
-    const speedControl = document.getElementById("vrs-speed-control");
-    const forwardBtn = document.getElementById("vrs-forward");
-    const backwardBtn = document.getElementById("vrs-backward");
-
-    playPauseBtn.addEventListener("click", () => {
-      if (video.paused || video.ended) {
-        video.play();
-        playPauseBtn.textContent = "❚❚";
-      } else {
-        video.pause();
-        playPauseBtn.textContent = "▶";
-      }
-    });
-
-    video.addEventListener("click", () => {
-      if (video.paused || video.ended) {
-        video.play();
-        playPauseBtn.textContent = "❚❚";
-      } else {
-        video.pause();
-        playPauseBtn.textContent = "▶";
-      }
-    });
-
-    forwardBtn.addEventListener("click", () => {
-      if (
-        video.duration &&
-        isFinite(video.duration) &&
-        isFinite(video.currentTime)
-      ) {
-        video.currentTime = Math.min(video.currentTime + 5, video.duration);
-        seekBar.value = (video.currentTime / video.duration) * 100;
-      }
-    });
-
-    backwardBtn.addEventListener("click", () => {
-      if (isFinite(video.currentTime)) {
-        video.currentTime = Math.max(video.currentTime - 5, 0);
-        if (video.duration && isFinite(video.duration)) {
-          seekBar.value = (video.currentTime / video.duration) * 100;
+        // Helper function to format time
+        function formatTime(seconds) {
+            if (seconds === undefined || seconds === null || isNaN(seconds)) return "N/A";
+            const isNegative = seconds < 0;
+            const absSeconds = Math.abs(seconds);
+            const mins = Math.floor(absSeconds / 60);
+            const secs = Math.round(absSeconds % 60); // Round seconds
+            return `${isNegative ? '-' : ''}${mins}:${secs.toString().padStart(2, '0')}`;
         }
-      }
-    });
 
-    video.addEventListener("timeupdate", () => {
-      if (
-        video.duration &&
-        isFinite(video.duration) &&
-        isFinite(video.currentTime)
-      ) {
-        const progress = (video.currentTime / video.duration) * 100;
-        seekBar.value = progress;
-        timeDisplay.textContent = `${formatTime(
-          video.currentTime
-        )} / ${formatTime(video.duration)}`;
-      }
-    });
+        // Create a map of review times for faster lookup
+        const reviewTimesMap = reviewTimes.reduce((acc, item) => {
+            if (item && item.task) {
+                acc[item.task] = item.time;
+            }
+            return acc;
+        }, {});
 
-    seekBar.addEventListener("input", () => {
-      if (video.duration && isFinite(video.duration)) {
-        const seekPosition = parseFloat(seekBar.value);
-        const seekTime = (seekPosition / 100) * video.duration;
+         let hasComparisonData = false;
 
-        // Make sure seekTime is finite before setting currentTime
-        if (isFinite(seekTime)) {
-          video.currentTime = seekTime;
+        // Process benchmark times and compare with review times
+        benchmarkTimes.forEach(benchmarkTask => {
+            if (!benchmarkTask || !benchmarkTask.task) return;
+            hasComparisonData = true;
+
+            const taskName = benchmarkTask.task;
+            const benchmarkTime = typeof benchmarkTask.time === 'number' ? benchmarkTask.time : null;
+            const reviewTime = typeof reviewTimesMap[taskName] === 'number' ? reviewTimesMap[taskName] : null;
+
+            const taskElement = document.createElement("div");
+            taskElement.className = "task-comparison-sidebar__task";
+
+            taskElement.innerHTML = `
+                <span class="task-comparison-sidebar__task-name">${taskName}</span>
+                <span class="task-comparison-sidebar__time--benchmark">Benchmark: ${formatTime(benchmarkTime)}</span>
+                <span class="task-comparison-sidebar__time--review">Review: ${formatTime(reviewTime)}</span>
+            `;
+
+            // Calculate and display difference if both times are valid numbers
+            if (benchmarkTime !== null && reviewTime !== null) {
+                const timeDifference = reviewTime - benchmarkTime;
+                const diffElem = document.createElement("span");
+                diffElem.className = `task-comparison-sidebar__time--diff ${timeDifference <= 0 ? "task-comparison-sidebar__time--positive" : "task-comparison-sidebar__time--negative"}`;
+                diffElem.textContent = `Difference: ${timeDifference >= 0 ? '+' : ''}${formatTime(timeDifference)}`;
+                taskElement.appendChild(diffElem);
+            } else {
+                 const diffElem = document.createElement("span");
+                 diffElem.className = 'task-comparison-sidebar__time--diff';
+                 diffElem.textContent = 'Difference: N/A';
+                 diffElem.style.color = 'var(--clr-text-muted)';
+                 taskElement.appendChild(diffElem);
+            }
+
+            taskComparisonList.appendChild(taskElement);
+            // Remove the task from the map so we know which review tasks are left
+            delete reviewTimesMap[taskName];
+        });
+
+        // Add any remaining review tasks (those without a benchmark)
+        Object.entries(reviewTimesMap).forEach(([taskName, reviewTime]) => {
+             if (typeof reviewTime !== 'number') return; // Skip if time is invalid
+             hasComparisonData = true;
+
+             const taskElement = document.createElement("div");
+             taskElement.className = "task-comparison-sidebar__task";
+             taskElement.innerHTML = `
+                <span class="task-comparison-sidebar__task-name">${taskName} (Review Only)</span>
+                <span class="task-comparison-sidebar__time--review">Review: ${formatTime(reviewTime)}</span>
+                <span class="task-comparison-sidebar__time--benchmark">Benchmark: N/A</span>
+             `;
+             taskComparisonList.appendChild(taskElement);
+        });
+
+         // Display message if no data was processed
+        if (!hasComparisonData) {
+             const noDataElement = document.createElement("p");
+             noDataElement.textContent = "No task time data available for comparison.";
+             noDataElement.style.textAlign = 'center';
+             noDataElement.style.color = 'var(--clr-text-muted)';
+             taskComparisonList.appendChild(noDataElement);
         }
-      }
-    });
 
-    muteBtn.addEventListener("click", () => {
-      video.muted = !video.muted;
-      muteBtn.textContent = video.muted ? "🔇" : "🔈";
-    });
+        // --- Optional: Magnifier Lens Logic ---
+        const video = document.getElementById('reviewVideo');
+        const lens = document.getElementById('magnifierLens');
+        let isShiftPressed = false;
 
-    volumeBar.addEventListener("input", () => {
-      video.volume = volumeBar.value;
-    });
+        if(video && lens) {
+            window.addEventListener('keydown', (e) => {
+                if (e.key === 'Shift' && !isShiftPressed) {
+                    isShiftPressed = true;
+                    lens.style.display = 'block';
+                    video.style.cursor = 'none';
+                }
+            });
+            window.addEventListener('keyup', (e) => {
+                if (e.key === 'Shift') {
+                    isShiftPressed = false;
+                    lens.style.display = 'none';
+                    video.style.cursor = 'auto';
+                }
+            });
 
-    fullscreenBtn.addEventListener("click", () => {
-      if (!document.fullscreenElement) {
-        video.requestFullscreen();
-      } else {
-        document.exitFullscreen();
-      }
-    });
+            video.addEventListener('mousemove', moveLens);
+            video.addEventListener('mouseleave', () => { // Hide lens if mouse leaves video
+                 if (isShiftPressed) {
+                    // lens.style.display = 'none'; // Optional: hide when leaving video even if shift held
+                 }
+            });
 
-    speedControl.addEventListener("change", () => {
-      video.playbackRate = speedControl.value;
-    });
+            function moveLens(e) {
+                if (!isShiftPressed || lens.style.display !== 'block') return;
 
-    function formatTime(seconds) {
-      if (!seconds || !isFinite(seconds)) return "0:00";
-      const minutes = Math.floor(seconds / 60);
-      const secs = Math.floor(seconds % 60);
-      return `${minutes}:${secs < 10 ? "0" : ""}${secs}`;
-    }
+                const videoRect = video.getBoundingClientRect();
+                const lensRect = lens.getBoundingClientRect();
+                const scrollX = window.pageXOffset || document.documentElement.scrollLeft;
+                const scrollY = window.pageYOffset || document.documentElement.scrollTop;
 
-    video.addEventListener("loadedmetadata", () => {
-      timeDisplay.textContent = `0:00 / ${formatTime(video.duration)}`;
-    });
+                // Calculate cursor position relative to the video element
+                let x = e.pageX - videoRect.left - scrollX;
+                let y = e.pageY - videoRect.top - scrollY;
 
-    // Lens functionality
-    const lens = document.getElementById("vrs-lens");
-    const lensWidth = lens.offsetWidth;
-    const lensHeight = lens.offsetHeight;
+                // Calculate lens position (centered on cursor)
+                let lensX = e.pageX - lensRect.width / 2;
+                let lensY = e.pageY - lensRect.height / 2;
 
-    let isShiftPressed = false;
+                // Prevent lens from going outside the video boundaries
+                if (lensX < videoRect.left + scrollX) lensX = videoRect.left + scrollX;
+                if (lensY < videoRect.top + scrollY) lensY = videoRect.top + scrollY;
+                if (lensX > videoRect.right + scrollX - lensRect.width) lensX = videoRect.right + scrollX - lensRect.width;
+                if (lensY > videoRect.bottom + scrollY - lensRect.height) lensY = videoRect.bottom + scrollY - lensRect.height;
 
-    lens.style.display = "none";
+                // Set lens position
+                lens.style.left = `${lensX}px`;
+                lens.style.top = `${lensY}px`;
 
-    window.addEventListener("keydown", (e) => {
-      if (e.key === "Shift") {
-        isShiftPressed = true;
-        lens.style.display = "block";
-        document.body.style.cursor = "none";
-      }
-    });
+                // Calculate background position for zoom effect
+                // Magnification factor (e.g., 2x zoom)
+                const zoom = 2;
+                const bgX = - (x * zoom - lensRect.width / 2);
+                const bgY = - (y * zoom - lensRect.height / 2);
 
-    window.addEventListener("keyup", (e) => {
-      if (e.key === "Shift") {
-        isShiftPressed = false;
-        lens.style.display = "none";
-        document.body.style.cursor = "auto";
-      }
-    });
+                lens.style.backgroundImage = `url('${captureVideoFrame(video)}')`; // Capture current frame
+                lens.style.backgroundSize = `${video.offsetWidth * zoom}px ${video.offsetHeight * zoom}px`;
+                lens.style.backgroundPosition = `${bgX}px ${bgY}px`;
+            }
 
-    video.addEventListener("mousemove", moveLens);
-    video.addEventListener("touchmove", moveLens);
+             function captureVideoFrame(videoElement) {
+                 
+                if (!videoElement.videoWidth || !videoElement.videoHeight) {
+                     return ''; // Return empty string if dimensions aren't available
+                 }
+                 const canvas = document.createElement("canvas");
+                 canvas.width = videoElement.videoWidth;
+                 canvas.height = videoElement.videoHeight;
+                 const ctx = canvas.getContext("2d");
+                 try {
+                    ctx.drawImage(videoElement, 0, 0, canvas.width, canvas.height);
+                    return canvas.toDataURL("image/png");
+                 } catch (e) {
+                    console.error("Error capturing video frame:", e);
+                    return ''; // Return empty on error
+                 }
+             }
+        } // end if(video && lens)
 
-    function moveLens(e) {
-      if (!isShiftPressed) return;
-
-      e.preventDefault();
-      const pos = getCursorPos(e);
-      let x = pos.x - lensWidth / 2;
-      let y = pos.y - lensHeight / 2;
-
-      const videoBounds = video.getBoundingClientRect();
-      const maxX = videoBounds.width - lensWidth;
-      const maxY = videoBounds.height - lensHeight;
-
-      x = Math.max(0, Math.min(x, maxX));
-      y = Math.max(0, Math.min(y, maxY));
-
-      lens.style.left = `${x + videoBounds.left}px`;
-      lens.style.top = `${y + videoBounds.top}px`;
-
-      captureAndDisplayFrame(pos);
-    }
-
-    function captureAndDisplayFrame(pos) {
-      if (!isShiftPressed) return;
-
-      const frame = captureVideoFrame(video);
-      lens.style.backgroundImage = `url('${frame}')`;
-      lens.style.backgroundSize = `${video.videoWidth * 2}px ${
-        video.videoHeight * 2
-      }px`;
-
-      const scaleFactorX = video.videoWidth / video.clientWidth;
-      const scaleFactorY = video.videoHeight / video.clientHeight;
-      const backgroundX = (pos.x * scaleFactorX - lensWidth / 2) * 2;
-      const backgroundY = (pos.y * scaleFactorY - lensHeight / 2) * 2;
-
-      lens.style.backgroundPosition = `-${backgroundX}px -${backgroundY}px`;
-    }
-
-    function getCursorPos(e) {
-      const rect = video.getBoundingClientRect();
-      const x = e.clientX - rect.left;
-      const y = e.clientY - rect.top;
-      return { x, y };
-    }
-
-    function captureVideoFrame(videoElement) {
-      const canvas = document.createElement("canvas");
-      canvas.width = videoElement.videoWidth;
-      canvas.height = videoElement.videoHeight;
-      const ctx = canvas.getContext("2d");
-      ctx.drawImage(videoElement, 0, 0, canvas.width, canvas.height);
-      return canvas.toDataURL("image/png");
-    }
-
-    // Task comparison functionality
-    const benchmarkTimes = {{ benchmark_times|tojson }}; // Benchmark times from the server
-    const reviewTimes = {{ review_times|tojson }}; // Review times from the server
-
-    const taskComparisonList = document.getElementById("task-comparison-list");
-    
-    // Clear any previous content
-    taskComparisonList.innerHTML = "";
-    
-    // Debug
-    console.log("Benchmark times:", benchmarkTimes);
-    console.log("Review times:", reviewTimes);
-    
-    if (!benchmarkTimes || !reviewTimes || benchmarkTimes.length === 0 || reviewTimes.length === 0) {
-      const noDataElement = document.createElement("p");
-      noDataElement.textContent = "No task comparison data available";
-      taskComparisonList.appendChild(noDataElement);
-    } else {
-      // Create a map of tasks to review times for easier lookup
-      const reviewTimesMap = {};
-      reviewTimes.forEach(item => {
-        if (item && item.task && item.time !== undefined) {
-          reviewTimesMap[item.task] = item.time;
-        }
-      });
-      
-      // For each benchmark task, find its corresponding review time
-      benchmarkTimes.forEach(benchmarkTask => {
-        if (!benchmarkTask || !benchmarkTask.task) return;
-        
-        const taskName = benchmarkTask.task;
-        const benchmarkTime = benchmarkTask.time || 0;
-        const reviewTime = reviewTimesMap[taskName] || 0;
-        const timeDifference = reviewTime - benchmarkTime;
-        
-        const taskElement = document.createElement("div");
-        taskElement.classList.add("task");
-        
-        const taskNameElem = document.createElement("span");
-        taskNameElem.classList.add("task-name");
-        taskNameElem.textContent = taskName;
-        
-        const benchmarkTimeElem = document.createElement("span");
-        benchmarkTimeElem.classList.add("benchmark-time");
-        benchmarkTimeElem.textContent = `Benchmark: ${formatTime(benchmarkTime)}`;
-        
-        const reviewTimeElem = document.createElement("span");
-        reviewTimeElem.classList.add("review-time");
-        reviewTimeElem.textContent = `Review: ${formatTime(reviewTime)}`;
-        
-        const diffElem = document.createElement("span");
-        diffElem.textContent = `Difference: ${timeDifference >= 0 ? '+' : ''}${formatTime(timeDifference)}`;
-        diffElem.classList.add(timeDifference <= 0 ? "positive" : "negative");
-        
-        taskElement.appendChild(taskNameElem);
-        taskElement.appendChild(benchmarkTimeElem);
-        taskElement.appendChild(reviewTimeElem);
-        taskElement.appendChild(diffElem);
-        
-        taskComparisonList.appendChild(taskElement);
-      });
-      
-      // Also show any review tasks that don't have benchmark equivalents
-      reviewTimes.forEach(reviewTask => {
-        if (!reviewTask || !reviewTask.task) return;
-        
-        // Skip if we've already processed this task
-        const found = benchmarkTimes.some(b => b.task === reviewTask.task);
-        if (found) return;
-        
-        const taskElement = document.createElement("div");
-        taskElement.classList.add("task");
-        
-        const taskNameElem = document.createElement("span");
-        taskNameElem.classList.add("task-name");
-        taskNameElem.textContent = reviewTask.task + " (No benchmark)";
-        
-        const reviewTimeElem = document.createElement("span");
-        reviewTimeElem.classList.add("review-time");
-        reviewTimeElem.textContent = `Review: ${formatTime(reviewTask.time)}`;
-        
-        taskElement.appendChild(taskNameElem);
-        taskElement.appendChild(reviewTimeElem);
-        
-        taskComparisonList.appendChild(taskElement);
-      });
-    }
-    
-    // Format time in seconds to mm:ss
-    function formatTime(seconds) {
-      if (seconds === undefined || seconds === null) return "00:00";
-      
-      const isNegative = seconds < 0;
-      seconds = Math.abs(seconds);
-      
-      const mins = Math.floor(seconds / 60);
-      const secs = Math.floor(seconds % 60);
-      
-      return `${isNegative ? '-' : ''}${mins}:${secs.toString().padStart(2, '0')}`;
-    }
-  });
+    }); // End DOMContentLoaded
 </script>
 {% endblock %}

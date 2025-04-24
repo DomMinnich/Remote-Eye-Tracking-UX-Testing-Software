@@ -1,11 +1,5 @@
-{% extends "base.html" %} 
-{% block title %}Project{% endblock %} 
-
-{% block head %}
-  {{ super() }}
-{% endblock %}
-
-{% block content %}
+{% extends "base.html" %} {% block title %}Project{% endblock %} {% block head
+%} {{ super() }} {% endblock %} {% block content %}
 
 <div class="review-container">
   <h2 class="review-h2">Project: {{ project.name }}</h2>
@@ -27,9 +21,13 @@
   <div class="review-controls">
     <a href="#" class="review-btn" id="start-session">Start Session</a>
     <a href="#" class="review-btn" id="end-session">End Session</a>
-    
+
     <!-- Task container moved next to buttons -->
-    <div id="task-container" class="review-task-container" style="display: none;">
+    <div
+      id="task-container"
+      class="review-task-container"
+      style="display: none"
+    >
       <h3 id="major-task"></h3>
       <ul id="minor-tasks"></ul>
       <a href="#" class="review-btn review-next-task" id="next-task">Next</a>
@@ -38,50 +36,50 @@
 </div>
 
 <!-- Scripts -->
-<script src="{{ url_for('static', filename='webgazer.js') }}"></script>
+<script src="{{ url_for('static', filename='js/webgazer.js') }}"></script>
 <script src="{{ url_for('static', filename='js/review.js') }}"></script>
 <script>
   // Initialize variables with server-provided data
   document.addEventListener('DOMContentLoaded', function() {
     // Set project data from the server
     projectId = "{{ project.id }}";
-    majorTasks = {{ project.tasks|tojson }};
+    majorTasks = {{ project_tasks_json|tojson }};  // Use the pre-serialized tasks
     benchmarkMode = {{ 'true' if request.args.get('benchmark') else 'false' }};
   });
 </script>
 
 <script>
-  document.addEventListener('DOMContentLoaded', function() {
+  document.addEventListener("DOMContentLoaded", function () {
     // Wait for review.js to load and define the original function
     setTimeout(() => {
-      if (typeof stopWebGazer === 'function') {
+      if (typeof stopWebGazer === "function") {
         console.log("Patching stopWebGazer function");
-        
+
         // Replace the original function with a fixed version
-        window.stopWebGazer = function() {
+        window.stopWebGazer = function () {
           return new Promise((resolve, reject) => {
             try {
               console.log("Stopping WebGazer");
-              
+
               // End the webgazer session
               webgazer.end();
-              
+
               // Save data across sessions if available
-              if (typeof webgazer.saveDataAcrossSessions === 'function') {
+              if (typeof webgazer.saveDataAcrossSessions === "function") {
                 webgazer.saveDataAcrossSessions(true);
               }
-              
+
               // Clean up webcam stream
               if (webcamStream) {
                 const tracks = webcamStream.getTracks();
                 tracks.forEach((track) => track.stop());
                 webcamStream = null;
               }
-              
+
               // Hide video and prediction points
               webgazer.showVideo(false);
               webgazer.showPredictionPoints(false);
-              
+
               resolve(); // Successfully stopped webgazer
             } catch (err) {
               console.error("Error stopping WebGazer:", err);
@@ -92,6 +90,39 @@
       }
     }, 500);
   });
+</script>
+
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    // Extract the Figma file ID from your proxied_link
+    const figmaUrl = "{{ proxied_link }}";
+    const figmaFileId = extractFigmaFileId(figmaUrl);
+
+    if (figmaFileId) {
+      // Replace the iframe with a div that will contain the embed
+      const container = document.createElement("div");
+      container.style.width = "100%";
+      container.style.height = "600px";
+      container.id = "figma-container";
+
+      const iframe = document.querySelector(".review-iframe");
+      iframe.parentNode.replaceChild(container, iframe);
+
+      // Create and append a script to load the Figma embed with additional parameters
+      const script = document.createElement("script");
+      script.src =
+        "https://www.figma.com/embed?embed_host=share&url=https://www.figma.com/file/" +
+        figmaFileId +
+        "?node-id=0%3A1&disable_autofocus=true"; // Add disable_autofocus parameter
+      document.body.appendChild(script);
+    }
+  });
+
+  function extractFigmaFileId(url) {
+    // Extract Figma file ID from URL like https://www.figma.com/file/FILE_ID/...
+    const matches = url.match(/figma\.com\/file\/([^\/]+)/);
+    return matches ? matches[1] : null;
+  }
 </script>
 
 {% endblock %}

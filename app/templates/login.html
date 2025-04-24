@@ -1,95 +1,70 @@
-<!-- Dominic Minnich 2024 -->
-<!-- login.html -->
+{% extends 'base.html' %}
+{% set body_class = 'login' %}
 
-{% extends 'base.html' %} {% block content %}
+{% block title %}Login - EyeC.Design{% endblock %}
 
-<link rel="stylesheet" href="{{ url_for('static', filename='eye.css') }}" />
-<style>
-  /* Reset */
-  * {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-  }
+{% block content %}
+<div class="auth-wrapper"> {# Centered container for auth forms #}
 
-  body {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 100vh;
-    background-color: #121212;
-    overflow: hidden;
-  }
+    {# Optional: Placeholder for a logo or cute illustration #}
+    {# <div class="auth-illustration" style="text-align: center; margin-bottom: var(--space-lg);">
+        <img src="{{ url_for('static', filename='images/login-icon.svg') }}" alt="" style="max-width: 80px;">
+    </div> #}
 
-  .video-background {
-    opacity: 0;
-  }
-</style>
-<div class="home-rain-container">
-  <div class="home-raindrops"></div>
-</div>
+    <h2 class="auth-title">Welcome Back!</h2>
 
-<!-- Centered Container -->
-<div class="login-page">
-  <!-- Animated Eye Container -->
-  <div class="eye-container">
-    <div class="eye-socket">
-      <div class="outer-ring"></div>
-      <div class="sclera">
-        <div class="vein-texture"></div>
-        <div class="cyber-iris">
-          <div class="inner-ring-1"></div>
-          <div class="inner-ring-2"></div>
-          <div class="inner-ring-3"></div>
-          <div class="inner-ring-4"></div>
-          <div class="inner-ring-5"></div>
-          <div class="inner-ring-6"></div>
-          <div class="inner-circuitry"></div>
-          <div class="pupil"></div>
-          <div class="tech-overlay"></div>
-          <div class="reflection-layer"></div>
-          <div class="reflection-layer-2"></div>
+    {# Flash Messages #}
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            <div class="flash-messages" style="width: 100%; margin-left: 0; margin-right: 0;">
+                {% for category, message in messages %}
+                    <div class="alert alert--{{ category }}">{{ message }}</div>
+                {% endfor %}
+            </div>
+        {% endif %}
+    {% endwith %}
+
+    <form method="POST" action="{{ url_for('main.login') }}" class="auth-form">
+        {{ form.hidden_tag() }}
+        <div class="form-group">
+            <label for="username" class="form-label sr-only">Username</label>
+            {{ form.username(id="username", class="form-control", placeholder="Username", required=true) }}
         </div>
-      </div>
-      <div class="upper-eyelid"></div>
-      <div class="lower-eyelid"></div>
-    </div>
-  </div>
+        <div class="form-group">
+            <label for="password" class="form-label sr-only">Password</label>
+            {{ form.password(id="password", class="form-control", placeholder="Password", required=true) }}
+        </div>
+        <div class="form-group form-check"> {# Remember Me Checkbox #}
+             {{ form.remember_me(class="form-check-input", id="remember_me") }}
+             {{ form.remember_me.label(class="form-check-label", for="remember_me") }}
+        </div>
+        <div class="form-group">
+            {{ form.submit(class="btn btn--primary") }}
+        </div>
+    </form>
 
-  <h2 class="login-title">Login</h2>
+    <div class="auth-links">
+        <p><a href="{{ url_for('main.forgotPassword') }}">Forgot Password?</a></p>
+        <p>Don't have an account? <a href="{{ url_for('main.register') }}">Sign Up</a></p>
+    </div>
 
-  <!-- Form Section -->
-  <!-- Flash Messages Section -->
-  {% with messages = get_flashed_messages(with_categories=true) %} {% if
-  messages %}
-  <div class="login-flash-messages">
-    {% for category, message in messages %}
-    <div class="login-alert alert-{{ category }}">{{ message }}</div>
-    {% endfor %}
-  </div>
-  {% endif %} {% endwith %}
-
-  <form method="POST" action="{{ url_for('main.login') }}" class="login-form">
-    {{ form.hidden_tag() }}
-    <div class="login-form-group">
-      {{ form.username(id="username", placeholder="Enter your username") }}
-    </div>
-    <div class="login-form-group">
-      {{ form.password(id="password", placeholder="Enter your password") }}
-    </div>
-    <div class="login-form-group">
-      {{ form.submit(class="login-btn-submit") }}
-    </div>
-    <p class="register-link">
-      Don't have an account?
-      <a href="{{ url_for('main.register') }}">Register</a>
-    </p>
-    <p class="register-link forgot-password-link">
-      Forgot your Password?
-      <a href="{{ url_for('main.forgotPassword') }}">Password</a>
-    </p>
-  </form>
 </div>
-<script src="{{ url_for('static', filename='eye.js') }}"></script>
+{% endblock %}
 
+{% block scripts %}
+
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        const successMessage = document.querySelector('.alert--success');
+        // If you want a specific transition on successful login, add it here.
+        // For example, a slight fade out before redirecting.
+        if (successMessage) {
+            document.body.style.transition = 'opacity 0.5s ease-out';
+            document.body.style.opacity = '0';
+            setTimeout(() => {
+                window.location.href = "{{ url_for('main.home') }}"; // Redirect to home
+            }, 500); // Match transition duration
+        }
+    });
+</script>
 {% endblock %}

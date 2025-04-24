@@ -1,325 +1,167 @@
-{% extends "base.html" %} {% block content %}
-<div style="text-align: center; margin: 20px; color: #ffffff">
-  <h1>Project ID# {{ project_id }}</h1>
-  <p>Reviews: {{ videos|length }}</p>
-  <!-- 
-  <div>
-    <label for="sort-options">Sort by:</label>
-    <select id="sort-options" onchange="sortReviews()">
-      <option value="length">Length</option>
-      <option value="date">Date</option>
-    </select>
-    <button onclick="sortReviews()">Sort</button>
-  </div>
-  -->
-</div>
+{% extends "base.html" %}
+{% set body_class = 'viewreviewbroad' %}
 
-{% if videos %}
-<div
-  style="
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-    gap: 20px;
-    padding: 20px;
-  "
->
-  {% for video in videos %}
-  <div
-    style="
-      position: relative;
-      border: 3px solid #6a5acd;
-      padding: 20px;
-      border-radius: 10px;
-      background-color: #ffffff00;
-      text-align: center;
-      box-shadow: 0 4px 8px rgb(0, 0, 0);
-      transition: transform 0.2s, box-shadow 0.2s;
-      color: #ffffff;
-    "
-    onmouseover="this.style.transform='scale(1.01)'; this.style.boxShadow='0 8px 16px rgba(0, 0, 0, 0.2)';"
-    onmouseout="this.style.transform='scale(1)'; this.style.boxShadow='0 4px 8px rgba(0, 0, 0, 0.1)';"
-  >
-    <!-- Three-dot menu button -->
-    <div
-      class="dropdown"
-      style="position: absolute; top: 10px; right: 10px; z-index: 10"
-    >
-      <button
-        onclick="toggleDropdown(event, 'dropdown-{{ loop.index }}')"
-        class="dropbtn"
-        style="
-          background: none;
-          border: none;
-          cursor: pointer;
-          color: white;
-          font-size: 20px;
-          padding: 5px;
-        "
-      >
-        &#8942;
-      </button>
-      <div
-        id="dropdown-{{ loop.index }}"
-        class="dropdown-content"
-        style="
-          display: none;
-          position: absolute;
-          right: 0;
-          background-color: #2a2a2a;
-          min-width: 120px;
-          box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2);
-          z-index: 1;
-          border-radius: 5px;
-          border: 1px solid #6a5acd;
-        "
-      >
-        <a
-          href="#"
-          onclick="confirmDelete(event, '{{ video.path }}')"
-          style="
-            color: #ff4d4d;
-            text-decoration: none;
-            padding: 8px 12px;
-            display: block;
-            text-align: left;
-          "
-          >Delete</a
-        >
-      </div>
+{% block title %}Project Submissions{% endblock %}
+
+{% block content %}
+<div class="review-broad-container container">
+    <div class="review-broad-header">
+        <h1>Project Submissions</h1>
+        <p>Project ID: {{ project_id }} | {{ videos|length }} Submission(s)</p>
+
+        <div class="sort-controls" style="margin-bottom: var(--space-lg);">
+            <label for="sort-options">Sort by:</label>
+            <select id="sort-options" class="form-control" style="display: inline-block; width: auto; margin-left: var(--space-sm);">
+                <option value="date_desc">Date (Newest First)</option>
+                <option value="date_asc">Date (Oldest First)</option>
+               
+            </select>
+        </div>
+       
     </div>
 
-    <a
-      href="{{ url_for('main.viewReviewSpecific', session_id=video.session_id, project_id=project_id) }}"
-      style="text-decoration: none; color: inherit"
-    >
-      <div style="position: relative; display: inline-block">
-        <video
-          autoplay
-          name="media"
-          width="280"
-          height="200"
-          style="border-radius: 5px; filter: blur(2px)"
-        >
-          <source src="{{ url_for('static', filename=video.path) }}" type="video/webm" />
-          Your browser does not support the video tag.
-        </video>
-        <img
-          src="{{ url_for('static', filename='Playbutton-removebg.png') }}"
-          alt="Play Button"
-          style="
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            width: 300px;
-            height: 200px;
-            border: 0.1px solid #695acd3f;
-          "
-        />
-      </div>
-      <p style="margin-top: 10px; font-size: 16px">
-        Submission #{{ loop.index }}
-      </p>
-    </a>
-  </div>
-  {% endfor %}
-</div>
+    {% if videos %}
+        <div class="review-grid">
+            {% for video in videos %}
+            <div class="card review-card">
+                <div class="dropdown-menu"> 
+                    <button class="dropdown-menu__button" onclick="toggleDropdown(event, 'dropdown-{{ loop.index }}')" aria-label="Review options">&#8942;</button>
+                    <div id="dropdown-{{ loop.index }}" class="dropdown-menu__content">
+                        <a href="#" class="dropdown-menu__link" onclick="confirmDelete(event, '{{ video.path }}')">Delete Review</a>
+                    
+                    </div>
+                </div>
 
-<!-- Confirmation Modal -->
-<div
-  id="deleteModal"
-  style="
-    display: none;
-    position: fixed;
-    z-index: 1000;
-    left: 0;
-    top: 0;
-    width: 100%;
-    height: 100%;
-    overflow: auto;
-    background-color: rgba(0, 0, 0, 0.4);
-  "
->
-  <div
-    style="
-      background-color: #2a2a2a;
-      margin: 15% auto;
-      padding: 20px;
-      border: 1px solid #6a5acd;
-      border-radius: 10px;
-      width: 80%;
-      max-width: 500px;
-      text-align: center;
-      color: white;
-    "
-  >
-    <h3>Delete Review</h3>
-    <p>
-      Are you sure you want to delete this review? This action cannot be undone.
-    </p>
-    <div style="margin-top: 20px">
-      <button
-        id="cancelDelete"
-        style="
-          background-color: #4a4a4a;
-          color: white;
-          border: none;
-          padding: 8px 16px;
-          margin-right: 10px;
-          border-radius: 5px;
-          cursor: pointer;
-        "
-      >
-        Cancel
-      </button>
-      <button
-        id="confirmDelete"
-        style="
-          background-color: #ff4d4d;
-          color: white;
-          border: none;
-          padding: 8px 16px;
-          border-radius: 5px;
-          cursor: pointer;
-        "
-      >
-        Delete
-      </button>
-    </div>
-  </div>
-</div>
+                <a href="{{ url_for('main.view_review_specific', session_id=video.session_id, project_id=project_id) }}" class="review-card__video-link">                    <div class="review-card__video-container">
+                        <img src="{{ url_for('static', filename='images/video_placeholder.png') }}" alt="Video Thumbnail" class="review-card__video" style="filter: none; border-radius: var(--radius-md); height: 100px;"/>                         <div class="review-card__play-overlay"></div>
+                    </div>
+                    <h4 class="review-card__title">Submission #{{ loop.index }}</h4>
+                    <p style="font-size: 0.8rem; color: var(--clr-text-muted);">Session: {{ video.session_id[:8] }}...</p>
+                </a>
+            </div>
+            {% endfor %}
+        </div>
 
-{% else %}
-<p style="text-align: center">No reviews available.</p>
-{% endif %}
+        {# Confirmation Modal #}
+        <div id="deleteModal" class="modal">
+            <div class="modal-content">
+                <span class="modal-close" onclick="closeModal()">&times;</span>
+                <h2>Confirm Deletion</h2>
+                <p>Are you sure you want to delete this review submission? This action cannot be undone.</p>
+                <div class="modal-actions">
+                    <button id="cancelDelete" class="btn btn--secondary" onclick="closeModal()">Cancel</button>
+                    <button id="confirmDelete" class="btn btn--danger">Delete</button>
+                </div>
+            </div>
+        </div>
+
+    {% else %}
+        <div class="card" style="text-align: center; padding: var(--space-xl); margin-top: var(--space-lg);">
+            <h2 class="card__title">No Submissions Found</h2>
+            <p class="card__content">There are no review submissions for this project yet.</p>
+             <div class="card__footer">
+                 <a href="{{ url_for('main.review', project_id=project_id) }}" class="btn btn--primary">Submit a Review</a>
+            </div>
+        </div>
+    {% endif %}
+</div>
+{% endblock %}
+
+{% block scripts %}
 <script>
-  function sortReviews() {
-    const sortBy = document.getElementById("sort-options").value;
-    // Implement sorting logic for videos based on "length" or "date".
-    console.log("Sorting by:", sortBy);
-  }
-
-  // Close all dropdowns when clicking elsewhere
-  window.onclick = function (event) {
-    if (!event.target.matches(".dropbtn")) {
-      var dropdowns = document.getElementsByClassName("dropdown-content");
-      for (var i = 0; i < dropdowns.length; i++) {
-        var openDropdown = dropdowns[i];
-        if (openDropdown.style.display === "block") {
-          openDropdown.style.display = "none";
+    // Dropdown Menu Logic
+    function toggleDropdown(event, dropdownId) {
+        event.stopPropagation(); // Prevent window click handler from closing it immediately
+        closeAllDropdowns(dropdownId); // Close others first
+        const dropdown = document.getElementById(dropdownId);
+        if (dropdown) {
+            dropdown.classList.toggle('show');
         }
-      }
-    }
-  };
-
-  // Toggle dropdown visibility
-  function toggleDropdown(event, dropdownId) {
-    event.stopPropagation();
-    var dropdown = document.getElementById(dropdownId);
-
-    // Close all other dropdowns
-    var dropdowns = document.getElementsByClassName("dropdown-content");
-    for (var i = 0; i < dropdowns.length; i++) {
-      var openDropdown = dropdowns[i];
-      if (
-        openDropdown.id !== dropdownId &&
-        openDropdown.style.display === "block"
-      ) {
-        openDropdown.style.display = "none";
-      }
     }
 
-    // Toggle this dropdown
-    dropdown.style.display =
-      dropdown.style.display === "block" ? "none" : "block";
-  }
-
-  // Variables for the delete modal
-  let videoToDelete = null;
-  const deleteModal = document.getElementById("deleteModal");
-  const cancelButton = document.getElementById("cancelDelete");
-  const confirmButton = document.getElementById("confirmDelete");
-
-  // Show the confirmation dialog
-  function confirmDelete(event, videoPath) {
-    event.preventDefault();
-    event.stopPropagation();
-    videoToDelete = videoPath;
-    deleteModal.style.display = "block";
-  }
-
-  // Cancel deletion
-  cancelButton.addEventListener("click", function () {
-    deleteModal.style.display = "none";
-    videoToDelete = null;
-  });
-
-  // Confirm deletion
-  confirmButton.addEventListener("click", function () {
-    if (videoToDelete) {
-      // Add loading state to the confirm button
-      confirmButton.textContent = "Deleting...";
-      confirmButton.disabled = true;
-
-      // Send delete request to server
-      fetch("/delete_review", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          "X-CSRFToken": getCookie("csrf_token"),
-        },
-        body: JSON.stringify({
-          project_id: "{{ project_id }}",
-          video_path: videoToDelete,
-        }),
-      })
-        .then((response) => {
-          if (!response.ok) {
-            throw new Error("Server error: " + response.status);
-          }
-          return response.json();
-        })
-        .then((data) => {
-          if (data.success) {
-            // Show a brief success message before reloading
-            const messageDiv = document.createElement("div");
-            messageDiv.style.position = "fixed";
-            messageDiv.style.top = "20px";
-            messageDiv.style.left = "50%";
-            messageDiv.style.transform = "translateX(-50%)";
-            messageDiv.style.padding = "10px 20px";
-            messageDiv.style.backgroundColor = "#4CAF50";
-            messageDiv.style.color = "white";
-            messageDiv.style.borderRadius = "5px";
-            messageDiv.style.zIndex = "9999";
-            messageDiv.textContent = "Review deleted successfully!";
-            document.body.appendChild(messageDiv);
-
-            // Reload the page after a short delay to show the success message
-            setTimeout(() => {
-              window.location.reload();
-            }, 500);
-          } else {
-            throw new Error(data.message || "Unknown error");
-          }
-        })
-        .catch((error) => {
-          console.error("Error:", error);
-          alert(
-            "An error occurred while deleting the review. Please try refreshing the page."
-          );
-        })
-        .finally(() => {
-          deleteModal.style.display = "none";
-          videoToDelete = null;
-          confirmButton.textContent = "Delete";
-          confirmButton.disabled = false;
+    function closeAllDropdowns(excludeId = null) {
+        document.querySelectorAll('.dropdown-menu__content.show').forEach(openDropdown => {
+            if (!excludeId || openDropdown.id !== excludeId) {
+                openDropdown.classList.remove('show');
+            }
         });
     }
-  });
 
-  // Get CSRF token from cookies
-  function getCookie(name) {
+    // Close dropdowns if clicking outside
+    window.addEventListener('click', function(event) {
+        if (!event.target.matches('.dropdown-menu__button')) {
+            closeAllDropdowns();
+        }
+    });
+
+    // Delete Confirmation Modal Logic
+    let videoToDeletePath = null;
+    const deleteModal = document.getElementById('deleteModal');
+    const confirmDeleteButton = document.getElementById('confirmDelete');
+
+    function confirmDelete(event, videoPath) {
+        event.preventDefault();
+        event.stopPropagation(); // Prevent link navigation or other clicks
+        closeAllDropdowns(); 
+        videoToDeletePath = videoPath;
+        if (deleteModal) {
+            deleteModal.style.display = 'block';
+        }
+    }
+
+    function closeModal() {
+        if (deleteModal) {
+            deleteModal.style.display = 'none';
+        }
+        videoToDeletePath = null; // Reset path
+    }
+
+    // Add event listeners for modal buttons
+    document.getElementById('cancelDelete')?.addEventListener('click', closeModal);
+
+    confirmDeleteButton?.addEventListener('click', function() {
+        if (videoToDeletePath) {
+            // Add loading state
+            confirmDeleteButton.textContent = 'Deleting...';
+            confirmDeleteButton.disabled = true;
+
+            fetch("{{ url_for('main.delete_review') }}", {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    
+                    // 'X-CSRFToken': getCookie('csrf_token')
+                },
+                body: JSON.stringify({
+                    project_id: "{{ project_id }}",
+                    video_path: videoToDeletePath
+                })
+            })
+            .then(response => response.json().then(data => ({ ok: response.ok, status: response.status, data })))
+            .then(({ ok, status, data }) => {
+                if (ok && data.success) {
+                     // Show success briefly then reload
+                     alert('Review deleted successfully!'); // Simple alert for now
+                     window.location.reload();
+                } else {
+                    throw new Error(data.message || `Server error: ${status}`);
+                }
+            })
+            .catch(error => {
+                console.error('Deletion error:', error);
+                alert(`Failed to delete review: ${error.message}`);
+            })
+            .finally(() => {
+                // Reset button and modal state even if reload is triggered
+                 confirmDeleteButton.textContent = 'Delete';
+                 confirmDeleteButton.disabled = false;
+                 closeModal();
+            });
+        }
+    });
+
+ // Get CSRF token from cookies
+ function getCookie(name) {
     let cookieValue = null;
     if (document.cookie && document.cookie !== "") {
       const cookies = document.cookie.split(";");
@@ -333,5 +175,18 @@
     }
     return cookieValue;
   }
+
 </script>
 {% endblock %}
+
+
+
+
+
+
+
+
+
+
+
+

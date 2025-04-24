@@ -1,11 +1,21 @@
 {% extends "base.html" %}
+{% set body_class = 'heatmap' %}
 
 {% block title %}Heatmap for {{ project.id }}{% endblock %}
 
 {% block content %}
-<div class="heatmap-container">
-    <h2>Heatmap for Project: {{ project.id }}</h2>
-    <img src="data:image/png;base64,{{ heatmap_data }}" alt="Heatmap" />
-    <a href="{{ url_for('main.viewProjects') }}" class="btn btn-primary">Back to Projects</a>
+<div class="heatmap-page container" style="text-align: center; margin-top: var(--space-xl);">
+    <h1 class="page-title">Gaze Heatmap</h1>
+    <p style="color: var(--clr-text-muted); margin-bottom: var(--space-md);">Project ID: {{ project.id }}</p>
+
+    <div class="heatmap-container" style="background-color: var(--clr-bg-alt); padding: var(--space-lg); border-radius: var(--radius-md); box-shadow: var(--shadow-soft); margin-bottom: var(--space-xl); display: inline-block;">
+        {# Ensure the image resizes correctly #}
+        <img src="data:image/png;base64,{{ heatmap_data }}" alt="Gaze Heatmap" style="max-width: 100%; height: auto; border: 1px solid var(--clr-border);" />
+        <p style="font-size: 0.9rem; color: var(--clr-text-muted); margin-top: var(--space-sm);">(Dummy Data Displayed)</p>
+    </div>
+
+    <div>
+        <a href="{{ url_for('main.viewProjects') }}" class="btn btn--secondary">Back to Projects</a>
+    </div>
 </div>
 {% endblock %}

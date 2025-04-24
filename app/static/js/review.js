@@ -16,15 +16,18 @@ function startWebGazer() {
   webgazer
     .setRegression("ridge")
     .setGazeListener(function (data, clock) {
-      if (data) {
-        // Update the gaze dot position
+      // 'clock' is the timestamp in ms
+      if (data && data.x != null && data.y != null) {
+        // Check x and y are not null/undefined
         const gazeDot = document.getElementById("webgazerGazeDot");
-        if (gazeDot && data.x && data.y) {
+        if (gazeDot) {
+          // Check if gazeDot exists
           gazeDot.style.left = data.x + "px";
           gazeDot.style.top = data.y + "px";
           addDataToCSV(data.x,data.y);
         }
-        gazeData.push([data.x, data.y]);
+        // Store as an object including the timestamp
+        gazeData.push({ x: data.x, y: data.y, t: Math.round(clock) }); // 't' for timestamp
       }
     })
     .showVideo(true)
@@ -51,10 +54,11 @@ function startWebGazer() {
 function stopWebGazer() {
   return new Promise((resolve, reject) => {
     // Save the webgazer model data before ending the session
-    webgazer.saveData()
-      .then(function() {
+    webgazer
+      .saveData()
+      .then(function () {
         console.log("WebGazer data saved successfully");
-        
+
         // Now end the webgazer session
         webgazer.end();
         console.log("Stopping WebGazer...");
@@ -67,23 +71,23 @@ function stopWebGazer() {
 
         webgazer.showVideo(false);
         webgazer.showPredictionPoints(false);
-        
+
         resolve(); // Successfully stopped webgazer
       })
-      .catch(function(err) {
+      .catch(function (err) {
         console.error("Error saving WebGazer data:", err);
         // Continue with stopping even if save fails
         webgazer.end();
-        
+
         if (webcamStream) {
           const tracks = webcamStream.getTracks();
           tracks.forEach((track) => track.stop());
           webcamStream = null;
         }
-        
+
         webgazer.showVideo(false);
         webgazer.showPredictionPoints(false);
-        
+
         resolve(); // Resolve even if there was an error
       });
   });
@@ -97,7 +101,7 @@ function updateWebGazerElements() {
     newGazeDot.id = "webgazerGazeDot";
     document.body.appendChild(newGazeDot);
   }
-  
+
   // Now style the dot (either existing or newly created)
   const updatedGazeDot = document.getElementById("webgazerGazeDot");
   if (updatedGazeDot) {
@@ -121,7 +125,7 @@ function updateWebGazerElements() {
   const faceOverlay = document.getElementById("webgazerFaceOverlay");
   if (faceOverlay) {
     faceOverlay.classList.add("review-face-overlay");
-    
+
     // Ensure the face overlay matches the video dimensions and position
     if (videoElement) {
       const videoRect = videoElement.getBoundingClientRect();
@@ -159,56 +163,61 @@ let csvData = [["Timestamp", "X", "Y"]];
 // Unified function to end the session and submit data
 function endSession() {
   console.log("End session function called");
-  
+
   // Only record the last task time if we're still within valid task range
-  if (sessionStarted && taskStartTime !== null && currentTaskIndex < majorTasks.length) {
+  if (
+    sessionStarted &&
+    taskStartTime !== null &&
+    currentTaskIndex < majorTasks.length
+  ) {
     endTask(); // Record time for the last task
   }
-  
+
   sessionStarted = false;
-  
+
   // Display a loading indicator
-  const loadingMessage = document.createElement('div');
-  loadingMessage.id = 'upload-progress';
-  loadingMessage.style.position = 'fixed';
-  loadingMessage.style.top = '50%';
-  loadingMessage.style.left = '50%';
-  loadingMessage.style.transform = 'translate(-50%, -50%)';
-  loadingMessage.style.backgroundColor = 'rgba(255, 79, 79, 0.8)';
-  loadingMessage.style.color = 'white';
-  loadingMessage.style.padding = '20px';
-  loadingMessage.style.borderRadius = '10px';
-  loadingMessage.style.zIndex = '9999';
-  loadingMessage.innerHTML = 'Uploading session data...<br>Please do not close this page.';
+  const loadingMessage = document.createElement("div");
+  loadingMessage.id = "upload-progress";
+  loadingMessage.style.position = "fixed";
+  loadingMessage.style.top = "50%";
+  loadingMessage.style.left = "50%";
+  loadingMessage.style.transform = "translate(-50%, -50%)";
+  loadingMessage.style.backgroundColor = "rgba(255, 79, 79, 0.8)";
+  loadingMessage.style.color = "white";
+  loadingMessage.style.padding = "20px";
+  loadingMessage.style.borderRadius = "10px";
+  loadingMessage.style.zIndex = "9999";
+  loadingMessage.innerHTML =
+    "Uploading session data...<br>Please do not close this page.";
   document.body.appendChild(loadingMessage);
-  
+
   // Create a variable to store our form data
   let formData = new FormData();
   formData.append("project_id", projectId);
-  
+
   console.log("Project ID being sent:", projectId);
-  
+
   // If benchmark mode is active, include that flag
   if (benchmarkMode) {
     formData.append("benchmark", "true");
     console.log("Benchmark mode enabled");
   }
-  
+
   // Append task times to the form data
   formData.append("task_times", JSON.stringify(taskTimes));
   console.log("Task times data:", JSON.stringify(taskTimes));
 
-  const csvString = csvData.map(row => row.join(",")).join("\n");
-  const csvBlob = new Blob([csvString], { type: "text/csv;charset=utf-8" });
-  formData.append("csv", csvBlob, "data.csv");
-  
   let submissionPromise;
-  
+
   // If we have recorded video, process it
   if (mediaRecorder && recordedChunks.length > 0) {
     console.log("Video chunks collected:", recordedChunks.length);
     const blob = new Blob(recordedChunks, { type: "video/webm" });
-    console.log("Video blob size:", Math.round(blob.size / 1024 / 1024 * 100) / 100, "MB");
+    console.log(
+      "Video blob size:",
+      Math.round((blob.size / 1024 / 1024) * 100) / 100,
+      "MB"
+    );
     formData.append("video", blob, "recorded_video.webm");
 
   } else {
@@ -217,21 +226,24 @@ function endSession() {
     const emptyBlob = new Blob([], { type: "video/webm" });
     formData.append("video", emptyBlob, "empty_video.webm");
   }
-  
+
   // Stop media recorder if it's running
   if (mediaRecorder && mediaRecorder.state !== "inactive") {
     try {
       mediaRecorder.stop();
       // Wait a bit for the mediaRecorder.onstop to fire and add data
-      submissionPromise = new Promise(resolve => {
+      submissionPromise = new Promise((resolve) => {
         setTimeout(() => {
           // Update formData with any new chunks
           if (recordedChunks.length > 0) {
             const blob = new Blob(recordedChunks, { type: "video/webm" });
             formData.delete("video"); // Remove the old video if it exists
             formData.append("video", blob, "recorded_video.webm");
-            console.log("Updated video blob size after recorder stopped:", 
-                      Math.round(blob.size / 1024 / 1024 * 100) / 100, "MB");
+            console.log(
+              "Updated video blob size after recorder stopped:",
+              Math.round((blob.size / 1024 / 1024) * 100) / 100,
+              "MB"
+            );
           }
           resolve();
         }, 2000); // Increase timeout to ensure data is processed
@@ -244,33 +256,53 @@ function endSession() {
     // If mediaRecorder isn't active, just resolve immediately
     submissionPromise = Promise.resolve();
   }
-  
+
   // Chain all the promises
   stopWebGazer()
     .then(() => {
       console.log("WebGazer stopped successfully");
-      return submissionPromise;
+      return submissionPromise; // Make sure submissionPromise is resolved from video handling
     })
     .then(() => {
       console.log("Preparing to upload data...");
-      // Add a CSRF token if your server requires it
-      const csrfToken = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content');
-      if (csrfToken) {
-        formData.append('csrf_token', csrfToken);
+
+      // Add gaze data to form data
+      if (gazeData && gazeData.length > 0) {
+        // Convert the gazeData array to a JSON string and add it to FormData
+        formData.append("gaze_data", JSON.stringify(gazeData));
+        console.log(
+          "Gaze data appended to form data:",
+          gazeData.length,
+          "points"
+        );
+      } else {
+        // Send an empty array if no gaze data was collected
+        formData.append("gaze_data", JSON.stringify([]));
+        console.warn("No gaze data collected or gazeData array is empty.");
       }
-      
+
+      // Add a CSRF token if your server requires it
+      const csrfToken = document
+        .querySelector('meta[name="csrf-token"]')
+        ?.getAttribute("content");
+      if (csrfToken) {
+        formData.append("csrf_token", csrfToken);
+      }
+
       // Now submit the form data with a longer timeout
       return fetch("/upload", {
         method: "POST",
         body: formData,
-        timeout: 120000 // 2 minute timeout
+        timeout: 120000, // 2 minute timeout
       });
     })
     .then((response) => {
       console.log("Server response status:", response.status);
       if (!response.ok) {
-        return response.text().then(text => {
-          throw new Error(`HTTP error! status: ${response.status}, message: ${text}`);
+        return response.text().then((text) => {
+          throw new Error(
+            `HTTP error! status: ${response.status}, message: ${text}`
+          );
         });
       }
       return response.json();
@@ -278,7 +310,7 @@ function endSession() {
     .then((data) => {
       console.log("Upload successful", data);
       // Remove loading message
-      document.body.removeChild(document.getElementById('upload-progress'));
+      document.body.removeChild(document.getElementById("upload-progress"));
       // Redirect to the review page or show a success message
       alert("Session uploaded successfully!");
       window.location.href = `/viewReviewBroad/${projectId}`;
@@ -286,11 +318,13 @@ function endSession() {
     .catch((error) => {
       console.error("Error during upload:", error);
       // Remove loading message
-      document.body.removeChild(document.getElementById('upload-progress'));
-      
+      document.body.removeChild(document.getElementById("upload-progress"));
+
       // Show more detailed error message
       const errorDetail = error.message || "Unknown error";
-      alert(`Failed to upload session: ${errorDetail}\n\nPlease try again or contact support if the issue persists.`);
+      alert(
+        `Failed to upload session: ${errorDetail}\n\nPlease try again or contact support if the issue persists.`
+      );
     });
 }
 
@@ -330,11 +364,11 @@ async function startSession() {
 
     mediaRecorder.start();
     startWebGazer();
-    
+
     // Start the first task
     sessionStarted = true;
     startTask(currentTaskIndex);
-    
+
     // Hide the start button after pressing it
     document.getElementById("start-session").style.display = "none";
   } catch (error) {
@@ -355,18 +389,18 @@ function displayTask(index) {
     // Hide task display if we've gone through all tasks
     document.getElementById("task-container").style.display = "none";
     document.getElementById("next-task").style.display = "none";
-    
+
     // Reset currentTaskIndex to prevent out of bounds errors
     currentTaskIndex = Math.max(0, majorTasks.length - 1);
-    
+
     // Show tasks complete alert
     alert("Tasks complete! Session will end automatically.");
-    
+
     // After a short delay, end the session automatically
     setTimeout(() => {
       endSession();
     }, 3000); // 3 second delay before ending session
-    
+
     return;
   }
 
@@ -374,7 +408,7 @@ function displayTask(index) {
   document.getElementById("major-task").innerText = majorTask.name;
   const minorTasksContainer = document.getElementById("minor-tasks");
   minorTasksContainer.innerHTML = "";
-  
+
   majorTask.minor_tasks.forEach((minorTask) => {
     const li = document.createElement("li");
     li.innerText = minorTask;
@@ -395,14 +429,17 @@ function endTask() {
   if (taskStartTime !== null && currentTaskIndex < majorTasks.length) {
     const endTime = new Date();
     const timeSpent = (endTime - taskStartTime) / 1000; // time in seconds
-    
-    taskTimes.push({ task: majorTasks[currentTaskIndex].name, time: timeSpent });
+
+    taskTimes.push({
+      task: majorTasks[currentTaskIndex].name,
+      time: timeSpent,
+    });
     taskStartTime = null; // Reset task start time
   }
 }
 
 // Initialize the page when DOM is loaded
-document.addEventListener('DOMContentLoaded', function() {
+document.addEventListener("DOMContentLoaded", function () {
   // Initialize observer for WebGazer elements
   const observer = new MutationObserver((mutations) => {
     mutations.forEach((mutation) => {
@@ -419,31 +456,33 @@ document.addEventListener('DOMContentLoaded', function() {
   });
 
   // Set up event listeners
-  document.getElementById("start-session").addEventListener("click", startSession);
+  document
+    .getElementById("start-session")
+    .addEventListener("click", startSession);
   document.getElementById("end-session").addEventListener("click", endSession);
-  
-  document.getElementById("next-task").addEventListener("click", function() {
+
+  document.getElementById("next-task").addEventListener("click", function () {
     if (!sessionStarted) return;
-    
+
     // End timing for current task
     endTask();
     currentTaskIndex++;
-    
+
     // If we've reached the end of tasks, end the session
     if (currentTaskIndex >= majorTasks.length) {
       // Since we've incremented past the end, set taskStartTime to null
       // to prevent recording an "Unknown task" entry
       taskStartTime = null;
-      
+
       alert("You've completed all tasks! The session will now end.");
-      
+
       // End the session after a brief delay to give the user time to see the alert
       setTimeout(() => {
         endSession();
       }, 1500);
       return;
     }
-    
+
     // Otherwise, start the next task
     startTask(currentTaskIndex);
   });

@@ -1,323 +1,158 @@
-{% extends 'base.html' %} {% block content %}
-<style>
-  html,
-  body {
-    margin: 0;
-    padding: 0;
-    height: 100%;
-    overflow: hidden;
-  }
+{% extends 'base.html' %}
+{% set body_class = 'home' %}
 
-  .home-fullscreen {
-    width: 100%;
-    height: 100%;
-    overflow: hidden;
-    color: #ffffff;
-    user-select: none;
-    position: relative;
-  }
+{% block title %}Dashboard{% endblock %}
 
-  .home-dashboard-title {
-    margin: 0;
-    padding: 20px;
-    font-family: "gruppo", sans-serif;
-    font-size: 3em;
-    text-align: center;
-    letter-spacing: 2px;
-    text-shadow: 2px 2px 4px #0000007a;
-  }
-
-  .home-clock-date {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    margin-bottom: 30px;
-  }
-
-  .home-clock {
-    font-size: 3rem;
-    font-weight: 600;
-    margin: 10px 0;
-    padding: 10px;
-    background: rgba(0, 0, 0, 0.4);
-    border-radius: 8px;
-    box-shadow: 0 2px 15px rgba(0, 0, 0, 0.5);
-  }
-
-  .home-date {
-    font-size: 1.2rem;
-    text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.8);
-  }
-
-  .home-cards-container {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-    gap: 25px;
-    margin: 0 30px 30px 30px;
-    max-width: 1400px;
-    width: 90%;
-    margin-left: auto;
-    margin-right: auto;
-  }
-
-  .home-card {
-    background: rgba(10, 36, 61, 0.555);
-    padding: 25px;
-    border-radius: 10px;
-    backdrop-filter: blur(4px);
-    position: relative;
-    overflow: hidden;
-    transition: transform 0.3s ease, box-shadow 0.3s ease;
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
-    min-height: 200px;
-  }
-
-  .home-card::before {
-    content: "";
-    position: absolute;
-    top: -2px;
-    left: -2px;
-    width: calc(100% + 4px);
-    height: calc(100% + 4px);
-    background: linear-gradient(
-      135deg,
-      rgb(212, 5, 5),
-      rgb(19, 80, 142),
-      rgb(212, 3, 3)
-    );
-    background-size: 400% 400%;
-    z-index: -1;
-    animation: animate-card-border 15s linear infinite;
-    opacity: 0;
-    transition: opacity 0.5s;
-  }
-  .home-card:hover::before {
-    opacity: 1;
-  }
-
-  .home-card:hover {
-    transform: translateY(-10px);
-    box-shadow: 0 12px 30px rgba(0, 0, 0, 0.5);
-  }
-
-  .home-card-title {
-    font-weight: 700;
-    font-size: 1.4rem;
-    margin-bottom: 10px;
-  }
-
-  .home-card-content {
-    font-size: 0.95rem;
-    line-height: 1.4rem;
-  }
-
-  @keyframes animate-card-border {
-    0% {
-      background-position: 0% 50%;
-    }
-    50% {
-      background-position: 100% 50%;
-    }
-    100% {
-      background-position: 0% 50%;
-    }
-  }
-
-  .home-progress-bar {
-    background-color: rgba(255, 255, 255, 0.2);
-    height: 10px;
-    border-radius: 5px;
-    overflow: hidden;
-    margin-top: 10px;
-  }
-
-  .home-progress-fill {
-    background-color: #00c1ff;
-    height: 100%;
-    width: 0%;
-    border-radius: 5px;
-    transition: width 1s ease-in-out;
-  }
-
-  .login-page,
-  .register-page {
-    width: 100%;
-    height: 100%;
-    position: relative;
-  }
-
-  .log-reg-alert-active {
-    animation: log-reg-slideDown-alert 0.12s forwards;
-  }
-  .slideInFromTop {
-    animation: log-reg-slideDown-normal 0.8s forwards;
-  }
-  .log-reg-page-transition-normal {
-    animation: log-reg-slideOut-normal 0.5s forwards;
-  }
-  .log-reg-page-transition-alert {
-    animation: log-reg-slideOut-alert 0.12s forwards;
-  }
-
-  @keyframes log-reg-slideDown-normal {
-    0% {
-      opacity: 0;
-      transform: translateY(-100%);
-      filter: blur(100px);
-    }
-    100% {
-      opacity: 1;
-      transform: translateY(0);
-      filter: blur(0);
-    }
-  }
-
-  @keyframes log-reg-slideOut-normal {
-    0% {
-      opacity: 1;
-      transform: translateY(0);
-      filter: blur(100px);
-    }
-    100% {
-      opacity: 0;
-      transform: translateY(100%);
-      filter: blur(0);
-    }
-  }
-
-  @keyframes log-reg-slideDown-alert {
-    0% {
-      opacity: 1;
-      transform: translateY(0);
-    }
-    100% {
-      opacity: 1;
-      transform: translateY(0);
-    }
-  }
-  @keyframes log-reg-slideOut-alert {
-    0% {
-      opacity: 1;
-      transform: translateY(0);
-      filter: blur(100px);
-    }
-    100% {
-      opacity: 0;
-      transform: translateY(100%);
-      filter: blur(0);
-    }
-  }
-</style>
-
-<div class="home-fullscreen">
-  <h1 class="home-dashboard-title">Dashboard</h1>
-
-  <div class="home-clock-date">
-    <div class="home-clock" id="clock">--:--:--</div>
-    <div class="home-date" id="date">Loading date...</div>
-  </div>
-
-  <div class="home-cards-container">
-    <div class="home-card">
-      <div>
-        <h2 class="home-card-title">Profile</h2>
-        <div class="home-card-content">
-          <p>
-            Name: {{ current_user.first_name }} {{ current_user.last_name }}
-          </p>
-          <p>Email: {{ current_user.email }}</p>
-          <p>Role: {{ current_user.role }}</p>
-        </div>
-      </div>
-      <div style="margin-top: 10px">
-        <a
-          href="{{ url_for('main.profile') }}"
-          style="color: #00c1ff; text-decoration: none; font-weight: bold"
-        >
-          Go to Profile &rarr;
-        </a>
-      </div>
+{% block content %}
+<div class="welcome-message container">
+    <h1>Welcome Back, {{ current_user.first_name }}!</h1>
+    {# <p>Here's a quick overview of your workspace.</p> #}
+     {# Clock and Date Widget - Simplified #}
+     <div style="font-size: 0.9rem; color: var(--clr-text-muted);">
+        <span id="date">Loading date...</span> | <span id="clock">--:--:--</span>
     </div>
-
-    <div class="home-card">
-      <h2 class="home-card-title">Projects Owned</h2>
-      <div class="home-card-content">
-        <p>
-          <span id="home-projectCount">{{ projects|length }}</span> out of
-          <span id="home-projectTotal">
-            {% if current_user.role == "admin" %} {{
-            max_projects_per_user_privilaged }} {% else %} {{
-            max_projects_per_user_unprivilaged }} {% endif %}
-          </span>
-        </p>
-        <div class="home-progress-bar">
-          <div class="home-progress-fill" id="home-progressFill"></div>
-        </div>
-      </div>
-    </div>
-
-    <div class="home-card">
-      <h2 class="home-card-title">Analytics</h2>
-      <div class="home-card-content">
-        <p>You own {{ projects|length }} project(s).</p>
-        <p>
-          You are a collaborator on {{ shared_projects|length }} shared
-          project(s).
-        </p>
-        <p>Total tasks in your owned projects: {{ total_tasks }}</p>
-      </div>
-    </div>
-
-    <div class="home-card">
-      <h2 class="home-card-title">Notifications</h2>
-      <div class="home-card-content">
-        {% if notifications|length > 0 %}
-        <ul style="list-style: none; padding: 0">
-          {% for notice in notifications %}
-          <li>{{ notice }}</li>
-          {% endfor %}
-        </ul>
-        {% else %}
-        <p>No notifications at this time.</p>
-        {% endif %}
-      </div>
-    </div>
-
-    <div class="home-card">
-      <h2 class="home-card-title">Projects List</h2>
-      <div class="home-card-content">
-        <ul style="list-style-type: none; padding-left: 0; margin: 0">
-          {% for project in projects[:2] %}
-          <li>{{ project.link }}</li>
-          {% endfor %}
-        </ul>
-      </div>
-      <div style="margin-top: 10px">
-        <a
-          href="{{ url_for('main.viewProjects') }}"
-          style="color: #00c1ff; text-decoration: none; font-weight: bold"
-        >
-          Go to Projects List &rarr;
-        </a>
-      </div>
-    </div>
-
-    <div class="home-card">
-      <h2 class="home-card-title">Other Feature</h2>
-      <div class="home-card-content">
-        <p>waddle.</p>
-      </div>
-      <div style="margin-top: 10px">
-        <a
-          href="/card"
-          style="color: #00c1ff; text-decoration: none; font-weight: bold"
-        >
-          Go to Card &rarr;
-        </a>
-      </div>
-    </div>
-  </div>
 </div>
+
+{# Flash Messages #}
+{% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+        <div class="flash-messages container">
+            {% for category, message in messages %}
+                <div class="alert alert--{{ category }}">{{ message }}</div>
+            {% endfor %}
+        </div>
+    {% endif %}
+{% endwith %}
+
+<div class="dashboard-grid container">
+
+    {# Profile Card #}
+    <div class="card">
+        <h3 class="card__title">👤 Profile</h3>
+        <div class="card__content">
+            <p><strong>Name:</strong> {{ current_user.first_name }} {{ current_user.last_name }}</p>
+            <p><strong>Email:</strong> {{ current_user.email }}</p>
+            <p><strong>Role:</strong> {{ current_user.role | capitalize }}</p>
+        </div>
+        <div class="card__footer">
+            <a href="{{ url_for('main.profile') }}" class="card__link">View Profile &rarr;</a>
+        </div>
+    </div>
+
+    {# Projects Owned Card #}
+    <div class="card">
+        <h3 class="card__title">📂 Projects Owned</h3>
+        <div class="card__content">
+             {% set max_projects = max_projects_per_user_privilaged if current_user.role in ['admin', 'project_manager'] else max_projects_per_user_unprivilaged %}
+             {% set project_count = projects|length %}
+             {% set percentage = (project_count / max_projects * 100) if max_projects > 0 else 0 %}
+
+             <p>You own <strong style="font-size: 1.2em;">{{ project_count }}</strong> out of {{ max_projects }} allowed projects.</p>
+            <div class="progress-bar">
+                <div class="progress-bar__fill" id="home-progressFill" style="width: {{ percentage }}%;"></div>
+            </div>
+             <p style="font-size: 0.85rem; margin-top: var(--space-sm);">
+                 {% if project_count >= max_projects %}
+                    You've reached your project limit!
+                 {% else %}
+                    You can create {{ max_projects - project_count }} more projects.
+                 {% endif %}
+             </p>
+        </div>
+         <div class="card__footer">
+            <a href="{{ url_for('main.viewProjects') }}" class="card__link">Manage Projects &rarr;</a>
+        </div>
+    </div>
+
+    {# Shared Projects Card #}
+    <div class="card">
+        <h3 class="card__title">🤝 Shared With You</h3>
+         <div class="card__content">
+             {% set shared_count = shared_projects|length %} {# Assume shared_projects is passed #}
+             <p>You are a collaborator on <strong style="font-size: 1.2em;">{{ shared_count }}</strong> project(s).</p>
+             {% if shared_projects %}
+                 <ul style="margin-top: var(--space-sm); font-size: 0.9rem;">
+                     {% for sp in shared_projects[:3] %} {# Show first few #}
+                        <li>{{ sp.id[:8] }}... (Role: {{ sp.role }})</li> {# Assuming role is available #}
+                     {% endfor %}
+                     {% if shared_count > 3 %}
+                        <li>... and {{ shared_count - 3 }} more.</li>
+                     {% endif %}
+                 </ul>
+             {% endif %}
+         </div>
+         <div class="card__footer">
+            <a href="{{ url_for('main.viewSharedProjects') }}" class="card__link">View Shared Projects &rarr;</a>
+        </div>
+    </div>
+
+    {# Quick Actions Card #}
+    <div class="card">
+        <h3 class="card__title">🚀 Quick Actions</h3>
+        <div class="card__content">
+             <ul style="list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: var(--space-sm);">
+                <li><a href="{{ url_for('main.createProject') }}" class="btn btn--primary" style="width: 100%;">+ Create New Project</a></li>
+                 <li><a href="{{ url_for('main.settings') }}" class="btn btn--secondary" style="width: 100%;">⚙️ Update Settings</a></li>
+                 {# Add other common actions #}
+             </ul>
+        </div>
+    </div>
+
+    {# Maybe Notifications or Recent Activity #}
+    <div class="card">
+        <h3 class="card__title">🔔 Notifications</h3>
+        <div class="card__content">
+            {# {% if notifications|length > 0 %} ... {% else %} #}
+            <p>No new notifications.</p>
+            {# {% endif %} #}
+        </div>
+    </div>
+
+     {# Placeholder Card #}
+    <div class="card">
+        <h3 class="card__title">🌻 Feature Spotlight</h3>
+        <div class="card__content">
+            <p>Check out our latest updates or helpful tips here!</p>
+            {# Add dynamic content later #}
+        </div>
+    </div>
+
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    // Clock and Date Update
+    function updateClockAndDate() {
+        const clockElement = document.getElementById("clock");
+        const dateElement = document.getElementById("date");
+        if (!clockElement || !dateElement) return;
+
+        const now = new Date();
+        // Time (e.g., 1:35 PM)
+        const timeString = now.toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' });
+        // Date (e.g., October 26, 2023)
+        const dateString = now.toLocaleDateString([], { year: 'numeric', month: 'long', day: 'numeric' });
+
+        clockElement.textContent = timeString;
+        dateElement.textContent = dateString;
+    }
+    setInterval(updateClockAndDate, 10000); // Update every 10 seconds is enough
+    updateClockAndDate(); // Initial call
+
+    // Animate progress bar on load (optional)
+    document.addEventListener('DOMContentLoaded', () => {
+        const progressBar = document.getElementById('home-progressFill');
+        if(progressBar) {
+
+            progressBar.getBoundingClientRect();
+            // Get width from style attribute set by Jinja
+            const finalWidth = progressBar.style.width;
+            progressBar.style.width = '0%'; // Start at 0
+             setTimeout(() => { // Allow time for reset
+                 progressBar.style.width = finalWidth; // Animate to final width
+             }, 100);
+        }
+    });
+</script>
 {% endblock %}

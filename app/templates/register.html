@@ -1,105 +1,67 @@
-<!-- Dominic Minnich 2024 -->
-<!-- register.html -->
+{% extends 'base.html' %}
+{% set body_class = 'register' %}
 
-{% extends 'base.html' %} {% block content %}
+{% block title %}Register - EyeC.Design{% endblock %}
 
-<link rel="stylesheet" href="{{ url_for('static', filename='eye.css') }}" />
-<style>
-  /* Reset */
-  * {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-  }
+{% block content %}
+<div class="auth-wrapper"> {# Centered container for auth forms #}
 
-  body {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 100vh;
-    background-color: #121212;
-  }
+    <h2 class="auth-title">Create Your Account</h2>
 
-  .video-background {
-    opacity: 0;
-  }
-</style>
+    {# Flash Messages #}
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            <div class="flash-messages" style="width: 100%; margin-left: 0; margin-right: 0;">
+                {% for category, message in messages %}
+                    <div class="alert alert--{{ category }}">{{ message }}</div>
+                {% endfor %}
+            </div>
+        {% endif %}
+    {% endwith %}
 
-<div class="home-rain-container">
-  <div class="home-raindrops"></div>
-</div>
-<div class="register-page">
-  <!-- Animated Eye Container -->
-  <div class="eye-container">
-    <div class="eye-socket">
-      <div class="outer-ring"></div>
-      <div class="sclera">
-        <div class="vein-texture"></div>
-        <div class="cyber-iris">
-          <div class="inner-ring-1"></div>
-          <div class="inner-ring-2"></div>
-          <div class="inner-ring-3"></div>
-          <div class="inner-ring-4"></div>
-          <div class="inner-ring-5"></div>
-          <div class="inner-ring-6"></div>
-          <div class="inner-circuitry"></div>
-          <div class="pupil"></div>
-          <div class="tech-overlay"></div>
-          <div class="reflection-layer"></div>
-          <div class="reflection-layer-2"></div>
+    <form method="POST" action="{{ url_for('main.register') }}" class="auth-form">
+        {{ form.hidden_tag() }}
+
+        <div class="form-group">
+            <label for="username" class="form-label sr-only">Username</label>
+            {{ form.username(id="username", class="form-control", placeholder="Choose a Username", required=true) }}
+            {% for error in form.username.errors %}<span class="form-error">{{ error }}</span>{% endfor %}
         </div>
-      </div>
-      <div class="upper-eyelid"></div>
-      <div class="lower-eyelid"></div>
-    </div>
-  </div>
+        <div class="form-group">
+            <label for="email" class="form-label sr-only">Email</label>
+            {{ form.email(id="email", class="form-control", placeholder="Your Email Address", required=true) }}
+             {% for error in form.email.errors %}<span class="form-error">{{ error }}</span>{% endfor %}
+        </div>
+         <div class="form-group">
+            <label for="first_name" class="form-label sr-only">First Name</label>
+            {{ form.first_name(id="first_name", class="form-control", placeholder="First Name", required=true) }}
+             {% for error in form.first_name.errors %}<span class="form-error">{{ error }}</span>{% endfor %}
+        </div>
+         <div class="form-group">
+            <label for="last_name" class="form-label sr-only">Last Name</label>
+            {{ form.last_name(id="last_name", class="form-control", placeholder="Last Name", required=true) }}
+             {% for error in form.last_name.errors %}<span class="form-error">{{ error }}</span>{% endfor %}
+        </div>
+        <div class="form-group">
+            <label for="password" class="form-label sr-only">Password</label>
+            {{ form.password(id="password", class="form-control", placeholder="Create a Password", required=true) }}
+             {% for error in form.password.errors %}<span class="form-error">{{ error }}</span>{% endfor %}
+        </div>
+        <div class="form-group">
+             <label for="confirm_password" class="form-label sr-only">Confirm Password</label>
+            {{ form.confirm_password(id="confirm_password", class="form-control", placeholder="Confirm Your Password", required=true) }}
+             {% for error in form.confirm_password.errors %}<span class="form-error">{{ error }}</span>{% endfor %}
+        </div>
+        <div class="form-group">
+            {{ form.submit(class="btn btn--primary") }}
+        </div>
+    </form>
 
-  <h2 class="register-title">Register</h2>
-
-  <!-- Flash Messages Section -->
-  {% with messages = get_flashed_messages(with_categories=true) %} {% if
-  messages %}
-  <div class="register-flash-messages">
-    {% for category, message in messages %}
-    <div class="register-alert alert-{{ category }}">{{ message }}</div>
-    {% endfor %}
-  </div>
-  <br />
-  {% endif %} {% endwith %}
-
-  <!-- Form Section -->
-  <!-- Form Section -->
-  <form method="POST" class="register-form">
-    {{ form.hidden_tag() }}
-    <div class="register-form-group">
-      {{ form.username(id="username", placeholder="Enter your username") }}
+    <div class="auth-links">
+        <p>Already have an account? <a href="{{ url_for('main.login') }}">Log In</a></p>
     </div>
-    <div class="register-form-group">
-      {{ form.email(id="email", placeholder="Enter your email") }}
-    </div>
-    <div class="register-form-group">
-      {{ form.first_name(id="first_name", placeholder="Enter your first name")
-      }}
-    </div>
-    <div class="register-form-group">
-      {{ form.last_name(id="last_name", placeholder="Enter your last name") }}
-    </div>
-    <div class="register-form-group">
-      {{ form.password(id="password", placeholder="Enter your password") }}
-    </div>
-    <div class="register-form-group">
-      {{ form.confirm_password(id="confirm_password", placeholder="Confirm your
-      password") }}
-    </div>
-    <div class="register-form-group">
-      {{ form.submit(class="register-btn-submit") }}
-    </div>
-    <p class="login-link">
-      Already have an account?
-      <a href="{{ url_for('main.login') }}">Login</a>
-    </p>
-  </form>
 </div>
-<script src="{{ url_for('static', filename='eye.js') }}"></script>
+{% endblock %}
 
+{% block scripts %}
 {% endblock %}

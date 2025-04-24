@@ -1,243 +1,102 @@
 <!-- settings.html -->
-{% extends 'base.html' %} {% block content %}
-<style>
-  .settings-page {
-    max-width: 800px;
-    margin: 80px auto 100px auto;
-    padding: 20px;
-    background: rgba(255, 255, 255, 0.07);
-    backdrop-filter: blur(10px);
-    border-radius: 12px;
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
-  }
+{% extends 'base.html' %}
+{% set body_class = 'settings' %}
 
-  .settings-title {
-    font-size: 2rem;
-    text-align: center;
-    margin-bottom: 30px;
-    color: #fff;
-    text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.8);
-  }
+{% block title %}Account Settings{% endblock %}
 
-  .settings-container {
-    display: flex;
-    flex-direction: column;
-    gap: 30px;
-  }
-
-  .settings-form {
-    display: flex;
-    flex-direction: column;
-    gap: 15px;
-    width: 100%;
-  }
-
-  .form-group {
-    display: flex;
-    flex-direction: column;
-  }
-
-  .form-group label {
-    margin-bottom: 5px;
-    font-weight: 600;
-    color: #ffd700;
-  }
-
-  .form-group input[type="text"],
-  .form-group input[type="email"],
-  .form-group input[type="password"] {
-    padding: 10px;
-    border-radius: 6px;
-    border: 1px solid #ccc;
-    outline: none;
-    transition: border-color 0.3s;
-  }
-
-  .form-group input:focus {
-    border-color: #00c1ff;
-  }
-
-  .checkbox-group {
-    flex-direction: row;
-    align-items: center;
-    gap: 10px;
-    margin-top: 10px;
-  }
-
-  .checkbox-group input[type="checkbox"] {
-    width: auto;
-    margin: 0;
-  }
-
-  .btn {
-    cursor: pointer;
-    font-weight: 600;
-    border: none;
-    border-radius: 6px;
-    padding: 10px 16px;
-    transition: background-color 0.3s;
-  }
-
-  .btn.btn-primary {
-    background-color: #4169e1;
-    color: #fff;
-    margin-top: 10px;
-  }
-  .btn.btn-primary:hover {
-    background-color: #27408b;
-  }
-
-  .btn.btn-secondary {
-    background-color: #616161;
-    color: #fff;
-    margin-top: 10px;
-  }
-  .btn.btn-secondary:hover {
-    background-color: #444;
-  }
-
-  .password-section {
-    background: rgba(255, 255, 255, 0.06);
-    padding: 20px;
-    border-radius: 12px;
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.4);
-  }
-
-  .password-section h3 {
-    margin-top: 0;
-    margin-bottom: 20px;
-    color: #fff;
-    text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.6);
-  }
-
-  .flash-messages {
-    margin-bottom: 20px;
-  }
-  .flash-messages .alert {
-    background-color: rgba(255, 255, 255, 0.2);
-    border-radius: 6px;
-    padding: 10px;
-    margin-top: 6px;
-    font-weight: 600;
-  }
-
-  @media (max-width: 600px) {
-    .settings-page {
-      margin: 60px 10px 100px 10px;
-      padding: 15px;
-    }
-    .settings-title {
-      font-size: 1.8rem;
-    }
-  }
-</style>
-
+{% block content %}
 <div class="settings-page">
-  <h2 class="settings-title">Settings</h2>
-  <div class="settings-container">
-    <form
-      method="POST"
-      action="{{ url_for('main.update_settings') }}"
-      class="settings-form"
-    >
-      <div class="form-group">
-        <label for="email">Email:</label>
-        <input
-          type="email"
-          id="email"
-          name="email"
-          value="{{ user.email }}"
-          required
-        />
-      </div>
-      <div class="form-group">
-        <label for="username">Username:</label>
-        <input
-          type="text"
-          id="username"
-          name="username"
-          value="{{ user.username }}"
-          required
-        />
-      </div>
-      <div class="form-group">
-        <label for="first_name">First Name:</label>
-        <input
-          type="text"
-          id="first_name"
-          name="first_name"
-          value="{{ user.first_name }}"
-          required
-        />
-      </div>
-      <div class="form-group">
-        <label for="last_name">Last Name:</label>
-        <input
-          type="text"
-          id="last_name"
-          name="last_name"
-          value="{{ user.last_name }}"
-          required
-        />
-      </div>
-      <div class="form-group checkbox-group">
-        <input
-          type="checkbox"
-          id="email_opt_in"
-          name="email_opt_in"
-          {%
-          if
-          user.email_opt_in
-          %}checked{%
-          endif
-          %}
-        />
-        <label for="email_opt_in">Opt-in to email notifications</label>
-      </div>
-      <button type="submit" class="btn btn-primary">Save Changes</button>
-    </form>
+    <h1 class="page-title">Settings</h1>
 
-    <div class="password-section">
-      <h3>Change Password</h3>
-      {% with messages = get_flashed_messages(with_categories=true) %} {% if
-      messages %}
-      <div class="flash-messages">
-        {% for category, message in messages %}
-        <div class="alert alert-{{ category }}">{{ message }}</div>
-        {% endfor %}
-      </div>
-      {% endif %} {% endwith %}
-      <form method="POST" action="{{ url_for('main.change_password') }}">
-        <div class="form-group">
-          <label for="old_password">Old Password:</label>
-          <input
-            type="password"
-            id="old_password"
-            name="old_password"
-            required
-          />
-        </div>
-        <div class="form-group">
-          <label for="new_password">New Password:</label>
-          <input
-            type="password"
-            id="new_password"
-            name="new_password"
-            required
-          />
-        </div>
-        <div class="form-group">
-          <label for="confirm_new_password">Confirm New Password:</label>
-          <input
-            type="password"
-            id="confirm_new_password"
-            name="confirm_new_password"
-            required
-          />
-        </div>
-        <button type="submit" class="btn btn-secondary">Change Password</button>
-      </form>
-    </div>
-  </div>
+    {# Flash Messages #}
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            <div class="flash-messages" style="max-width: 100%; margin-bottom: var(--space-lg);">
+                {% for category, message in messages %}
+                    <div class="alert alert--{{ category }}">{{ message }}</div>
+                {% endfor %}
+            </div>
+        {% endif %}
+    {% endwith %}
+
+    <div class="settings-container"> 
+
+        {# Account Details Section #}
+        <section class="settings-section">
+            <h3>Account Details</h3>
+            {# Use account_form passed from route #}
+            <form method="POST" action="{{ url_for('main.settings') }}" class="settings-form">
+                {{ account_form.hidden_tag() }}
+                <div class="form-group">
+                    {{ account_form.email.label(class="form-label") }}
+                    {{ account_form.email(class="form-control", required=true) }}
+                     {% for error in account_form.email.errors %}
+                        <span class="form-error">{{ error }}</span>
+                     {% endfor %}
+                </div>
+                <div class="form-group">
+                    {{ account_form.username.label(class="form-label") }}
+                    {{ account_form.username(class="form-control", required=true) }}
+                     {% for error in account_form.username.errors %}
+                        <span class="form-error">{{ error }}</span>
+                     {% endfor %}
+                </div>
+                 <div class="form-group">
+                    {{ account_form.first_name.label(class="form-label") }}
+                    {{ account_form.first_name(class="form-control", required=true) }}
+                     {% for error in account_form.first_name.errors %}
+                        <span class="form-error">{{ error }}</span>
+                     {% endfor %}
+                </div>
+                 <div class="form-group">
+                    {{ account_form.last_name.label(class="form-label") }}
+                    {{ account_form.last_name(class="form-control", required=true) }}
+                     {% for error in account_form.last_name.errors %}
+                        <span class="form-error">{{ error }}</span>
+                     {% endfor %}
+                </div>
+                 <div class="form-group form-check">
+                    {{ account_form.email_opt_in(class="form-check-input") }}
+                    {{ account_form.email_opt_in.label(class="form-check-label") }}
+                 </div>
+                 {# <<< FIX 3: Add name attribute >>> #}
+                <button type="submit" name="update_account" class="btn btn--primary" style="align-self: flex-start;">Save Account Changes</button>
+            </form>
+        </section>
+
+        {# Change Password Section #}
+        <section class="settings-section">
+            <h3>Change Password</h3>
+            {# Use password_form passed from route #}
+             <form method="POST" action="{{ url_for('main.settings') }}" class="settings-form">
+                 {{ password_form.hidden_tag() }}
+                <div class="form-group">
+                    {{ password_form.old_password.label(class="form-label") }}
+                    {{ password_form.old_password(class="form-control", required=true) }}
+                     {% for error in password_form.old_password.errors %}
+                        <span class="form-error">{{ error }}</span>
+                     {% endfor %}
+                </div>
+                <div class="form-group">
+                    {{ password_form.new_password.label(class="form-label") }}
+                    {{ password_form.new_password(class="form-control", required=true) }}
+                     {% for error in password_form.new_password.errors %}
+                        <span class="form-error">{{ error }}</span>
+                     {% endfor %}
+                     <small class="form-text text-muted" style="font-size: 0.85rem; color: var(--clr-text-muted); margin-top: var(--space-xs);">Must be at least 6 characters long.</small>
+                </div>
+                 <div class="form-group">
+                    {{ password_form.confirm_new_password.label(class="form-label") }}
+                    {{ password_form.confirm_new_password(class="form-control", required=true) }}
+                     {% for error in password_form.confirm_new_password.errors %}
+                        <span class="form-error">{{ error }}</span>
+                     {% endfor %}
+                </div>
+                {# <<< FIX 3: Add name attribute >>> #}
+                 <button type="submit" name="change_password" class="btn btn--secondary" style="align-self: flex-start;">Update Password</button>
+            </form>
+        </section>
+
+    </div> {# End settings-container #}
 </div>
 {% endblock %}

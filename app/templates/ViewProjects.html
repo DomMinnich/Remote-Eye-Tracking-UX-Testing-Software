@@ -1,546 +1,296 @@
-{% extends 'base.html' %} {% block content %}
+<!-- ViewProjects.html -->
+{% extends 'base.html' %}
+{% set body_class = 'viewprojects' %}
 
-<style>
-  html {
-    overflow: hidden;
-  }
-  .project-container {
-    position: relative;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    margin: 50px auto 80px auto;
-    width: 90%;
-    max-width: 1200px;
-    min-height: 100vh;
-  }
+{% block title %}My Projects{% endblock %}
 
-  .project-carousel {
-    position: relative;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    width: 100%;
-    margin-bottom: 30px;
-  }
+{% block content %}
+<div class="projects-page container">
+    <h1 class="page-title">My Projects</h1>
 
-  .carousel-wrapper {
-    overflow: hidden;
-    width: 80%;
-    max-width: 900px;
-    position: relative;
-  }
-
-  .carousel-track {
-    display: flex;
-    transition: transform 0.6s cubic-bezier(0.25, 1, 0.5, 1);
-    transform-style: preserve-3d;
-    perspective: 1000px;
-  }
-  .carousel-track[data-index] {
-    transform: translateX(calc(-100% * var(--index)));
-  }
-
-  /* Each project card */
-  .project-card {
-    flex: 0 0 auto;
-    width: 280px;
-    margin: 0 10px;
-    background: rgba(255, 255, 255, 0.08);
-    backdrop-filter: blur(8px);
-    border-radius: 12px;
-    overflow: hidden;
-    text-align: center;
-    cursor: pointer;
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
-    transform: scale(0.9);
-    transition: transform 0.3s ease, box-shadow 0.3s ease, border 0.3s ease;
-    position: relative;
-    border: 3px solid transparent;
-  }
-  .project-card:hover {
-    transform: scale(0.91) translateY(-8px);
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.6);
-  }
-  
-  .project-card.active {
-    border: 3px solid #ffd700;
-    box-shadow: 0 0 15px rgba(255, 215, 0, 0.5);
-  }
-
-  .project-img {
-    width: 100%;
-    height: 160px;
-    object-fit: cover;
-    display: block;
-  }
-
-  .project-title {
-    font-size: 1.2rem;
-    margin: 16px 0;
-    color: #fff;
-    text-shadow: 1px 1px 1px #000;
-  }
-
-  .carousel-control {
-    background-color: rgba(0, 0, 0, 0.4);
-    border: none;
-    color: #fff;
-    font-size: 2rem;
-    cursor: pointer;
-    padding: 0 16px;
-    margin: 0 10px;
-    transition: background-color 0.3s ease;
-    border-radius: 50%;
-    width: 48px;
-    height: 48px;
-    text-align: center;
-    line-height: 48px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-  }
-  .carousel-control:hover {
-    background-color: rgba(0, 0, 0, 0.6);
-  }
-  .prev {
-    position: absolute;
-    left: 0;
-    z-index: 2;
-  }
-  .next {
-    position: absolute;
-    right: 0;
-    z-index: 2;
-  }
-
-  .project-details {
-    background: rgba(10, 36, 61, 0.555);
-    backdrop-filter: blur(8px);
-    padding: 20px;
-    border-radius: 12px;
-    width: 80%;
-    max-width: 900px;
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
-    margin-top: 20px;
-  }
-
-  .detail-item {
-    display: flex;
-    margin-bottom: 10px;
-  }
-  .detail-title {
-    font-weight: 600;
-    margin-right: 8px;
-    color: #ffd700;
-  }
-  #detail-id,
-  #detail-title,
-  #detail-description,
-  #detail-visibility,
-  #detail-eol_time,
-  #detail-reviews {
-    color: #fff;
-  }
-
-  .edit-button {
-    background-color: #4169e1;
-    color: #fff;
-    border: none;
-    border-radius: 8px;
-    padding: 10px 16px;
-    margin-right: 10px;
-    cursor: pointer;
-    font-weight: 600;
-    transition: background-color 0.3s ease;
-    text-decoration: none;
-  }
-  .edit-button:hover {
-    background-color: #27408b;
-  }
-
-  /* Review link */
-  .review-link {
-    display: inline-block;
-    color: #00c1ff;
-    text-decoration: none;
-    font-weight: 600;
-    margin-top: 10px;
-  }
-
-  #unavailable {
-    color: #fff;
-    margin-top: 20px;
-    text-align: center;
-  }
-  #duck {
-    display: block;
-    margin: 20px auto;
-    max-width: 200px;
-    opacity: 0.8;
-  }
-
-  /* Responsive adjustments */
-  @media (max-width: 768px) {
-    .carousel-wrapper {
-      width: 90%;
-    }
-    .project-card {
-      width: 220px;
-    }
-    .project-img {
-      height: 140px;
-    }
-    .project-details {
-      width: 90%;
-    }
-  }
-
-  .title {
-    color: #fff;
-    text-align: center;
-    margin-top: 20px;
-  }
-
-  .benchmark-container {
-    margin-left: 10px;
-    border-radius: 4px;
-    display: inline-block;
-  }
-  
- 
-  .button {
-    background-color:rgb(172, 6, 6);
-    color: #fff;
-    border: none;
-    border-radius: 8px;
-    padding: 10px 16px;
-    margin-top: 15px;
-    margin-right: 10px;
-    cursor: pointer;
-    font-weight: 600;
-    transition: background-color 0.3s ease;
-    text-decoration: none;
-  }
-
-  .button:hover{
-    background-color:rgb(108, 7, 7);
-  }
-
-  .button-container {
-    display: flex;
-    justify-content: center;
-    flex-wrap: wrap;
-    gap: 10px;
-  } 
-  
-  .shareable-link-container {
-    margin-top: 15px;
-    display: none;
-    align-items: center;
-    gap: 10px;
-  }
-
-  .shareable-link {
-    background: rgba(255, 255, 255, 0.07);
-    padding: 8px 12px;
-    border-radius: 4px;
-    color: #fff;
-    border: 1px solid #ccc;
-    width: 250px;
-    text-align: center;
-  }
-  
-</style>
-<div class="project-container">
-  <h2 class="title">My Projects</h2>
-  <div class="project-carousel">
-    <button class="carousel-control prev" onclick="scrollCarousel(-1)">
-      &#10094;
-    </button>
-
-    <div class="carousel-wrapper">
-      <div class="carousel-track" id="carousel-track" data-index="0">
-        {% for project in projects %}
-        <div
-          class="project-card"
-          onclick="goToProject('{{ project.id }}')"
-          data-id="{{ project.id }}"
-          data-title="{{ project.title }}"
-          data-description="{{ project.description }}"
-          data-visibility="{{ 'Public' if project.visibility else 'Private' }}"
-          data-eol_time="{{ project.eol_time }}"
-          data-reviews="{{ project.reviews }}"
-        >
-          <div
-            class="project-card-image-container"
-            style="
-              width: 100%;
-              height: 160px;
-              background-color: #4169e1;
-              display: flex;
-              align-items: center;
-              justify-content: center;
-              color: white;
-              font-size: 2rem;
-              font-weight: bold;
-            "
-          >
-            Project {{ loop.index }}
-          </div>
-          <h3 class="project-title">{{ project.title }}</h3>
+    {% if projects %}
+        <div class="carousel">
+            <button class="carousel__control carousel__control--prev" aria-label="Previous Project">❮</button>
+            <div class="carousel__wrapper">
+                <div class="carousel__track">
+                    {% for project in projects %}
+                    <div class="carousel__slide" data-project-index="{{ loop.index0 }}">
+                        {# Use card styling #}
+                        <div class="card carousel-card"
+                             data-id="{{ project.id }}"
+                             data-name="{{ project.name }}" {# Pass project name #}
+                             data-link="{{ project.link }}"
+                             
+                             data-tasks-count="{{ project.task_count }}"                             
+                             data-task-names="{{ project.tasks.limit(3) | map(attribute='name') | list | tojson }}" {# Get first 3 names #}
+                             data-creator-id="{{ project.creator.id if project.creator else '' }}" {# Pass creator ID #}
+                             data-eol_time="{{ project.eol_time.strftime('%Y-%m-%d %H:%M') if project.eol_time else 'N/A' }}"
+                             data-benchmarked="{{ project.benchmarked|string|lower }}"
+                             >
+                            <div class="carousel-card__image-container" style="background-color: #e0f7fa;"> {# Light placeholder bg #}
+                                {# Placeholder - Could fetch Figma preview? #}
+                                <span style="color: var(--clr-primary-dark); font-weight: 500;">Project Preview</span>
+                            </div>
+                            <div class="card__content" style="padding-top: var(--space-md);">
+                                {# Display Project Name in Card #}
+                                <h4 class="card__title" style="margin-bottom: var(--space-sm); font-size: 1.1rem;">{{ project.name }}</h4>
+                                <p style="font-size: 0.85rem; color: var(--clr-text-muted); word-break: break-all;">ID: {{ project.id[:8] }}...</p>
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+            <button class="carousel__control carousel__control--next" aria-label="Next Project">❯</button>
         </div>
-        {% endfor %}
-      </div>
-    </div>
 
-    <button class="carousel-control next" onclick="scrollCarousel(1)">
-      &#10095;
-    </button>
-  </div>
+        <div class="project-details-display" id="project-details">
+             <div class="project-details-display__item">
+                <span class="project-details-display__title">Name:</span>
+                <span class="project-details-display__value" id="detail-name"></span>
+            </div>
+            <div class="project-details-display__item">
+                <span class="project-details-display__title">ID:</span>
+                <span class="project-details-display__value" id="detail-id"></span>
+            </div>
+            <div class="project-details-display__item">
+                <span class="project-details-display__title">Figma Link:</span>
+                <span class="project-details-display__value" id="detail-link"></span>
+            </div>
+            <div class="project-details-display__item">
+                <span class="project-details-display__title">End of Life:</span>
+                <span class="project-details-display__value" id="detail-eol_time"></span>
+            </div>
+             <div class="project-details-display__item">
+                <span class="project-details-display__title">Benchmarked:</span>
+                <span class="project-details-display__value" id="detail-benchmarked"></span>
+            </div>
+             <div class="project-details-display__item">
+                <span class="project-details-display__title">Tasks:</span>
+                <span class="project-details-display__value" id="detail-tasks-display"></span>
+            </div>
 
-  {% if projects %}
-  <div class="project-details" id="project-details">
-    <div class="detail-item">
-      <span class="detail-title">ID:</span>
-      <span id="detail-id">{{ projects[0].id }}</span>
-    </div>
-    <div class="detail-item">
-      <span class="detail-title">Title:</span>
-      <span id="detail-title">{{ projects[0].title }}</span>
-    </div>
-    <div class="detail-item">
-      <span class="detail-title">Description:</span>
-      <span id="detail-description">{{ projects[0].description }}</span>
-    </div>
-    <div class="detail-item">
-      <span class="detail-title">Visibility:</span>
-      <span id="detail-visibility"
-        >{{ 'Public' if projects[0].visibility else 'Private' }}</span
-      >
-    </div>
-    <div class="detail-item">
-      <span class="detail-title">Shareable time left:</span>
-      <span id="detail-eol_time">{{ projects[0].eol_time }}</span>
-    </div>
-    <div class="detail-item">
-      <span class="detail-title">Reviews:</span>
-      <span id="detail-reviews">{{ projects[0].reviews }}</span>
-    </div>
+            
+            <div class="project-details-display__actions">
+                <a href="#" class="btn btn--primary" id="detail-edit-link" style="background-color: orange;">Edit Project</a>
+                <a href="#" class="btn btn--primary" id="detail-review-link">Go to Review</a>
+                <a href="#" class="btn btn--primary" id="detail-view-submissions-link" style="background-color: lightgreen;">View Submissions</a>
+                <a href="#" class="btn btn--primary" id="detail-analysis-link" style="background-color: pink;">View Analysis</a>
+                <a href="#" class="btn" id="detail-benchmark-action" style="padding: 0 0 0 0; margin: 0 0 0 0; background-color: #df75ffdd; color: #ffffff !important">Benchmark</a>                
+                <button class="btn btn--outline-primary" id="detail-generate-link-btn" style="background-color: rgb(66, 129, 255); color:rgb(255, 255, 255) !important;">Generate Share Link</button>
+                <!-- <a href="#" class="btn btn--primary" id="detail-heatmap-link">Generate Heatmap</a> -->
+            </div>
+            
+            <div class="shareable-link-container" id="shareable-link-container" style="display: none; margin-top: var(--space-md); align-items: center; gap: var(--space-sm);">
+                <label for="shareable-link" class="sr-only">Shareable Link</label>
+                <input type="text" id="shareable-link" class="form-control" readonly style="background-color: var(--clr-bg); border-color: var(--clr-border); color: var(--clr-text-muted);" />
+                <button class="btn btn--primary btn--small copy-link-btn" style="padding: 0.3rem 0.8rem; font-size: 0.9rem;">Copy</button>
+            </div>
+            
+        </div>
 
-    <a
-      class="edit-button"
-      href="{{ url_for('main.editProject', project_id=projects[0].id) }}"
-      >Edit Project</a
-    >
-
-    <a
-      href="{{ url_for('main.project', project_id=projects[0].id) }}"
-      class="review-link"
-      id="review-link"
-      style="
-        margin-left: 10px;
-        background-color: #00c1ff;
-        padding: 8px 12px;
-        border-radius: 4px;
-        text-decoration: none;
-        color: #fff;
-      "
-    >
-      Go to Review
-    </a>
-
-    <a
-    href="{{ url_for('main.generate_heatmap', project_id=projects[0].id) }}"
-    class="edit-button"
-    style="background-color: #28a745; margin-top: 10px;"
-  >
-    Generate Heatmap
-  </a>
-
-    <div class="benchmark-container">
-      {% if projects[0].benchmarked %}
-      <form
-        action="{{ url_for('main.delete_benchmark', project_id=projects[0].id) }}"
-        method="post"
-        onsubmit="return confirmDeleteBenchmark()"
-      >
-        <button
-          type="submit"
-          class="benchmark-link"
-          style="
-            background-color: #ff9800;
-            padding: 8px 12px;
-            border-radius: 4px;
-            text-decoration: none;
-            color: #fff;
-          "
-        >
-          Delete Benchmark
-        </button>
-      </form>
-      {% else %}
-      <div class="benchmark-container">
-        <a
-          href="{{ url_for('main.project', project_id=projects[0].id) }}?benchmark=true"
-          class="benchmark-link"
-          style="
-            background-color: #ff9800;
-            padding: 8px 12px;
-            border-radius: 4px;
-            text-decoration: none;
-            color: #fff;
-          "
-        >
-          Benchmark Project
-        </a>
-      </div>
-      {% endif %}
-    </div>
-
-    <div class="generate-link-container">
-      <button class="button" onclick="generateShareableLink()">Generate Link</button>
-      <div class="shareable-link-container" id="shareable-link-container">
-        <input type="text" id="shareable-link" class="shareable-link" readonly />
-        <button class="button" onclick="copyShareableLink()">Copy</button>
-        <button class="button" onclick="closeShareableLink()">Close</button>
-      </div>
-    </div>   
-
-
-  {% else %}
-  <p id="unavailable">No Projects Available</p>
-  <img
-    id="duck"
-    src="{{ url_for('static', filename='duck.gif') }}"
-    alt="duck"
-  />
-  {% endif %}
+    {% else %}
+        <div class="card" style="text-align: center; padding: var(--space-xl);">
+            <h2 class="card__title">No Projects Yet!</h2>
+            <p class="card__content">You haven't created any projects. Why not start one now?</p>
+            <div class="card__footer">
+                <a href="{{ url_for('main.createProject') }}" class="btn btn--primary">Create New Project</a>
+            </div>
+        </div>
+    {% endif %}
 </div>
+{% endblock %}
 
+{% block scripts %}
 <script>
-  function confirmDeleteBenchmark() {
-    return confirm("Are you sure you want to delete this benchmark?");
-  }
+document.addEventListener('DOMContentLoaded', function() {
+    const track = document.querySelector('.carousel__track');
+    const slides = Array.from(track?.children || []);
+    const nextButton = document.querySelector('.carousel__control--next');
+    const prevButton = document.querySelector('.carousel__control--prev');
+    const detailsContainer = document.getElementById('project-details');
 
-  function generateShareableLink() {
-    const projectId = document.getElementById("detail-id").innerText;
-    const shareableLink = `${window.location.origin}/review/${projectId}`;
-    document.getElementById("shareable-link").value = shareableLink;
-    document.getElementById("shareable-link-container").style.display = "flex";
-  }
+    if (!track || slides.length === 0 || !nextButton || !prevButton || !detailsContainer) {
+        console.log("Carousel or details elements not found. Exiting script.");
+        return; // Exit if essential elements aren't present
+    }
 
-  function copyShareableLink() {
-    const linkInput = document.getElementById("shareable-link");
-    linkInput.select();
-    linkInput.setSelectionRange(0, 99999);
-    navigator.clipboard.writeText(linkInput.value).then(() => {
-      alert("Link has been copied!");
+    // Adjust calculation if padding is applied to slides
+    const slideStyle = window.getComputedStyle(slides[0]);
+    const slideMargin = parseFloat(slideStyle.marginLeft) + parseFloat(slideStyle.marginRight);
+    const slidePadding = parseFloat(slideStyle.paddingLeft) + parseFloat(slideStyle.paddingRight);
+    const slideWidth = slides[0].offsetWidth + slideMargin; // Use offsetWidth for full width including padding/border
+
+
+    let currentIndex = 0;
+    const numVisibleSlides = 3; // Adjust based on your CSS/design
+
+    const updateSlidePosition = () => {
+         // Calculate the correct offset based on the current index
+         // This assumes slides are arranged linearly. Adjust if using different layout.
+         const offset = currentIndex * slideWidth;
+         track.style.transform = `translateX(-${offset}px)`;
+        updateDetails(currentIndex);
+        updateActiveClass();
+        updateButtonStates();
+    };
+
+    const moveToSlide = (targetIndex) => {
+        // Clamp index within bounds [0, slides.length - numVisibleSlides]
+        // Or allow wrapping:
+        if (targetIndex < 0) {
+           // currentIndex = slides.length - 1; // Wrap to end
+           currentIndex = 0; // Stop at beginning
+        } else if (targetIndex >= slides.length) {
+           // currentIndex = 0; // Wrap to start
+           currentIndex = slides.length - 1; // Stop at end
+        } else {
+            currentIndex = targetIndex;
+        }
+        updateSlidePosition();
+    };
+
+    const updateActiveClass = () => {
+        slides.forEach((slide, index) => {
+            const card = slide.querySelector('.carousel-card');
+             if (card) {
+                 // Highlight the *center* visible card maybe? Or just the one being detailed?
+                 card.classList.toggle('active', index === currentIndex); // Highlight selected
+             }
+        });
+    };
+
+    const updateButtonStates = () => {
+         prevButton.disabled = currentIndex === 0;
+         // Disable next if the last slide is already visible
+         // This logic depends on how many slides are shown at once
+         // Simple version: disable if currentIndex is the last slide
+         nextButton.disabled = currentIndex === slides.length - 1;
+    };
+
+
+    const updateDetails = (index) => {
+        const currentSlide = slides[index]?.querySelector('.carousel-card');
+        if (!currentSlide) return;
+    
+        const projectId = currentSlide.dataset.id;
+        const projectName = currentSlide.dataset.name; // Get name
+        const projectLink = currentSlide.dataset.link;
+        const projectTasksCount = parseInt(currentSlide.dataset.tasksCount || '0');
+        
+        // Add error handling for JSON parsing
+        let projectTaskNames = [];
+        try {
+            projectTaskNames = JSON.parse(currentSlide.dataset.taskNames || '[]');
+        } catch (e) {
+            console.error("Error parsing task names JSON:", e);
+            // If JSON parse fails, use empty array
+            projectTaskNames = [];
+        }
+        
+        const projectEol = currentSlide.dataset.eol_time;
+        const isBenchmarked = currentSlide.dataset.benchmarked === 'true';
+    
+        document.getElementById('detail-name').textContent = projectName || 'N/A'; // Display name
+        document.getElementById('detail-id').textContent = projectId || 'N/A';
+        document.getElementById('detail-link').textContent = projectLink || 'N/A';
+        document.getElementById('detail-eol_time').textContent = projectEol || 'N/A';
+        document.getElementById('detail-benchmarked').textContent = isBenchmarked ? 'Yes' : 'No';
+    
+        // <<< FIX 1: Update Task Display >>>
+        const tasksDisplay = document.getElementById('detail-tasks-display');
+        if (projectTasksCount > 0) {
+            let taskText = `${projectTasksCount} Task(s)`;
+            if (projectTaskNames.length > 0) {
+                taskText += `: ${projectTaskNames.join(', ')}`;
+                if (projectTasksCount > projectTaskNames.length) {
+                    taskText += '...';
+                }
+            }
+            tasksDisplay.textContent = taskText;
+        } else {
+            tasksDisplay.textContent = 'No tasks defined';
+        }
+
+
+        // Update Action Links
+        document.getElementById('detail-edit-link').href = `/projects/${projectId}/edit`;
+        document.getElementById('detail-review-link').href = `/review/${projectId}`;
+        document.getElementById('detail-view-submissions-link').href = `/viewReviewBroad/${projectId}`;
+    //    document.getElementById('detail-heatmap-link').href = `/generate_heatmap/${projectId}`;
+        document.getElementById('detail-analysis-link').href = `/projects/${projectId}/analysis`;
+
+
+        // Update Benchmark Action Button/Link (Existing logic seems ok)
+        const benchmarkActionContainer = document.getElementById('detail-benchmark-action');
+        benchmarkActionContainer.innerHTML = ''; // Clear previous
+
+        if (isBenchmarked) {
+            const form = document.createElement('form');
+            form.action = `/delete_benchmark/${projectId}`;
+            form.method = 'post';
+            form.onsubmit = () => confirm('Are you sure you want to delete this benchmark? This cannot be undone.');
+            form.style.display = 'inline';
+            
+            const button = document.createElement('button');
+            button.type = 'submit';
+            button.className = 'btn btn--outline-primary'; // Changed from btn--danger for consistency
+            button.style.fontSize = '0.9rem';
+            button.textContent = 'Delete Benchmark';
+            form.appendChild(button);
+            benchmarkActionContainer.appendChild(form);
+        } else {
+            const link = document.createElement('a');
+            link.href = `/review/${projectId}?benchmark=true`;
+            link.className = 'btn btn--outline-primary'; // Changed from btn--warning for consistency
+            link.style.fontSize = '0.9rem';
+            link.textContent = 'Benchmark Project';
+            benchmarkActionContainer.appendChild(link);
+        }
+        
+
+        // Hide shareable link initially when changing projects
+        document.getElementById('shareable-link-container').style.display = 'none';
+        document.getElementById('shareable-link').value = '';
+    };
+
+    // --- Generate Shareable Link Button --- (Existing logic seems ok)
+    const generateLinkBtn = document.getElementById('detail-generate-link-btn');
+    const shareableLinkContainer = document.getElementById('shareable-link-container');
+    const shareableLinkInput = document.getElementById('shareable-link');
+    const copyLinkBtn = shareableLinkContainer?.querySelector('.copy-link-btn');
+
+    generateLinkBtn?.addEventListener('click', () => {
+        const projectId = document.getElementById('detail-id').textContent;
+        if (projectId && projectId !== 'N/A') {
+            const shareLink = `${window.location.origin}/review/${projectId}`;
+            shareableLinkInput.value = shareLink;
+            shareableLinkContainer.style.display = 'flex'; // Show the container
+        }
     });
-  }
 
-  function closeShareableLink() {
-    document.getElementById("shareable-link-container").style.display = "none";
-  }
+    copyLinkBtn?.addEventListener('click', () => {
+        shareableLinkInput.select();
+        shareableLinkInput.setSelectionRange(0, 99999); // For mobile
+        try {
+            navigator.clipboard.writeText(shareableLinkInput.value).then(() => {
+               const originalText = copyLinkBtn.textContent;
+               copyLinkBtn.textContent = 'Copied!';
+               setTimeout(() => { copyLinkBtn.textContent = originalText; }, 1500);
+            });
+        } catch (err) {
+            console.error('Failed to copy text: ', err);
+            alert('Failed to copy link.'); // Provide feedback
+        }
+    });
 
-  function scrollCarousel(direction) {
-    const track = document.getElementById("carousel-track");
-    const items = track.querySelectorAll(".project-card");
-    const itemCount = items.length;
-    if (!itemCount) return;
+    // Event Listeners for Carousel Controls
+    prevButton.addEventListener('click', () => moveToSlide(currentIndex - 1));
+    nextButton.addEventListener('click', () => moveToSlide(currentIndex + 1));
 
-    const itemWidth = items[0].offsetWidth + 20;
+    // Initialize first slide details
+    updateSlidePosition();
+});
 
-    let currentIndex = parseInt(track.getAttribute("data-index")) || 0;
-
-    // Remove active class from current item
-    items[currentIndex].classList.remove("active");
-
-    currentIndex += direction;
-
-    if (currentIndex < 0) currentIndex = itemCount - 1;
-    if (currentIndex > itemCount - 1) currentIndex = 0;
-
-    track.style.transform = `translateX(-${currentIndex * itemWidth}px)`;
-    track.setAttribute("data-index", currentIndex);
-
-    // Add active class to new current item
-    items[currentIndex].classList.add("active");
-
-    const currentProject = items[currentIndex];
-    document.getElementById("detail-id").innerText =
-      currentProject.getAttribute("data-id");
-    document.getElementById("detail-title").innerText =
-      currentProject.getAttribute("data-title");
-    document.getElementById("detail-description").innerText =
-      currentProject.getAttribute("data-description");
-    document.getElementById("detail-visibility").innerText =
-      currentProject.getAttribute("data-visibility");
-    document.getElementById("detail-eol_time").innerText =
-      currentProject.getAttribute("data-eol_time");
-    document.getElementById("detail-reviews").innerText =
-      currentProject.getAttribute("data-reviews");
-
-    document
-      .querySelector(".edit-button")
-      .setAttribute(
-        "href",
-        `/editProject/${currentProject.getAttribute("data-id")}`
-      );
-
-    document
-      .getElementById("review-link")
-      .setAttribute(
-        "href",
-        `/review/${currentProject.getAttribute("data-id")}`
-      );
-
-    // Update benchmark link logic based on current project
-    const benchmarkContainer = document.querySelector(".benchmark-container");
-    if (benchmarkContainer) {
-      if (
-        currentProject.hasAttribute("data-benchmarked") &&
-        currentProject.getAttribute("data-benchmarked") === "True"
-      ) {
-        benchmarkContainer.innerHTML = `
-          <form action="/delete_benchmark/${currentProject.getAttribute(
-            "data-id"
-          )}" method="post" onsubmit="return confirmDeleteBenchmark()">
-            <button type="submit" class="benchmark-link" style="background-color: #ff9800; padding: 8px 12px; border-radius: 4px; text-decoration: none; color: #fff;">
-              Delete Benchmark
-            </button>
-          </form>
-        `;
-      } else {
-        benchmarkContainer.innerHTML = `
-          <a href="/review/${currentProject.getAttribute(
-            "data-id"
-          )}?benchmark=true" class="benchmark-link" style="background-color: #ff9800; padding: 8px 12px; border-radius: 4px; text-decoration: none; color: #fff;">
-            Benchmark Project
-          </a>
-        `;
-      }
-    }
-  }
-
-  function goToProject(projectId) {
-    // Use the exact same URL structure as defined in the route
-    window.location.href = `/viewReviewBroad/${projectId}`;
-  }
-
-  function editProject(projectId) {
-    window.location.href = `/editProject/${projectId}`;
-  }
-
-  // Add this at the end of your existing script section to set the initial active state
-  document.addEventListener("DOMContentLoaded", function () {
-    const track = document.getElementById("carousel-track");
-    const items = track.querySelectorAll(".project-card");
-    if (items.length > 0) {
-      items[0].classList.add("active");
-    }
-  });
 </script>
-
 {% endblock %}

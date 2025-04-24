@@ -31,11 +31,11 @@
     position: relative;
     max-width: 720px;
     margin: 0 auto 20px auto;
-    border: 2px solid #ccc;
+    border: 2px solid #cccccc00;
     border-radius: 12px;
     overflow: hidden;
-    background-color: #000;
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.4);
+    background-color: #00000000;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0);
   }
 
   .webgazer-video-feed {
@@ -302,7 +302,7 @@
   </div>
 </div>
 
-<script src="https://webgazer.cs.brown.edu/webgazer.js"></script>
+<script src="{{ url_for('static', filename='js/webgazer.js') }}"></script>
 <script>
   document.addEventListener("DOMContentLoaded", function () {
     const startCalibrationButton = document.getElementById("startCalibration");
@@ -348,15 +348,16 @@
       showCalibrationPoint();
     });
 
+    // Inside the finishCalibrationButton event listener
     finishCalibrationButton.addEventListener("click", function () {
       webgazer.end();
       calibrationInstructions.textContent =
         "Calibration complete. You can now proceed.";
       finishCalibrationButton.style.display = "none";
       redirectButton.parentElement.style.display = "block";
-
+    
       webgazer.saveDataAcrossSessions(true);
-
+    
       fetch("/calibration_complete", {
         method: "POST",
         headers: {
@@ -364,7 +365,13 @@
         },
       })
         .then((response) => response.json())
-        .then((data) => console.log(data.message))
+        .then((data) => {
+          console.log(data.message);
+          // Check if there's a redirect URL in the response
+          if (data.redirect) {
+            window.location.href = data.redirect;
+          }
+        })
         .catch((error) => console.error("Error:", error));
     });
 

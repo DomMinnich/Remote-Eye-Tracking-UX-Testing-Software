@@ -1,125 +1,700 @@
-{% extends 'base.html' %} {% block content %}
+<!-- EditProject.html -->
+{% extends 'base.html' %}
+{% set body_class = 'editproject' %}
 
-<style>
-  .edit-project-page {
-    max-width: 600px;
-    margin: 80px auto 100px auto;
-    padding: 20px;
-    background: rgba(255, 255, 255, 0.07);
-    backdrop-filter: blur(10px);
-    border-radius: 12px;
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
-    color: #fff;
-  }
+{% block title %}Edit Project{% endblock %}
 
-  .edit-project-page h2 {
-    text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.8);
-    margin-bottom: 20px;
-    text-align: center;
-  }
+{% block content %}
+<div class="project-form-page"> {# Reuse create project page style #}
+    <h2 class="page-title">Edit Project: {{ project.name }}</h2>
+     <p style="text-align: center; color: var(--clr-text-muted); margin-top: calc(-1 * var(--space-lg)); margin-bottom: var(--space-lg);">ID: {{ project.id }}</p>
 
-  .edit-project-form {
-    display: flex;
-    flex-direction: column;
-    gap: 15px;
-  }
+    {# Flash Messages #}
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            <div class="flash-messages" style="max-width: 100%; margin-bottom: var(--space-lg);">
+                {% for category, message in messages %}
+                    <div class="alert alert--{{ category }}">{{ message }}</div>
+                {% endfor %}
+            </div>
+        {% endif %}
+    {% endwith %}
 
-  label {
-    font-weight: 600;
-    margin-bottom: 5px;
-    color: #ffd700;
-  }
+    {# --- Main Edit Form (Name & Link) --- #}
+    <form class="project-form" method="POST" action="{{ url_for('main.editProject', project_id=project.id) }}">
+        {{ form.hidden_tag() }} {# CSRF token etc. from EditProjectForm #}
 
-  input[type="text"],
-  textarea {
-    padding: 10px;
-    border-radius: 6px;
-    border: 1px solid #ccc;
-    width: 100%;
-    box-sizing: border-box;
-    color: #000;
-  }
+        <div class="form-group">
+            {{ form.name.label(class="form-label") }}
+            {{ form.name(class="form-control", required=true) }}
+             {% for error in form.name.errors %}
+                 <span class="form-error">{{ error }}</span>
+             {% endfor %}
+        </div>
 
-  .btn {
-    cursor: pointer;
-    font-weight: 600;
-    border: none;
-    border-radius: 6px;
-    padding: 10px 16px;
-    transition: background-color 0.3s;
-    margin: 5px;
-    color: #fff;
-  }
-  .delete-button {
-    background-color: #ff0000;
-  }
-  .delete-button:hover {
-    background-color: #cc0000;
-  }
-  .save-button {
-    background-color: #fffb00;
-    color: #000;
-  }
-  .save-button:hover {
-    background-color: #dcdc00;
-  }
-  .button {
-    background-color: #007bff;
-  }
-  .button:hover {
-    background-color: #0056b3;
-  }
-</style>
+        <div class="form-group">
+            {{ form.link.label(class="form-label") }}
+            {{ form.link(class="form-control", required=true) }}
+             {% for error in form.link.errors %}
+                 <span class="form-error">{{ error }}</span>
+             {% endfor %}
+        </div>
+        <div class="form-group">
+            <label class="form-label">Tasks</label>
+            <div id="tasks-container" class="task-list-container">
+                <!-- Task items will be generated here via JS -->
+                <div class="no-tasks" style="display: none;">No tasks added yet</div>
+            </div>
+            
+            <div class="task-actions" style="margin-top: var(--space-md);">
+                <button type="button" id="add-task-btn" class="btn btn--secondary btn--sm">
+                    <i class="fas fa-plus"></i> Add New Task
+                </button>
+            </div>
+            
+            <textarea name="tasks" id="tasks-json" style="display: none;">{{ tasks_json }}</textarea>
+        </div>
 
-<div class="edit-project-page">
-  <h2>Edit Project</h2>
 
-  <img
-    src="https://via.placeholder.com/400"
-    alt="Project {{ project.id }}"
-    class="project-img"
-  />
-  <button class="btn button">Change Pic</button>
+        {% if current_user.can_manage_collaborators(project.id) and  current_user.role == "Admin" %}
+            <div class="form-group">
+                <label class="form-label">Collaborators</label>
+                <div id="collaborators-container" class="collab-list-container">
+                    <!-- Collaborator items will be generated here via JS -->
+                    <div class="no-collaborators" style="display: none;">No collaborators added yet</div>
+                </div>
+                
+                <div class="collab-form" style="margin-top: var(--space-md); padding: var(--space-sm); background: var(--clr-bg); border-radius: var(--radius-sm);">
+                    <div style="display: flex; gap: var(--space-md); margin-bottom: var(--space-sm);">
+                        <input type="email" id="new-collab-email" class="form-control" placeholder="Email address" style="flex: 2;">
+                        <select id="new-collab-role" class="form-control" style="flex: 1;">
+                            <option value="viewer">Viewer</option>
+                            <option value="editor">Editor</option>
+                            <option value="co-owner">Co-Owner</option>
+                        </select>
+                    </div>
+                    <button type="button" id="add-collab-btn" class="btn btn--secondary btn--sm">
+                        <i class="fas fa-user-plus"></i> Add Collaborator
+                    </button>
+                </div>
+                
+                <textarea name="collaborators" id="collaborators-json" style="display: none;">{{ collaborators_json }}</textarea>
+            </div>
+        {% else %}
+            <div class="form-group">
+                <label class="form-label">Collaborators</label>
+                <p style="color: var(--clr-text-muted); font-size: 0.9rem;">You do not have permission to manage collaborators.</p>
+                <div id="view-only-collaborators" class="collab-list-container view-only">
+                    <!-- Display-only collaborator list will be generated here -->
+                </div>
+                {# Keep the hidden field for form submission #}
+                <textarea name="collaborators" id="collaborators-json" style="display: none;">{{ collaborators_json }}</textarea>
+            </div>
+        {% endif %}
 
-  <form
-    class="edit-project-form"
-    method="POST"
-    action="{{ url_for('main.editProject', project_id=project.id) }}"
-  >
-    <div>
-      <label for="link">Figma Link:</label>
-      <input
-        type="text"
-        name="link"
-        id="link"
-        value="{{ project.link }}"
-        required
-      />
-    </div>
+        {# --- Action Buttons --- #}
+        <div style="display: flex; justify-content: flex-end; align-items: center; margin-top: var(--space-lg); gap: var(--space-md);">
+            {# Advanced toggle button #}
+            <button type="button" id="toggle-advanced-mode" class="btn btn--text">
+                <i class="fas fa-code"></i> Toggle JSON View
+            </button>
+            {# Save Button (Submits the main form including hidden JSON) #}
+            {{ form.submit(class="btn btn--primary", value="Save Changes") }}
+        </div>
+    </form> {# End Main Edit Form #}
 
-    <div>
-      <label for="tasks">Tasks (JSON array):</label>
-      <textarea name="tasks" id="tasks" rows="3">{{ project.tasks|tojson }}</textarea>
-      <small style="color: #aaa">Enter a JSON array, e.g. [{"name":"Task1","minor_tasks":["Subtask1","Subtask2"]}]</small>
-    </div>
+    {# --- Delete Project Section (Separate Form) --- #}
+    {% if current_user.can_delete_project(project.id) %}
+        <hr style="margin: var(--space-xl) 0;">
+        <section class="settings-section" style="border: 1px solid var(--clr-error); padding: var(--space-lg); border-radius: var(--radius-md);">
+            <h3 style="color: var(--clr-error);">Delete Project</h3>
+            <p style="color: var(--clr-text-muted); margin-bottom: var(--space-md);">
+                This action is permanent and will delete the project, all associated tasks, submissions, and data.
+            </p>
+            <form action="{{ url_for('main.delete_project', project_id=project.id) }}" method="POST" onsubmit="return confirm('FINAL WARNING: Are you absolutely sure you want to delete this project and all its data? This cannot be undone.');">
+                 {{ delete_form.hidden_tag() }} {# Includes project_id hidden field + CSRF #}
+                 <div class="form-group">
+                     {{ delete_form.confirm_text.label(class="form-label") }}
+                     {{ delete_form.confirm_text(class="form-control", placeholder="Type DELETE here", required=true) }} {# Add required #}
+                     {% for error in delete_form.confirm_text.errors %}
+                        <span class="form-error">{{ error }}</span>
+                     {% endfor %}
+                 </div>
+                 {{ delete_form.submit(class="btn btn--danger") }}
+            </form>
+        </section>
+    {% endif %}
 
-    <div>
-      <label for="collaborators">Collaborators (JSON array):</label>
-      <textarea name="collaborators" id="collaborators" rows="3">{{ project.collaborators|tojson }}</textarea>
-      <small style="color: #aaa">Format: [{"email":"user@example.com","id":"...","role":"editor"},...]</small>
-    </div>
-
-    <div style="text-align: center; margin-top: 10px">
-      <button class="btn save-button" type="submit">Save</button>
-    </div>
-  </form>
-  <form
-    action="{{ url_for('main.delete_project', project_id=project.id) }}"
-    method="POST"
-    style="display: inline"
-  >
-    <button class="btn delete-button" type="submit">Delete</button>
-  </form>
 </div>
 
+{# --- Hidden templates for dynamic items --- #}
+<template id="task-item-template">
+    <div class="task-item" data-task-id="">
+        <div class="task-content">
+            <div class="drag-handle"><i class="fas fa-grip-vertical"></i></div>
+            <input type="text" class="task-name form-control" value="">
+            <div class="task-actions">
+                <button type="button" class="btn btn--icon task-up-btn" title="Move Up">
+                    <i class="fas fa-arrow-up"></i>
+                </button>
+                <button type="button" class="btn btn--icon task-down-btn" title="Move Down">
+                    <i class="fas fa-arrow-down"></i>
+                </button>
+                <button type="button" class="btn btn--icon task-delete-btn" title="Delete Task">
+                    <i class="fas fa-trash"></i>
+                </button>
+            </div>
+        </div>
+    </div>
+</template>
+
+<template id="collaborator-item-template">
+    <div class="collaborator-item" data-user-id="">
+        <div class="collaborator-content">
+            <div class="collaborator-info">
+                <span class="collab-email"></span>
+                <span class="collab-id text-muted"></span>
+            </div>
+            <div class="collaborator-role">
+                <select class="role-selector form-control">
+                    <option value="viewer">Viewer</option>
+                    <option value="editor">Editor</option>
+                    <option value="co-owner">Co-Owner</option>
+                    <option value="creator" disabled>Creator</option>
+                </select>
+            </div>
+            <div class="collaborator-actions">
+                <button type="button" class="btn btn--icon collab-delete-btn" title="Remove Collaborator">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+        </div>
+    </div>
+</template>
+
+<template id="view-only-collaborator-template">
+    <div class="collaborator-item view-only">
+        <div class="collaborator-content">
+            <div class="collaborator-info">
+                <span class="collab-email"></span>
+            </div>
+            <div class="collaborator-role">
+                <span class="role-badge"></span>
+            </div>
+        </div>
+    </div>
+</template>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    // Task Management
+    document.addEventListener('DOMContentLoaded', function() {
+        // Variables to track task and collaborator data
+        let tasks = [];
+        let collaborators = [];
+        let advancedMode = false;
+        
+        // Get templates
+        const taskTemplate = document.getElementById('task-item-template').content;
+        const collabTemplate = document.getElementById('collaborator-item-template').content;
+        const viewOnlyCollabTemplate = document.getElementById('view-only-collaborator-template')?.content;
+        
+        // Get containers
+        const tasksContainer = document.getElementById('tasks-container');
+        const collabsContainer = document.getElementById('collaborators-container');
+        const viewOnlyCollabsContainer = document.getElementById('view-only-collaborators');
+        const tasksJsonField = document.getElementById('tasks-json');
+        const collabsJsonField = document.getElementById('collaborators-json');
+        
+        // Parse initial JSON data
+        try {
+            tasks = JSON.parse(tasksJsonField.value || '[]');
+            renderTasks();
+        } catch (e) {
+            console.error('Error parsing tasks JSON:', e);
+        }
+        
+        try {
+            collaborators = JSON.parse(collabsJsonField.value || '[]');
+            renderCollaborators();
+        } catch (e) {
+            console.error('Error parsing collaborators JSON:', e);
+        }
+        
+        // Add event listeners for adding new tasks and collaborators
+        document.getElementById('add-task-btn')?.addEventListener('click', addNewTask);
+        document.getElementById('add-collab-btn')?.addEventListener('click', addNewCollaborator);
+        document.getElementById('toggle-advanced-mode')?.addEventListener('click', toggleAdvancedMode);
+        
+        // Function to render all tasks
+        function renderTasks() {
+            if (!tasksContainer) return;
+            
+            // Clear container
+            tasksContainer.innerHTML = '';
+            
+            if (tasks.length === 0) {
+                const noTasks = document.createElement('div');
+                noTasks.className = 'no-tasks';
+                noTasks.textContent = 'No tasks added yet';
+                tasksContainer.appendChild(noTasks);
+                return;
+            }
+            
+            // Sort tasks by order
+            tasks.sort((a, b) => (a.order || 0) - (b.order || 0));
+            
+            // Create and append task items
+            tasks.forEach((task, index) => {
+                const taskElement = document.importNode(taskTemplate, true);
+                const taskItem = taskElement.querySelector('.task-item');
+                
+                taskItem.dataset.taskId = task.id || '';
+                taskItem.dataset.index = index;
+                
+                const nameInput = taskItem.querySelector('.task-name');
+                nameInput.value = task.name || '';
+                nameInput.addEventListener('input', (e) => {
+                    tasks[index].name = e.target.value;
+                    updateTasksJson();
+                });
+                
+                // Add event listeners for buttons
+                taskItem.querySelector('.task-delete-btn').addEventListener('click', () => {
+                    tasks.splice(index, 1);
+                    updateTaskOrder();
+                    renderTasks();
+                    updateTasksJson();
+                });
+                
+                taskItem.querySelector('.task-up-btn').addEventListener('click', () => {
+                    if (index > 0) {
+                        [tasks[index - 1], tasks[index]] = [tasks[index], tasks[index - 1]];
+                        updateTaskOrder();
+                        renderTasks();
+                        updateTasksJson();
+                    }
+                });
+                
+                taskItem.querySelector('.task-down-btn').addEventListener('click', () => {
+                    if (index < tasks.length - 1) {
+                        [tasks[index], tasks[index + 1]] = [tasks[index + 1], tasks[index]];
+                        updateTaskOrder();
+                        renderTasks();
+                        updateTasksJson();
+                    }
+                });
+                
+                tasksContainer.appendChild(taskItem);
+            });
+        }
+        
+        // Function to update task order values
+        function updateTaskOrder() {
+            tasks.forEach((task, index) => {
+                task.order = index;
+            });
+        }
+        
+        // Function to add a new task
+        function addNewTask() {
+            const newTask = {
+                name: "New Task",
+                order: tasks.length
+            };
+            
+            tasks.push(newTask);
+            updateTasksJson();
+            renderTasks();
+        }
+        
+        // Function to render collaborators
+        function renderCollaborators() {
+            const container = collabsContainer || viewOnlyCollabsContainer;
+            if (!container) return;
+            
+            // Clear container
+            container.innerHTML = '';
+            
+            if (collaborators.length === 0) {
+                const noCollabs = document.createElement('div');
+                noCollabs.className = 'no-collaborators';
+                noCollabs.textContent = 'No collaborators added yet';
+                container.appendChild(noCollabs);
+                return;
+            }
+            
+            // Create and append collaborator items
+            collaborators.forEach((collab, index) => {
+                // Skip empty collaborators
+                if (!collab.email) return;
+                
+                // Choose template based on container
+                let template;
+                if (container === viewOnlyCollabsContainer) {
+                    template = viewOnlyCollabTemplate;
+                } else {
+                    template = collabTemplate;
+                }
+                
+                const collabElement = document.importNode(template, true);
+                const collabItem = collabElement.querySelector('.collaborator-item');
+                
+                collabItem.dataset.userId = collab.id || '';
+                
+                const emailSpan = collabItem.querySelector('.collab-email');
+                emailSpan.textContent = collab.email;
+                
+                // Add ID as small text if available
+                const idSpan = collabItem.querySelector('.collab-id');
+                if (idSpan && collab.id) {
+                    idSpan.textContent = `(ID: ${collab.id.slice(0, 8)}...)`;
+                }
+                
+                // Handle roles (differently for editable vs view-only)
+                if (container === collabsContainer) {
+                    const roleSelector = collabItem.querySelector('.role-selector');
+                    roleSelector.value = collab.role;
+                    
+                    // Disable changing role for creator
+                    if (collab.role === 'creator') {
+                        roleSelector.disabled = true;
+                        collabItem.querySelector('.collab-delete-btn').disabled = true;
+                        collabItem.classList.add('creator');
+                    }
+                    
+                    roleSelector.addEventListener('change', (e) => {
+                        collaborators[index].role = e.target.value;
+                        updateCollaboratorsJson();
+                    });
+                    
+                    // Add delete button functionality
+                    collabItem.querySelector('.collab-delete-btn').addEventListener('click', () => {
+                        if (collab.role !== 'creator') {
+                            collaborators.splice(index, 1);
+                            renderCollaborators();
+                            updateCollaboratorsJson();
+                        }
+                    });
+                } else {
+                    // View-only display
+                    const roleBadge = collabItem.querySelector('.role-badge');
+                    roleBadge.textContent = collab.role;
+                    roleBadge.className = `role-badge role-${collab.role}`;
+                }
+                
+                container.appendChild(collabItem);
+            });
+        }
+        
+        // Function to add a new collaborator
+        function addNewCollaborator() {
+            const emailInput = document.getElementById('new-collab-email');
+            const roleSelect = document.getElementById('new-collab-role');
+            
+            if (!emailInput || !roleSelect) return;
+            
+            const email = emailInput.value.trim();
+            const role = roleSelect.value;
+            
+            if (email === '') {
+                alert('Please enter a valid email address');
+                return;
+            }
+            
+            // Check if email already exists
+            if (collaborators.some(c => c.email.toLowerCase() === email.toLowerCase())) {
+                alert(`${email} is already a collaborator`);
+                return;
+            }
+            
+            const newCollaborator = {
+                email: email,
+                role: role
+            };
+            
+            collaborators.push(newCollaborator);
+            updateCollaboratorsJson();
+            renderCollaborators();
+            
+            // Clear input
+            emailInput.value = '';
+        }
+        
+        // Function to toggle between UI and JSON view
+        function toggleAdvancedMode() {
+            advancedMode = !advancedMode;
+            
+            // Get the containers and JSON textareas
+            const tasksUI = document.getElementById('tasks-container');
+            const collabsUI = document.getElementById('collaborators-container') || document.getElementById('view-only-collaborators');
+            const tasksAddBtn = document.getElementById('add-task-btn');
+            const collabAddForm = document.querySelector('.collab-form');
+            
+            // Toggle visibility
+            if (advancedMode) {
+                // Hide UI components
+                if (tasksUI) tasksUI.style.display = 'none';
+                if (collabsUI) collabsUI.style.display = 'none';
+                if (tasksAddBtn) tasksAddBtn.style.display = 'none';
+                if (collabAddForm) collabAddForm.style.display = 'none';
+                
+                // Create and show editable textareas
+                createAdvancedEditor('tasks', tasksJsonField, 'Tasks JSON');
+                createAdvancedEditor('collaborators', collabsJsonField, 'Collaborators JSON');
+            } else {
+                // Show UI components
+                if (tasksUI) tasksUI.style.display = '';
+                if (collabsUI) collabsUI.style.display = '';
+                if (tasksAddBtn) tasksAddBtn.style.display = '';
+                if (collabAddForm) collabAddForm.style.display = '';
+                
+                // Remove editable textareas
+                document.querySelectorAll('.advanced-editor').forEach(el => el.remove());
+                
+                // Parse and update from any changes made in JSON view
+                try {
+                    tasks = JSON.parse(tasksJsonField.value);
+                    renderTasks();
+                } catch (e) {
+                    console.error('Error parsing tasks JSON:', e);
+                    alert('Invalid tasks JSON format. Changes may not be applied correctly.');
+                }
+                
+                try {
+                    collaborators = JSON.parse(collabsJsonField.value);
+                    renderCollaborators();
+                } catch (e) {
+                    console.error('Error parsing collaborators JSON:', e);
+                    alert('Invalid collaborators JSON format. Changes may not be applied correctly.');
+                }
+            }
+        }
+        
+        // Create advanced editor textarea
+        function createAdvancedEditor(type, hiddenField, label) {
+            if (!hiddenField) return;
+            
+            const formGroup = hiddenField.closest('.form-group');
+            if (!formGroup) return;
+            
+            const editor = document.createElement('div');
+            editor.className = 'advanced-editor';
+            
+            const labelEl = document.createElement('label');
+            labelEl.className = 'form-label';
+            labelEl.textContent = label;
+            
+            const textarea = document.createElement('textarea');
+            textarea.className = 'form-control json-editor';
+            textarea.rows = 8;
+            textarea.value = hiddenField.value;
+            
+            textarea.addEventListener('input', function() {
+                hiddenField.value = this.value;
+                
+                // Add visual indication for valid/invalid JSON
+                try {
+                    JSON.parse(this.value);
+                    this.classList.remove('json-invalid');
+                    this.classList.add('json-valid');
+                } catch (e) {
+                    this.classList.remove('json-valid');
+                    this.classList.add('json-invalid');
+                }
+            });
+            
+            const helper = document.createElement('small');
+            helper.style.color = 'var(--clr-text-muted)';
+            helper.style.fontSize = '0.85rem';
+            helper.style.marginTop = 'var(--space-xs)';
+            helper.style.display = 'block';
+            
+            if (type === 'tasks') {
+                helper.innerHTML = `
+                    <strong>Format:</strong> Array of task objects <code>[{"id": task_id, "name": "Task Name", "order": integer}, ...]</code>.<br>
+                    - To <strong>update</strong> existing tasks, include their correct <code>"id"</code>.<br>
+                    - To <strong>add</strong> new tasks, omit the <code>"id"</code> field (or set <code>"id": null</code>).<br>
+                    - To <strong>delete</strong> tasks, simply remove their object from the array.<br>
+                    - The <code>"order"</code> field determines the display sequence (lower numbers first).
+                `;
+            } else {
+                helper.innerHTML = `
+                    <strong>Format:</strong> Array of collaborator objects <code>[{"id": "user_uuid", "email": "user@example.com", "role": "role_name"}, ...]</code>.<br>
+                    - Use the correct <code>"id"</code> and <code>"email"</code> for existing users.<br>
+                    - Valid <code>"role"</code> values are: <code>'viewer'</code>, <code>'editor'</code>, <code>'co-owner'</code>.<br>
+                    - The project creator's role cannot be changed from <code>'creator'</code>.
+                `;
+            }
+            
+            editor.appendChild(labelEl);
+            editor.appendChild(textarea);
+            editor.appendChild(helper);
+            formGroup.appendChild(editor);
+        }
+        
+        // Update hidden JSON fields
+        function updateTasksJson() {
+            if (!tasksJsonField) return;
+            tasksJsonField.value = JSON.stringify(tasks, null, 2);
+        }
+        
+        function updateCollaboratorsJson() {
+            if (!collabsJsonField) return;
+            collabsJsonField.value = JSON.stringify(collaborators, null, 2);
+        }
+    });
+    
+    // Auto-resize for any visible textareas
+    document.querySelectorAll('textarea').forEach(textarea => {
+        function autoResize() {
+            if (textarea.style.display === 'none') return;
+            textarea.style.height = 'auto';
+            textarea.style.height = (textarea.scrollHeight + 2) + 'px';
+        }
+        textarea.style.overflowY = 'hidden';
+        textarea.addEventListener('input', autoResize);
+        // Trigger resize on load
+        autoResize();
+    });
+</script>
+
+<style>
+    /* Task and Collaborator Styling */
+    .task-list-container, .collab-list-container {
+        border: 1px solid var(--clr-border);
+        border-radius: var(--radius-sm);
+        overflow: hidden;
+        margin-bottom: var(--space-md);
+    }
+    
+    .task-item, .collaborator-item {
+        border-bottom: 1px solid var(--clr-border);
+        background: var(--clr-card-bg);
+    }
+    
+    .task-item:last-child, .collaborator-item:last-child {
+        border-bottom: none;
+    }
+    
+    .task-content, .collaborator-content {
+        display: flex;
+        align-items: center;
+        padding: var(--space-sm);
+        gap: var(--space-sm);
+    }
+    
+    .drag-handle {
+        color: var(--clr-text-muted);
+        cursor: grab;
+        padding: 0 var(--space-xs);
+    }
+    
+    .task-name {
+        flex-grow: 1;
+    }
+    
+    .task-actions, .collaborator-actions {
+        display: flex;
+        gap: var(--space-xs);
+    }
+    
+    .btn--icon {
+        padding: var(--space-xs);
+        border: none;
+        background: transparent;
+        cursor: pointer;
+        border-radius: var(--radius-sm);
+    }
+    
+    .btn--icon:hover {
+        background: var(--clr-bg);
+    }
+    
+    .task-delete-btn, .collab-delete-btn {
+        color: var(--clr-error);
+    }
+    
+    .no-tasks, .no-collaborators {
+        padding: var(--space-md);
+        color: var(--clr-text-muted);
+        text-align: center;
+        font-style: italic;
+    }
+    
+    /* Collaborator specific styling */
+    .collaborator-info {
+        flex-grow: 1;
+    }
+    
+    .collab-id {
+        font-size: 0.8rem;
+        opacity: 0.6;
+        margin-left: var(--space-xs);
+    }
+    
+    .collaborator-role {
+        width: 120px;
+    }
+    
+    /* View-only mode */
+    .role-badge {
+        display: inline-block;
+        padding: var(--space-xs) var(--space-sm);
+        border-radius: var(--radius-sm);
+        font-size: 0.8rem;
+        background: var(--clr-bg);
+    }
+    
+    .role-creator {
+        background: var(--clr-primary-light);
+        color: var(--clr-primary-dark);
+    }
+    
+    .role-co-owner {
+        background: var(--clr-secondary-light);
+        color: var(--clr-secondary-dark);
+    }
+    
+    .role-editor {
+        background: var(--clr-info-light);
+        color: var(--clr-info-dark);
+    }
+    
+    .role-viewer {
+        background: var(--clr-bg);
+        color: var(--clr-text);
+    }
+    
+    .collaborator-item.creator {
+        background-color: rgba(var(--clr-primary-rgb), 0.05);
+    }
+    
+    /* JSON editor styling */
+    .json-editor {
+        font-family: monospace;
+    }
+    
+    .json-valid {
+        border-color: var(--clr-success);
+    }
+    
+    .json-invalid {
+        border-color: var(--clr-error);
+    }
+    
+    /* Toggle button styling */
+    .btn--text {
+        background: transparent;
+        border: none;
+        color: var(--clr-text-muted);
+        padding: var(--space-xs) var(--space-sm);
+    }
+    
+    .btn--text:hover {
+        color: var(--clr-text);
+        background: var(--clr-bg);
+    }
+</style>
 {% endblock %}
