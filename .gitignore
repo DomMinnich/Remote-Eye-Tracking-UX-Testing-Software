@@ -20,6 +20,7 @@ uploads/userProfiles/*.jpg
 
 # Ignore log files
 log.txt
+*.log
 
 # Ignore virtual environments
 venv/

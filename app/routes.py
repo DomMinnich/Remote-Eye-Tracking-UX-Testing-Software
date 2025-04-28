@@ -3152,6 +3152,26 @@ def admin_delete_project():
     return redirect(url_for("main.admin_panel"))
 
 
+@main_bp.route("/upload_database", methods=["POST"])
+@login_required
+def upload_database():
+    if current_user.role != "admin":
+        flash("You do not have permission to access this page.", "danger")
+        return redirect(url_for("main.home"))
+    file = request.files.get("database_file")
+    if not file or file.filename != "app.db":
+        flash("Only a file named app.db is allowed.", "danger")
+        return redirect(url_for("main.admin_panel"))
+    db_path = os.path.join(current_app.instance_path, "app.db")
+    try:
+        file.save(db_path)
+        flash("Database uploaded and replaced successfully!", "success")
+    except Exception as e:
+        current_app.logger.error(f"Failed to upload database: {e}", exc_info=True)
+        flash("An error occurred while uploading the database.", "danger")
+    return redirect(url_for("main.admin_panel"))
+
+
 # === REMOVED Routes ===
 # /write_logs - Removed due to security risk. Implement proper server-side logging.
 # /save_gaze_data - Merged into /upload route logic.
