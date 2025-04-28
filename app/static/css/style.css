@@ -74,6 +74,45 @@
      flex-direction: column;
      overflow-x: hidden; /* Prevent horizontal scroll */
    }
+
+   body.dark-mode {
+     --clr-bg: #121212;
+     --clr-bg-alt: #1e1e1e;
+     --clr-text: #e0e0e0;
+     --clr-text-muted: #b0b0b0;
+     --clr-primary: #90caf9;
+     --clr-primary-dark: #42a5f5;
+     --clr-secondary: #f48fb1;
+     --clr-secondary-dark: #f06292;
+     --clr-border: #333;
+     --clr-error: #ef9a9a;
+   }
+
+   body.dark-mode a {
+     color: var(--clr-primary-dark);
+   }
+
+   body.dark-mode a:hover {
+     color: var(--clr-secondary-dark);
+   }
+
+   body.dark-mode .header {
+     background-color: var(--clr-bg-alt);
+     border-bottom-color: var(--clr-border);
+   }
+
+   body.dark-mode .footer {
+     background-color: var(--clr-bg-alt);
+     border-top-color: var(--clr-border);
+   }
+
+   body.dark-mode .btn--primary {
+     color: #000; /* Black text on green button */
+   }
+
+   body.dark-mode .btn--outline-primary {
+     color: #000; /* Black text on blue button */
+   }
    
    main.main-content {
      flex-grow: 1; /* Take remaining vertical space */
@@ -1233,4 +1272,3 @@
        .review-page__task-display { max-width: 100%; width: 90%; }
        .webgazer-ui-container { width: 150px; bottom: var(--space-md); right: var(--space-md); }
    }
-   

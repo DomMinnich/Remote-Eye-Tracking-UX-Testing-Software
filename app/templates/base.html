@@ -122,6 +122,13 @@
           <span class="nav-mobile-toggle__bar"></span>
           <span class="nav-mobile-toggle__bar"></span>
         </button>
+
+        {# Dark Mode Toggle #}
+        <div class="header__actions">
+          <button id="darkModeToggle" class="btn btn--secondary" aria-label="Toggle Dark Mode">
+            👁️
+          </button>
+        </div>
       </div>
     </header>
 
@@ -299,6 +306,27 @@
               submenu.style.maxHeight = submenu.scrollHeight + "px";
             }
           });
+        });
+
+        const darkModeToggle = document.getElementById("darkModeToggle");
+        const prefersDarkScheme = window.matchMedia("(prefers-color-scheme: dark)");
+        const currentTheme = localStorage.getItem("theme");
+
+        const updateIcon = () => {
+          darkModeToggle.textContent = document.body.classList.contains("dark-mode") ? "🌙" : "👁️";
+        };
+
+        if (currentTheme === "dark" || (!currentTheme && prefersDarkScheme.matches)) {
+          document.body.classList.add("dark-mode");
+        }
+
+        updateIcon();
+
+        darkModeToggle.addEventListener("click", () => {
+          document.body.classList.toggle("dark-mode");
+          const theme = document.body.classList.contains("dark-mode") ? "dark" : "light";
+          localStorage.setItem("theme", theme);
+          updateIcon();
         });
       });
     </script>
