@@ -95,8 +95,9 @@
             >
               <img
                 class="nav-main__profile-img"
-                src="{{ url_for('static', filename='uploads/userProfiles/' + (current_user.picture if current_user.picture else 'images/pic.png')) }}"
+                src="{{ url_for('static', filename='uploads/userProfiles/' + (current_user.picture if current_user.picture else 'pic.png')) }}"
                 alt="Profile Picture"
+                onerror="this.onerror=null;this.src='data:image/svg+xml;utf8,<svg xmlns=\'http://www.w3.org/2000/svg\' width=\'120\' height=\'120\'><circle cx=\'60\' cy=\'60\' r=\'60\' fill=\'%23bbb\'/></svg>';" 
               />
               <span class="nav-main__profile-name"
                 >{{ current_user.first_name }}</span

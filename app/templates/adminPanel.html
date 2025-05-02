@@ -73,15 +73,16 @@
     {# --- Database Management --- #}
     <div class="admin-panel-section">
         <h3>Database Management</h3>
-        <p>Upload a new <strong>app.db</strong> file for the application. <span style="color: var(--clr-error);">Only <code>app.db</code> is supported. <b>site.db is no longer used.</b></span></p>
+        <p>Upload a <strong>ZIP file</strong> containing <code>app.db</code> and the <code>data</code> directory (all project data, videos, etc). <span style="color: var(--clr-error);">Only ZIP files are supported. <b>site.db is no longer used.</b></span></p>
         <form method="post" action="{{ url_for('main.upload_database') }}" enctype="multipart/form-data" style="margin-bottom: var(--space-md);">
             <div class="form-group">
-                <label for="database_file" class="form-label">Select <code>app.db</code> file to upload</label>
+                <label for="database_file" class="form-label">Select <code>.zip</code> file to upload</label>
                 <input type="file" id="database_file" name="database_file" class="form-control"
-                       accept=".db,application/octet-stream" required
-                       onchange="if(this.files[0] && this.files[0].name !== 'app.db'){alert('Only app.db is allowed.'); this.value='';}">
+                       accept=".zip,application/zip" required
+                       onchange="if(this.files[0] && !this.files[0].name.toLowerCase().endsWith('.zip')){alert('Only ZIP files are allowed.'); this.value='';}">
                 <small style="color: var(--clr-text-muted); font-size: 0.85rem;">
-                    Only a file named <code>app.db</code> will be accepted and will replace the current database.
+                    The ZIP must contain <code>app.db</code> and a <code>data</code> folder (at the root) with all project folders and videos.<br>
+                    Uploading will <b>replace the current database and all project data</b> with the contents of the ZIP.
                 </small>
             </div>
             <button type="submit" class="btn btn--primary">Upload</button>
