@@ -5,6 +5,8 @@ import os
 # Determine the base directory of the application
 basedir = os.path.abspath(os.path.dirname(__file__))
 
+DB_FOLDER = os.path.join(os.getcwd(), 'databases')
+
 class Config:
     # --- Security ---
     # WARNING: Storing secrets directly in code is insecure for production.
