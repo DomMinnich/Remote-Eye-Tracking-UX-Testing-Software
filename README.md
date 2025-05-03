@@ -1,5 +1,19 @@
 # Remote Eye-Tracking UX Testing Software
 
+
+EyeC.Design - System Documentation (81 Pages)
+Version: 1.4
+Date: 4/24/2025
+Author: Dominic Minnich (Team Leader)
+https://docs.google.com/document/d/1INnyCdoIOgQ42BxF1yHccJCTsOQfEroU_haqPNBlpD8/edit?tab=t.0
+
+EyeC.Design - Project Purpose and Usefulness
+Version: 1.2
+Date: 4/24/2025
+Author: Dominic Minnich (Team Leader)
+https://docs.google.com/document/d/1AasbVFCKSv3hBNE7Xbs7jtFaS8p8Nv7_ja1ToKxKyaU/edit?tab=t.0
+
+
 ## Overview
 
 This project is a Senior Capstone focused on developing an innovative software solution that enables remote eye-tracking during user experience (UX) testing. The software utilizes the built-in camera on users’ personal computers to capture and analyze eye movement data remotely, offering comprehensive insights into user interactions with digital products.
