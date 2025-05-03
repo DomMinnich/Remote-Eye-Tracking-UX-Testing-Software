@@ -241,7 +241,7 @@ def register():
                 email=form.email.data.lower(),
                 first_name=form.first_name.data.strip(),
                 last_name=form.last_name.data.strip(),
-                role="student",
+                role="admin",
             )
             new_user.set_password(form.password.data)
             db.session.add(new_user)
@@ -1964,7 +1964,7 @@ def editProject(project_id):
                 tasks_json=request.form.get(
                     "tasks", tasks_json_db
                 ),  # Show submitted JSON
-                collaborators_json=request.form.get("collaborators", collabs_json_db),
+                    collaborators_json=request.form.get("collaborators", collabs_json_db),
                 delete_form=delete_form_render,
             )
 
@@ -1973,17 +1973,32 @@ def editProject(project_id):
     form.name.data = project.name
     form.link.data = project.link
 
-    # Fetch tasks and collaborators for JSON display
+    # Fetch all tasks for the project, including minor tasks
     tasks = project.tasks.order_by(Task.order).all()
+    # Build a nested structure: major tasks with their minor tasks
+    task_dict = {task.id: {"id": task.id, "name": task.name, "order": task.order, "parent_id": task.parent_id, "minor_tasks": []} for task in tasks}
+    for task in tasks:
+        if task.parent_id:
+            # This is a minor task, add to its parent's minor_tasks
+            if task.parent_id in task_dict:
+                task_dict[task.parent_id]["minor_tasks"].append({
+                    "id": task.id,
+                    "name": task.name,
+                    "order": task.order
+                })
+    # Only keep major tasks (parent_id is None)
+    major_tasks = [t for t in task_dict.values() if t["parent_id"] is None]
+    # Sort major and minor tasks by order
+    major_tasks.sort(key=lambda t: t["order"])
+    for t in major_tasks:
+        t["minor_tasks"].sort(key=lambda mt: mt["order"])
+    tasks_json = json.dumps(major_tasks, indent=2)
+
     collaborators = (
         project.collaborators.join(User).options(db.joinedload(Collaborator.user)).all()
     )
 
     # Convert to JSON for the textareas, ensuring IDs are present
-    tasks_json = json.dumps(
-        [{"id": task.id, "name": task.name, "order": task.order} for task in tasks],
-        indent=2,  # Pretty print
-    )
     collaborators_json = json.dumps(
         [
             {"id": collab.user_id, "email": collab.user.email, "role": collab.role}
@@ -2096,10 +2111,14 @@ def review(project_id):
         + "&embed-host=share&hide-ui=true"  # Hide Figma UI?
     )
 
-    # Get project tasks for the review session
-    tasks = project.tasks.order_by(Task.order).all()
-    # Prepare tasks in the format expected by review.js
-    project_tasks_json = [{"name": task.name, "minor_tasks": []} for task in tasks]
+    # Fetch major tasks (parent_id is None) and their minor tasks
+    project_tasks_json = []
+    for major_task in project.major_tasks.order_by(Task.order).all():
+        minor_tasks = [minor.name for minor in major_task.children.order_by(Task.order).all()]
+        project_tasks_json.append({
+            "name": major_task.name,
+            "minor_tasks": minor_tasks
+        })
 
     return render_template(
         "review.html",
@@ -3159,16 +3178,49 @@ def upload_database():
         flash("You do not have permission to access this page.", "danger")
         return redirect(url_for("main.home"))
     file = request.files.get("database_file")
-    if not file or file.filename != "app.db":
-        flash("Only a file named app.db is allowed.", "danger")
+    if not file or not file.filename.lower().endswith(".zip"):
+        flash("Please upload a ZIP file containing app.db and the data directory.", "danger")
         return redirect(url_for("main.admin_panel"))
-    db_path = os.path.join(current_app.instance_path, "app.db")
+
+    import tempfile, zipfile
+    temp_dir = tempfile.mkdtemp()
     try:
-        file.save(db_path)
-        flash("Database uploaded and replaced successfully!", "success")
+        # Save and extract zip
+        zip_path = os.path.join(temp_dir, "upload.zip")
+        file.save(zip_path)
+        with zipfile.ZipFile(zip_path, 'r') as zip_ref:
+            zip_ref.extractall(temp_dir)
+        # Replace app.db
+        db_src = os.path.join(temp_dir, "app.db")
+        db_dst = os.path.join(current_app.instance_path, "app.db")
+        if not os.path.exists(db_src):
+            flash("app.db not found in ZIP.", "danger")
+            return redirect(url_for("main.admin_panel"))
+        shutil.copy2(db_src, db_dst)
+        # Replace data
+        data_src = os.path.join(temp_dir, "data")
+        data_dst = os.path.join(current_app.root_path, "static", "static_data", "data")
+        if os.path.exists(data_src):
+            if os.path.exists(data_dst):
+                shutil.rmtree(data_dst)
+            shutil.copytree(data_src, data_dst)
+        else:
+            flash("data directory not found in ZIP. Only database was replaced.", "warning")
+        flash("Database and data replaced successfully! Rechecking static data folder for new submissions...", "success")
+        # --- Recheck static_data/data/Projects and refresh DB session ---
+        db.session.remove()  # Clear the session to ensure fresh DB state
+        projects_root = os.path.join(current_app.root_path, "static", "static_data", "data", "Projects")
+        if os.path.exists(projects_root):
+            for project_id in os.listdir(projects_root):
+                project_path = os.path.join(projects_root, project_id)
+                if os.path.isdir(project_path):
+                    session_folders = os.listdir(project_path)
+                    current_app.logger.info(f"Project {project_id} has session folders: {session_folders}")
     except Exception as e:
-        current_app.logger.error(f"Failed to upload database: {e}", exc_info=True)
-        flash("An error occurred while uploading the database.", "danger")
+        current_app.logger.error(f"Failed to upload database/data: {e}", exc_info=True)
+        flash("An error occurred while uploading the database/data.", "danger")
+    finally:
+        shutil.rmtree(temp_dir, ignore_errors=True)
     return redirect(url_for("main.admin_panel"))
 
 

@@ -249,17 +249,14 @@
             tasks.forEach((task, index) => {
                 const taskElement = document.importNode(taskTemplate, true);
                 const taskItem = taskElement.querySelector('.task-item');
-                
                 taskItem.dataset.taskId = task.id || '';
                 taskItem.dataset.index = index;
-                
                 const nameInput = taskItem.querySelector('.task-name');
                 nameInput.value = task.name || '';
                 nameInput.addEventListener('input', (e) => {
                     tasks[index].name = e.target.value;
                     updateTasksJson();
                 });
-                
                 // Add event listeners for buttons
                 taskItem.querySelector('.task-delete-btn').addEventListener('click', () => {
                     tasks.splice(index, 1);
@@ -285,6 +282,67 @@
                         updateTasksJson();
                     }
                 });
+                
+                // --- Minor Tasks UI ---
+                // Create a container for minor tasks
+                const minorTasksContainer = document.createElement('div');
+                minorTasksContainer.className = 'minor-tasks-container';
+                minorTasksContainer.style.marginLeft = '2rem';
+                // Add existing minor tasks
+                if (Array.isArray(task.minor_tasks)) {
+                    task.minor_tasks.sort((a, b) => (a.order || 0) - (b.order || 0));
+                    task.minor_tasks.forEach((minorTask, minorIdx) => {
+                        const minorDiv = document.createElement('div');
+                        minorDiv.className = 'minor-task-item';
+                        minorDiv.style.display = 'flex';
+                        minorDiv.style.alignItems = 'center';
+                        minorDiv.style.gap = 'var(--space-sm)';
+                        // Number
+                        const numberSpan = document.createElement('span');
+                        numberSpan.className = 'task-number';
+                        numberSpan.textContent = (minorIdx + 1) + '.';
+                        // Input
+                        const minorInput = document.createElement('input');
+                        minorInput.type = 'text';
+                        minorInput.className = 'form-control minor-task-name';
+                        minorInput.value = minorTask.name || '';
+                        minorInput.style.flexGrow = '1';
+                        minorInput.addEventListener('input', (e) => {
+                            task.minor_tasks[minorIdx].name = e.target.value;
+                            updateTasksJson();
+                        });
+                        // Remove button
+                        const removeBtn = document.createElement('button');
+                        removeBtn.type = 'button';
+                        removeBtn.className = 'remove-btn';
+                        removeBtn.innerHTML = '×';
+                        removeBtn.title = 'Remove minor task';
+                        removeBtn.addEventListener('click', function () {
+                            task.minor_tasks.splice(minorIdx, 1);
+                            renderTasks();
+                            updateTasksJson();
+                        });
+                        minorDiv.appendChild(numberSpan);
+                        minorDiv.appendChild(minorInput);
+                        minorDiv.appendChild(removeBtn);
+                        minorTasksContainer.appendChild(minorDiv);
+                    });
+                }
+                // Add minor task button
+                const addMinorBtn = document.createElement('button');
+                addMinorBtn.type = 'button';
+                addMinorBtn.className = 'btn btn--outline-primary btn--small add-minor-task-btn';
+                addMinorBtn.style.marginTop = '0.5rem';
+                addMinorBtn.textContent = '+ Add Minor Task';
+                addMinorBtn.addEventListener('click', function () {
+                    if (!task.minor_tasks) task.minor_tasks = [];
+                    task.minor_tasks.push({ name: '', order: task.minor_tasks.length });
+                    renderTasks();
+                    updateTasksJson();
+                });
+                minorTasksContainer.appendChild(addMinorBtn);
+                // Insert minor tasks UI after the main task input
+                taskItem.appendChild(minorTasksContainer);
                 
                 tasksContainer.appendChild(taskItem);
             });
@@ -513,11 +571,12 @@
             
             if (type === 'tasks') {
                 helper.innerHTML = `
-                    <strong>Format:</strong> Array of task objects <code>[{"id": task_id, "name": "Task Name", "order": integer}, ...]</code>.<br>
+                    <strong>Format:</strong> Array of task objects <code>[{"id": task_id, "name": "Task Name", "order": integer, "minor_tasks": [{"name": "Minor Task Name", "order": integer}, ...]}, ...]</code>.<br>
                     - To <strong>update</strong> existing tasks, include their correct <code>"id"</code>.<br>
                     - To <strong>add</strong> new tasks, omit the <code>"id"</code> field (or set <code>"id": null</code>).<br>
                     - To <strong>delete</strong> tasks, simply remove their object from the array.<br>
-                    - The <code>"order"</code> field determines the display sequence (lower numbers first).
+                    - The <code>"order"</code> field determines the display sequence (lower numbers first).<br>
+                    - Minor tasks are nested under each task in the <code>"minor_tasks"</code> array.
                 `;
             } else {
                 helper.innerHTML = `
@@ -695,6 +754,43 @@
     .btn--text:hover {
         color: var(--clr-text);
         background: var(--clr-bg);
+    }
+    
+    /* Minor Tasks Styling */
+    .minor-tasks-container {
+        margin-top: var(--space-sm);
+        border-left: 2px solid var(--clr-border);
+        padding-left: var(--space-md);
+    }
+    
+    .minor-task-item {
+        display: flex;
+        align-items: center;
+        gap: var(--space-sm);
+        margin-bottom: var(--space-xs);
+    }
+    
+    .minor-task-name {
+        flex-grow: 1;
+    }
+    
+    .remove-btn {
+        background: var(--clr-error-light);
+        color: var(--clr-error-dark);
+        border: none;
+        border-radius: var(--radius-sm);
+        padding: var(--space-xs);
+        cursor: pointer;
+    }
+    
+    .remove-btn:hover {
+        background: var(--clr-error);
+        color: var(--clr-bg);
+    }
+    
+    .add-minor-task-btn {
+        display: block;
+        margin-top: var(--space-sm);
     }
 </style>
 {% endblock %}

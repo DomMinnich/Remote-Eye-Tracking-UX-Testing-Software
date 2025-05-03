@@ -84,6 +84,10 @@ def create_app(config_class=None):
     if not app.debug and not app.testing:
         if not os.path.exists('logs'):
             os.mkdir('logs')
+        try:
+            from concurrent_log_handler import ConcurrentRotatingFileHandler as RotatingFileHandler
+        except ImportError:
+            from logging.handlers import RotatingFileHandler
         file_handler = RotatingFileHandler('logs/eyecdesign.log', maxBytes=10240, backupCount=10)
         file_handler.setFormatter(logging.Formatter(
             '%(asctime)s %(levelname)s: %(message)s [in %(pathname)s:%(lineno)d]'))

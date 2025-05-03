@@ -35,7 +35,7 @@ class Config:
     UPLOAD_FOLDER = os.path.join(basedir, 'app', 'static', 'static_data', 'data', 'Projects')
     USER_PROFILE_UPLOAD_FOLDER = os.path.join(basedir, 'app', 'static', 'uploads', 'userProfiles')
     ALLOWED_EXTENSIONS = {'jpg', 'jpeg', 'png', 'gif'} # For profile pics
-    MAX_CONTENT_LENGTH = 100 * 1024 * 1024 #100MB upload limit for videos
+    MAX_CONTENT_LENGTH = 2 * 1024 * 1024 * 1024  # 2 GB upload limit for videos
 
     # Project Limits & Config
     MAX_PROJECTS_STUDENT = 4

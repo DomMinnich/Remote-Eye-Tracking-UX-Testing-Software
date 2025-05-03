@@ -196,6 +196,8 @@
      padding: var(--space-md) 0;
      z-index: var(--z-header);
      transition: box-shadow var(--transition-smooth);
+     --header-height: 64px;
+     height: var(--header-height);
    }
    
 
@@ -1030,17 +1032,29 @@
        bottom: var(--space-lg);
        right: var(--space-lg);
        width: 180px; /* Smaller */
-       z-index: var(--z-modal); /* High z-index */
+       z-index: 2000 !important; /* High z-index */
        background: rgba(255, 255, 255, 0.9);
        border-radius: var(--radius-md);
        padding: var(--space-sm);
        box-shadow: var(--shadow-medium);
    }
-   #webgazerVideoFeed, #webgazerFaceOverlay, #webgazerFaceFeedbackBox {
-       border-radius: var(--radius-sm) !important; /* Override webgazer styles */
+   #webgazerVideoFeed,
+   #webgazerFaceOverlay,
+   #webgazerFaceFeedbackBox {
+       position: fixed !important;
+       top: 64px !important; /* Move just below the header (header is 64px) */
+       left: 10px !important;
+       width: 160px !important;
+       height: 120px !important;
+       z-index: 10001 !important;
+       pointer-events: auto !important;
+       display: block !important;
    }
    #webgazerGazeDot { 
-       z-index: calc(var(--z-modal) + 1) !important;
+       z-index: 2000 !important;
+       display: block !important;
+       position: fixed !important;
+       pointer-events: none !important;
    }
    
    /* Review Broad Grid */
